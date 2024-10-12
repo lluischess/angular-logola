@@ -1,0 +1,51 @@
+/* General (para dispositivos móviles) */
+.offcanvas-header {
+  text-align: center;
+  position: relative;
+}
+
+.offcanvas-header .btn-close {
+  position: absolute;
+  top: 15px;
+  right: 12%;
+  transform: translateX(50%);
+  margin-top: 1rem;
+}
+
+.offcanvas-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding-top: 4rem; /* Agregar espacio superior para evitar solapamiento con la cruz */
+}
+
+/* Hacer que el botón de enviar presupuesto esté abajo */
+button[type="submit"] {
+  position: sticky;
+  bottom: 0;
+  width: 100%;
+}
+
+/* Versiones de pantallas grandes (escritorio) */
+@media (min-width: 992px) {
+  /* Botón de cerrar a la derecha en escritorio */
+  .offcanvas-header {
+    text-align: right;
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin-right: 1rem;
+    margin-top: 1rem;
+  }
+
+  .offcanvas-header .btn-close {
+    position: static;
+    transform: none;
+    margin-top: 0;
+  }
+
+  /* Ajustar el espacio superior en escritorio */
+  .offcanvas-body {
+    padding-top: 4.8rem; /* Ajustamos ligeramente el espacio superior */
+  }
+}

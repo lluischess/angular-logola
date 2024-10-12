@@ -22,8 +22,8 @@ body {
   --bs-body-line-height: 2;
   --bs-body-color: #747474;
 
-  --bs-primary: #6BB252;
-  --bs-primary-rgb: 107, 178, 82;
+  --bs-primary: #18bdba;
+  --bs-primary-rgb: 24,189,186;
 
   --bs-secondary: #364127;
   --bs-secondary-rgb: 54, 65, 39;
@@ -44,7 +44,7 @@ body {
   --bs-btn-bg: var(--bs-primary);
   --bs-btn-border-color: transparent;
   --bs-btn-hover-color: #fff;
-  --bs-btn-hover-bg: #f7a422;
+  --bs-btn-hover-bg: #b59c87;
   --bs-btn-hover-border-color: transparent;
   --bs-btn-focus-shadow-rgb: 49,132,253;
   --bs-btn-active-color: #fff;
@@ -687,7 +687,7 @@ abbr[title] {
 
 b,
 strong {
-  font-weight: 900;
+  font-weight: bolder;
 }
 
 /**
