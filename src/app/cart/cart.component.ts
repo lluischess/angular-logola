@@ -17,9 +17,9 @@ export class CartComponent {
   getCartItems() {
     // Función que retorna los items del carrito (ejemplo)
     return [
-      { name: 'Growers Cider', description: 'Brief description', image: 'path/to/image', quantity: 0 },
-      { name: 'Fresh Grapes', description: 'Brief description', image: 'path/to/image', quantity: 0 },
-      { name: 'Heinz Tomato Ketchup', description: 'Brief description', image: 'path/to/image', quantity: 0 }
+      { name: 'Growers Cider', description: 'Brief description', referencia: '12345', image: 'path/to/image', quantity: 0 },
+      { name: 'Fresh Grapes', description: 'Brief description', referencia: '12345', image: 'path/to/image', quantity: 0 },
+      { name: 'Heinz Tomato Ketchup', description: 'Brief description', referencia: '12345', image: 'path/to/image', quantity: 0 }
     ];
   }
 
