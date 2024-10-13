@@ -49,3 +49,18 @@ button[type="submit"] {
     padding-top: 4.8rem; /* Ajustamos ligeramente el espacio superior */
   }
 }
+
+.quantity-selector {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.slider-container {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.form-range {
+  width: 100%;
+}

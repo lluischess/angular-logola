@@ -13,21 +13,50 @@
         <span>Presupuesto</span>
         <span class="badge bg-primary rounded-pill">{{ cartItems.length }}</span>
       </h4>
+
       <ul class="list-group mb-3">
-        <li *ngFor="let item of cartItems" class="list-group-item d-flex justify-content-between lh-sm">
-          <div class="d-flex gap-2">
-            <img [src]="item.image" alt="{{item.name}}" width="50" height="50" class="rounded">
-            <div>
-              <h6 class="my-0">{{ item.name }}</h6>
-              <small class="text-body-secondary">{{ item.description }}</small>
+        <!-- Recorremos los productos con ngFor -->
+        <ng-container *ngFor="let item of cartItems; let i = index">
+          <!-- Producto -->
+          <li class="list-group-item d-flex justify-content-between lh-sm">
+            <div class="d-flex gap-2">
+              <!-- Imagen del producto -->
+              <img [src]="item.image" alt="{{item.name}}" width="50" height="50" class="rounded">
+              <div>
+                <h6 class="my-0">{{ item.name }}</h6>
+                <small class="text-body-secondary">{{ item.referencia }}</small>
+              </div>
             </div>
+
+            <!-- Cantidad -->
+            <div class="quantity-selector d-flex align-items-center">
+              <input type="number" [(ngModel)]="item.quantity" class="form-control mx-1 text-center" style="width: 100px;" />
+            </div>
+
+            <!-- Botón de eliminar producto (pequeña cruz) -->
+            <button type="button" class="btn btn-close" aria-label="Remove" (click)="removeItem(i)"></button>
+          </li>
+
+          <!-- Slider-container fuera del <li> pero dentro del bucle de productos -->
+            <!-- <label>Selecciona un valor por unidad maximo a gastar para que podamos ajustarnos a su presupuesto</label> -->
+          <div class="slider-container mt-2 mb-3">
+             <!-- Icono de interrogante -->
+             <span (click)="toggleExplanation(i)" class="text-primary cursor-pointer" style="cursor: pointer;">
+              <i class="bi bi-question-circle" aria-hidden="true"></i>
+            </span>
+            <!-- Tooltip o explicación que aparece al hacer clic -->
+            <div *ngIf="item.showExplanation" class="alert alert-info mt-2">
+              Este deslizador te permite seleccionar la cantidad adicional de {{ item.name }} que deseas entre 1 y 100.
+            </div>
+            <input type="range" class="form-range" min="1" max="100" [(ngModel)]="item.sliderValue" (input)="updateSliderValue(i, $event)" />
+            <span>{{ item.sliderValue }}</span>
           </div>
-          <span class="text-body-secondary">{{ item.price }}</span>
-        </li>
+        </ng-container>
+
         <!-- Total -->
         <li class="list-group-item d-flex justify-content-between">
-          <strong>Total (USD)</strong>
-          <strong>{{ totalPrice}}</strong>
+          <strong>Cantidad Total: </strong>
+          <strong>{{ totalPrice }}</strong>
         </li>
       </ul>
     </div>
@@ -39,7 +68,7 @@
         <label class="form-check-label" for="acceptTerms">
           Acepto que podemos enviarte correos electrónicos.
         </label>
-        <div *ngIf="termsForm.get('acceptTerms').touched && termsForm.get('acceptTerms').invalid" class="text-danger">
+        <div *ngIf="termsForm.get('acceptTerms')?.touched && termsForm.get('acceptTerms')?.invalid" class="text-danger">
           Debes aceptar los términos para continuar.
         </div>
       </div>
