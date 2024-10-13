@@ -17,9 +17,9 @@ export class CartComponent {
   getCartItems() {
     // Función que retorna los items del carrito (ejemplo)
     return [
-      { name: 'Growers Cider', description: 'Brief description', referencia: '12345', image: 'path/to/image', quantity: 0 },
-      { name: 'Fresh Grapes', description: 'Brief description', referencia: '12345', image: 'path/to/image', quantity: 0 },
-      { name: 'Heinz Tomato Ketchup', description: 'Brief description', referencia: '12345', image: 'path/to/image', quantity: 0 }
+      { name: 'BOMBÓN NAVIDAD EN BOLSA UNITARIA PERSONALIZADA', referencia: 'BE-015-156', image: 'assets/images/BE-015-156.jpg', quantity: 0 },
+      { name: 'Botes de Logolate', referencia: 'EN-130-b-&-EN-170', image: 'assets/images/EN-130-b-y-EN-170.jpg', quantity: 0 },
+      { name: 'BOTES PET CON DULCES NAVIDEÑOS', referencia: 'EN-130G-175', image: 'assets/images/EN-130G-175.jpg', quantity: 0 }
     ];
   }
 

@@ -388,7 +388,7 @@ input[type=number]::-webkit-outer-spin-button {
   text-align: center;
 }
 .product-item figure img {
-  max-height: 210px;
+  max-height: 275px;
   height: auto;
 }
 .product-item .product-qty {
