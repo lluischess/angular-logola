@@ -30,7 +30,9 @@
 
             <!-- Cantidad -->
             <div class="quantity-selector d-flex align-items-center">
-              <input type="number" [(ngModel)]="item.quantity" class="form-control mx-1 text-center" style="width: 100px;" />
+              <input id="quantity-input-{{i}}" type="number" [(ngModel)]="item.quantity"
+                     class="form-control mx-1 text-center" (input)="updateQuantity(i)"
+                     style="width: 100px;" min="0" />
             </div>
 
             <!-- Botón de eliminar producto (pequeña cruz) -->
@@ -38,16 +40,21 @@
           </li>
 
           <!-- Slider-container fuera del <li> pero dentro del bucle de productos -->
-            <!-- <label>Selecciona un valor por unidad maximo a gastar para que podamos ajustarnos a su presupuesto</label> -->
           <div class="slider-container mt-2 mb-3">
-             <!-- Icono de interrogante -->
-             <span (click)="toggleExplanation(i)" class="text-primary cursor-pointer" style="cursor: pointer;">
-              <i class="bi bi-question-circle" aria-hidden="true"></i>
-            </span>
-            <!-- Tooltip o explicación que aparece al hacer clic -->
-            <div *ngIf="item.showExplanation" class="alert alert-info mt-2">
-              Este deslizador te permite seleccionar la cantidad adicional de {{ item.name }} que deseas entre 1 y 100.
+            <!-- Icono de interrogante -->
+            <div class="position-relative">
+              <span (click)="toggleExplanation(i)" class="text-primary cursor-pointer">
+                <i class="bi bi-question-circle" aria-hidden="true"></i>
+              </span>
+
+              <!-- Tooltip o explicación que aparece al hacer clic -->
+              <div *ngIf="item.showExplanation" class="tooltip-explanation">
+                <span (click)="toggleExplanation(i)" class="close-tooltip">&times;</span> <!-- Cerrar el tooltip -->
+                Este deslizador te permite seleccionar un valor maximo de presupuesto por unidad, esto nos ayuda a agilizar y ajustar su presupuesto. Entre 1€ y 100€.
+              </div>
             </div>
+
+            <!-- Input deslizante (slider) -->
             <input type="range" class="form-range" min="1" max="100" [(ngModel)]="item.sliderValue" (input)="updateSliderValue(i, $event)" />
             <span>{{ item.sliderValue }}</span>
           </div>
@@ -55,8 +62,8 @@
 
         <!-- Total -->
         <li class="list-group-item d-flex justify-content-between">
-          <strong>Cantidad Total: </strong>
-          <strong>{{ totalPrice }}</strong>
+          <strong>Total unidades: </strong>
+          <strong>{{ totalUnits }}</strong>
         </li>
       </ul>
     </div>

@@ -64,3 +64,41 @@ button[type="submit"] {
 .form-range {
   width: 100%;
 }
+
+.position-relative {
+  position: relative; /* Para que el tooltip se posicione relativo a este contenedor */
+}
+
+.tooltip-explanation {
+  position: absolute;
+  background-color: #d4f1ff; /* Color suave de fondo */
+  color: #000; /* Color del texto */
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Añadir una sombra */
+  z-index: 10; /* Asegurar que esté sobre otros elementos */
+  width: 250px;
+  top: 0;
+  left: 30px; /* Ajusta la posición del tooltip al lado del ícono */
+}
+
+.close-tooltip {
+  position: absolute;
+  top: 5px;
+  right: 10px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.slider-container .bi-question-circle {
+  font-size: 1.2rem; /* Tamaño del ícono de interrogante */
+}
+
+.alert-info {
+  font-size: 0.9rem;
+  padding: 0.5rem;
+}

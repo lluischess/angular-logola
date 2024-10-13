@@ -5,64 +5,65 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 @Component({
   selector: 'app-cart',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule,FormsModule],
+  imports: [ReactiveFormsModule, CommonModule, FormsModule],
   templateUrl: './cart.component.html',
-  styleUrl: './cart.component.css'
+  styleUrls: ['./cart.component.css']  // Cambié styleUrl a styleUrls
 })
 export class CartComponent {
   cartItems: any[] = [];
   termsForm: FormGroup;
+  totalUnits: number = 0;  // Variable para total de unidades
 
   getCartItems() {
     // Función que retorna los items del carrito (ejemplo)
     return [
-      { name: 'Growers Cider', description: 'Brief description', price: 12, image: 'path/to/image', quantity: 1 },
-      { name: 'Fresh Grapes', description: 'Brief description', price: 8, image: 'path/to/image', quantity: 1 },
-      { name: 'Heinz Tomato Ketchup', description: 'Brief description', price: 5, image: 'path/to/image', quantity: 1 }
+      { name: 'Growers Cider', description: 'Brief description', image: 'path/to/image', quantity: 0 },
+      { name: 'Fresh Grapes', description: 'Brief description', image: 'path/to/image', quantity: 0 },
+      { name: 'Heinz Tomato Ketchup', description: 'Brief description', image: 'path/to/image', quantity: 0 }
     ];
   }
-
-  totalPrice: number = 0;
-
 
   ngOnInit() {
     // Simula la carga del carrito con productos y añade el showExplanation en false
     this.cartItems = this.getCartItems().map(item => ({
       ...item,
-      showExplanation: false  // Añadimos la propiedad para manejar el tooltip de cada producto
+      showExplanation: false,  // Añadimos la propiedad para manejar el tooltip de cada producto
+      sliderValue: 1  // Inicializa el slider con un valor por defecto
     }));
+    this.updateTotalUnits();  // Inicializa el total de unidades
   }
-
-
 
   constructor(private fb: FormBuilder) {
     // Inicializar el formulario de términos
     this.termsForm = this.fb.group({
       acceptTerms: [false, Validators.requiredTrue]
     });
-    this.updateTotalPrice();
   }
 
   // Actualizar el valor del slider
-updateSliderValue(index: number, event: any) {
-  this.cartItems[index].sliderValue = event.target.value;
-  this.updateTotalPrice();
-}
+  updateSliderValue(index: number, event: any) {
+    this.cartItems[index].sliderValue = event.target.value;
+  }
 
-// Calcular el precio total con la cantidad seleccionada en el slider
-updateTotalPrice() {
-  this.totalPrice = this.cartItems.reduce((acc, item) => acc + (item.price * item.sliderValue), 0);
-}
+  updateQuantity(index: number) {
+    // Asigna el valor actual del input a la cantidad del producto
+    this.cartItems[index].quantity = parseInt((document.getElementById(`quantity-input-${index}`) as HTMLInputElement).value);
+    this.updateTotalUnits();  // Actualiza el total de unidades
+  }
 
-removeItem(index: number) {
-  this.cartItems.splice(index, 1);
-  this.updateTotalPrice(); // Actualiza el precio total después de eliminar el producto
-}
+  // Calcular el total de unidades
+  updateTotalUnits() {
+    this.totalUnits = this.cartItems.reduce((acc, item) => acc + item.quantity, 0);
+  }
 
-toggleExplanation(index: number) {
-  this.cartItems[index].showExplanation = !this.cartItems[index].showExplanation;
-}
+  removeItem(index: number) {
+    this.cartItems.splice(index, 1);
+    this.updateTotalUnits(); // Actualiza el total de unidades después de eliminar el producto
+  }
 
+  toggleExplanation(index: number) {
+    this.cartItems[index].showExplanation = !this.cartItems[index].showExplanation;
+  }
 
   // Manejar el envío del formulario
   onSubmit() {
