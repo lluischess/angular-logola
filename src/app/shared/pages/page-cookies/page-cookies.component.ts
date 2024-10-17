@@ -8,5 +8,5 @@ import { Component } from '@angular/core';
   styleUrl: './page-cookies.component.css'
 })
 export class PageCookiesComponent {
-
+  public email: string = 'info@logolate.com'
 }

@@ -8,5 +8,5 @@ import { Component } from '@angular/core';
   styleUrl: './page-legal.component.css'
 })
 export class PageLegalComponent {
-
+  public email = 'info@logolate.com';
 }
