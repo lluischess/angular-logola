@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { CartServiceService } from '../shared/services/cart-service.service';
 
 @Component({
   selector: 'app-cart',
@@ -25,15 +26,16 @@ export class CartComponent {
 
   ngOnInit() {
     // Simula la carga del carrito con productos y añade el showExplanation en false
-    this.cartItems = this.getCartItems().map(item => ({
-      ...item,
-      showExplanation: false,  // Añadimos la propiedad para manejar el tooltip de cada producto
-      sliderValue: 1  // Inicializa el slider con un valor por defecto
-    }));
+    // this.cartItems = this.getCartItems().map(item => ({
+    //   ...item,
+    //   showExplanation: false,  // Añadimos la propiedad para manejar el tooltip de cada producto
+    //   sliderValue: 1  // Inicializa el slider con un valor por defecto
+    // }));
+    this.cartItems = this.cartService.getCartItems();
     this.updateTotalUnits();  // Inicializa el total de unidades
   }
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder, private cartService: CartServiceService) {
     // Inicializar el formulario de términos
     this.termsForm = this.fb.group({
       acceptTerms: [false, Validators.requiredTrue]
@@ -52,14 +54,18 @@ export class CartComponent {
   }
 
   // Calcular el total de unidades
+  // updateTotalUnits() {
+  //   this.totalUnits = this.cartItems.reduce((acc, item) => acc + item.quantity, 0);
+  // }
+
   updateTotalUnits() {
-    this.totalUnits = this.cartItems.reduce((acc, item) => acc + item.quantity, 0);
+    this.totalUnits = this.cartService.getTotalUnits();
   }
 
-  removeItem(index: number) {
-    this.cartItems.splice(index, 1);
-    this.updateTotalUnits(); // Actualiza el total de unidades después de eliminar el producto
-  }
+  // removeItem(index: number) {
+  //   this.cartItems.splice(index, 1);
+  //   this.updateTotalUnits(); // Actualiza el total de unidades después de eliminar el producto
+  // }
 
   toggleExplanation(index: number) {
     this.cartItems[index].showExplanation = !this.cartItems[index].showExplanation;
