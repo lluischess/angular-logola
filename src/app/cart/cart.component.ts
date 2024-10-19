@@ -67,6 +67,12 @@ export class CartComponent {
   //   this.updateTotalUnits(); // Actualiza el total de unidades después de eliminar el producto
   // }
 
+  removeItem(productId: number) {
+    this.cartService.removeFromCart(productId);
+    this.cartItems = this.cartService.getCartItems();
+    this.updateTotalUnits();
+  }
+
   toggleExplanation(index: number) {
     this.cartItems[index].showExplanation = !this.cartItems[index].showExplanation;
   }

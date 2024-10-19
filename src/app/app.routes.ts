@@ -24,11 +24,15 @@ export const routes: Routes = [
     component: PageTermsComponent
   },
   {
-    path: 'chocolates',
+    path: 'productos',
     component: PageGridComponent
   },
   {
-    path: 'producto',
+    path: 'productos/:categoria',
+    component: PageGridComponent
+  },
+  {
+    path: 'producto/:id',
     component: PageProductComponent
   },
   {
