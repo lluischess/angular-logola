@@ -1,11 +1,11 @@
-<section class="product-details py-5">
+<section *ngIf="producto">
   <div class="container-lg">
     <div class="row gy-4">
 
       <!-- Imagen del producto (Responsive: Se muestra arriba en móvil) -->
       <div class="col-12 col-lg-6">
         <div class="product-image text-center">
-          <img src="assets/images/BE-015-156.jpg" alt="Nombre del producto" class="img-fluid rounded">
+          <img [src]="producto.imagen" alt="{{ producto.nombre }}" class="img-fluid rounded">
         </div>
       </div>
 
@@ -13,7 +13,8 @@
       <div class="col-12 col-lg-6">
         <div class="product-info">
           <!-- Nombre del producto -->
-          <h1 class="product-title mb-3">Nombre del Producto</h1>
+          <h1 class="product-title mb-3">{{ producto.nombre | titlecase }}</h1>
+          <span class="text-muted">{{ producto.referencia | uppercase }}</span>
           <!-- Descripción del producto -->
           <p class="product-description text-muted mb-4">
             Bombón en forma de pirámide serigrafiados de chocolate negro: Trufa de cacao 67% de cacao de Carácas. De chocolate con leche: Praliné de avellanas 38% de cacao Java.
@@ -34,7 +35,7 @@
             <tbody>
               <tr>
                 <td><strong>Medidas</strong></td>
-                <td>Medidas del producto (Ej. 50x70 cm)</td>
+                <td>{{ producto.medidas }}</td>
               </tr>
               <tr>
                 <td><strong>Material</strong></td>
@@ -42,11 +43,11 @@
               </tr>
               <tr>
                 <td><strong>Ingredientes</strong></td>
-                <td>Lista de ingredientes (Ej. Cacao, Chocolate Blanco,leche y Negro 77% de Origen)</td>
+                <td>Lista de ingredientes (Ej. Cacao, Chocolate Blanco, Leche y Negro 77% de Origen)</td>
               </tr>
               <tr>
                 <td><strong>Unidades</strong></td>
-                <td>Numero de unidades por bolsa (Ej. 4 de cada sabor)</td>
+                <td>Número de unidades por bolsa (Ej. 4 de cada sabor)</td>
               </tr>
             </tbody>
           </table>
