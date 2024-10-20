@@ -21,6 +21,10 @@ export class HeaderComponent {
       // Redirigir a la página del grid con el término de búsqueda como parámetro
       this.router.navigate(['/productos'], { queryParams: { search: this.searchQuery } });
     }
+    // Desplazamiento automático hacia arriba
+    window.scrollTo({
+      top: 0
+    });
   }
 
 }

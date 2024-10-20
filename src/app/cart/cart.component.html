@@ -79,22 +79,56 @@
 
     <!-- Checkbox para aceptar términos -->
     @if (cartItems.length > 0){
-    <form [formGroup]="termsForm" (ngSubmit)="onSubmit()">
-      <div class="form-check mb-3">
-        <input class="form-check-input" type="checkbox" id="acceptTerms" formControlName="acceptTerms" name="acceptTerms">
-        <label class="form-check-label" for="acceptTerms">
-          Acepto que podemos enviarte correos electrónicos.
-        </label>
-        <div *ngIf="termsForm.get('acceptTerms')?.touched && termsForm.get('acceptTerms')?.invalid" class="text-danger">
-          Debes aceptar los términos para continuar.
+    <!-- Formulario de envío de presupuesto -->
+    <div class="form-container"> <!-- Nuevo contenedor con clase form-container -->
+      <form [formGroup]="termsForm" (ngSubmit)="onSubmit()">
+        <!-- Email -->
+        <div class="mb-3">
+          <label for="email" class="form-label">Email *</label>
+          <input type="email" id="email" class="form-control" formControlName="email" required>
+          <div *ngIf="termsForm.get('email')?.touched && termsForm.get('email')?.invalid" class="text-danger">
+            Email es requerido y debe ser válido.
+          </div>
         </div>
-      </div>
 
-      <!-- Botón de enviar presupuesto -->
-      <button class="w-100 btn btn-primary btn-lg mt-auto" type="submit" [disabled]="!termsForm.valid">
-        Enviar presupuesto
-      </button>
-    </form>
+        <!-- Nombre -->
+        <div class="mb-3">
+          <label for="name" class="form-label">Nombre *</label>
+          <input type="text" id="name" class="form-control" formControlName="name" required>
+          <div *ngIf="termsForm.get('name')?.touched && termsForm.get('name')?.invalid" class="text-danger">
+            El nombre es requerido.
+          </div>
+        </div>
+
+        <!-- Empresa (opcional) -->
+        <div class="mb-3">
+          <label for="company" class="form-label">Empresa</label>
+          <input type="text" id="company" class="form-control" formControlName="company">
+        </div>
+
+        <!-- Logotipo (opcional) -->
+        <div class="mb-3">
+          <label for="logo" class="form-label">Logotipo</label>
+          <input type="file" id="logo" class="form-control" (change)="onFileSelected($event)">
+        </div>
+
+        <!-- Aceptar términos -->
+        <div class="form-check mb-3">
+          <input class="form-check-input" type="checkbox" id="acceptTerms" formControlName="acceptTerms">
+          <label class="form-check-label" for="acceptTerms">
+            Acepto que podemos enviarte correos electrónicos.
+          </label>
+          <div *ngIf="termsForm.get('acceptTerms')?.touched && termsForm.get('acceptTerms')?.invalid" class="text-danger">
+            Debes aceptar los términos para continuar.
+          </div>
+        </div>
+
+        <!-- Botón de enviar -->
+        <button class="w-100 btn btn-primary btn-lg" type="submit" [disabled]="!termsForm.valid">
+          Enviar presupuesto
+        </button>
+      </form>
+    </div> <!-- Fin del form-container -->
   }
   </div>
 </div>

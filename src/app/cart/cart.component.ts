@@ -38,6 +38,10 @@ export class CartComponent {
   constructor(private fb: FormBuilder, private cartService: CartServiceService) {
     // Inicializar el formulario de términos
     this.termsForm = this.fb.group({
+      email: ['', [Validators.required, Validators.email]],
+      name: ['', Validators.required],
+      company: [''],  // Campo opcional
+      logo: [null],  // Campo opcional para archivo de logotipo
       acceptTerms: [false, Validators.requiredTrue]
     });
   }
@@ -77,11 +81,29 @@ export class CartComponent {
     this.cartItems[index].showExplanation = !this.cartItems[index].showExplanation;
   }
 
+  // Para manejar la subida de archivos
+  onFileSelected(event: any) {
+    if (event.target.files.length > 0) {
+      const file = event.target.files[0];
+      this.termsForm.patchValue({
+        logo: file
+      });
+    }
+  }
+
   // Manejar el envío del formulario
   onSubmit() {
     if (this.termsForm.valid) {
-      // Lógica para enviar presupuesto
-      console.log('Formulario enviado');
+      const formData = new FormData();
+      formData.append('email', this.termsForm.get('email')?.value);
+      formData.append('name', this.termsForm.get('name')?.value);
+      formData.append('company', this.termsForm.get('company')?.value || '');
+      formData.append('logo', this.termsForm.get('logo')?.value);
+
+      // Aquí puedes manejar el envío del formulario, por ejemplo, con una petición HTTP.
+      console.log('Formulario enviado', formData);
+    } else {
+      console.log('Formulario no válido');
     }
   }
 }

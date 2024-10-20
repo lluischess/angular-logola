@@ -1,3 +1,18 @@
+// window.addEventListener('scroll', function() {
+//   const header = document.querySelector('.sticky-header');
+
+//   // Si el usuario ha hecho scroll hacia abajo, añade la clase 'sticky'
+//   if (window.scrollY > 100) { // Ajusta este valor según cuándo quieras que se active
+//     header.style.position = 'fixed';
+//     header.style.top = '0';
+//     header.style.width = '100%';
+//     header.style.zIndex = '1000';
+//   } else {
+//     // Si no ha hecho scroll, asegúrate de que el header vuelva a su posición original
+//     header.style.position = 'relative';
+//   }
+// });
+
 (function($) {
 
   "use strict";
@@ -120,10 +135,10 @@
   var initProductQty = function(){
 
     $('.product-qty').each(function(){
-      
+
       var $el_product = $(this);
       var quantity = 0;
-      
+
       $el_product.find('.quantity-right-plus').click(function(e){
         e.preventDefault();
         quantity = parseInt($el_product.find('#quantity').val());
@@ -153,7 +168,7 @@
 
   // document ready
   $(document).ready(function() {
-    
+
     initPreloader();
     initSwiper();
     initProductQty();

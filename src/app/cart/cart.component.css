@@ -21,7 +21,6 @@
 
 /* Hacer que el botón de enviar presupuesto esté abajo */
 button[type="submit"] {
-  position: sticky;
   bottom: 0;
   width: 100%;
 }
@@ -101,4 +100,21 @@ button[type="submit"] {
 .alert-info {
   font-size: 0.9rem;
   padding: 0.5rem;
+}
+
+.form-container {
+  border: 1px solid #ddd;   /* Borde gris claro */
+  padding: 20px;            /* Espaciado interno */
+  border-radius: 8px;       /* Bordes redondeados */
+  margin-top: 20px;         /* Espaciado superior respecto al listado de productos */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra suave */
+  background-color: #f9f9f9; /* Fondo ligeramente gris */
+}
+
+.form-label {
+  font-weight: bold;
+}
+
+.form-container .form-control {
+  margin-bottom: 15px; /* Espaciado entre los inputs */
 }

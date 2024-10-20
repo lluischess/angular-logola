@@ -109,7 +109,7 @@ export class PageGridComponent {
       medidas: 'Medidas 250 x 250 x 30mm'
     },
     {
-      id: 12,
+      id: 13,
       nombre: 'Estuche con Benjamín y Bombones Lindor',
       categoria: 'navidad',
       referencia: 'LOTE 003-01',
@@ -117,7 +117,7 @@ export class PageGridComponent {
       medidas: 'Medidas 120 x 63 x 200 mm'
     },
     {
-      id: 12,
+      id: 14,
       nombre: 'Galleta Artesana',
       categoria: 'galletas',
       referencia: 'FL-023',

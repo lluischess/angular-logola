@@ -10,4 +10,9 @@ import { RouterModule } from '@angular/router';
 })
 export class EndComponent {
 
+  scrollToTop() {
+    window.scrollTo({
+      top: 0
+    });
+  }
 }

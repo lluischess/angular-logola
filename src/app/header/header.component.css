@@ -6,3 +6,15 @@
     outline: 0;
     box-shadow: 0 0 0 .25rem #d5c0ae38;
 }
+
+/* .container-fluid {
+  overflow: hidden;
+} */
+
+/*
+.sticky-header {
+  position: relative;
+  background-color: white;
+  transition: all 0.3s ease;
+}
+*/

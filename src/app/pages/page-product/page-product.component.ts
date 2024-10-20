@@ -111,7 +111,7 @@ export class PageProductComponent {
       medidas: 'Medidas 250 x 250 x 30mm'
     },
     {
-      id: 12,
+      id: 13,
       nombre: 'Estuche con Benjamín y Bombones Lindor',
       categoria: 'navidad',
       referencia: 'LOTE 003-01',
@@ -119,12 +119,71 @@ export class PageProductComponent {
       medidas: 'Medidas 120 x 63 x 200 mm'
     },
     {
-      id: 12,
+      id: 14,
       nombre: 'Galleta Artesana',
       categoria: 'galletas',
       referencia: 'FL-023',
       imagen: 'assets/images/FL-023.jpg',
       medidas: 'Medidas  5,4 x 4,5 cm'
+    }
+  ];
+
+  public relatedProducts = [
+    {
+      id: 1,
+      nombre: 'BOMBÓN NAVIDAD EN BOLSA UNITARIA PERSONALIZADA',
+      categoria: 'chocolates',
+      referencia: 'BE-015-156',
+      imagen: 'assets/images/BE-015-156.jpg',
+      medidas: 'Medidas 72 x 59 mm'
+    },
+    {
+      id: 2,
+      nombre: 'Bote personalizado con Bolas de Cereales con Chocolate',
+      categoria: 'chocolates',
+      referencia: 'EN-148',
+      imagen: 'assets/images/EN-148.jpg',
+      medidas: 'Medidas 72 x 59 mm'
+    },
+    {
+      id: 3,
+      nombre: 'Bote personalizado con Catanias',
+      categoria: 'chocolates',
+      referencia: 'EN-134',
+      imagen: 'assets/images/EN-134.jpg',
+      medidas: 'Medidas 72 x 59 mm'
+    },
+    {
+      id: 4,
+      nombre: 'Catánias 35g en estuche Medium Faja',
+      categoria: 'chocolates',
+      referencia: 'SS-201-003',
+      imagen: 'assets/images/SS-201-003.jpg',
+      medidas: 'Medidas 60 x 60 x 55 mm'
+    },
+    {
+      id: 5,
+      nombre: 'Bombon de Yogur y Fresa cubo medium',
+      categoria: 'chocolates',
+      referencia: 'SS-202',
+      imagen: 'assets/images/SS-202.jpg',
+      medidas: 'Medidas  60 x 40 x 55 mm'
+    },
+    {
+      id: 6,
+      nombre: 'Chocolates Levels Piramid',
+      categoria: 'chocolates',
+      referencia: 'CO-000',
+      imagen: 'assets/images/CO-000.jpg',
+      medidas: 'Medidas 13 x 13 x 9,5 cm'
+    },
+    {
+      id: 7,
+      nombre: 'Cub Gajos Jelly',
+      categoria: 'caramelos',
+      referencia: 'FC-056-01',
+      imagen: 'assets/images/FC-056-01.jpg',
+      medidas: 'Medidas 5 x 5 x 5 cm'
     }
   ];
 

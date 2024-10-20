@@ -5,9 +5,9 @@
         <p>© 2025 Logolate. Todos los derechos reservados.</p>
       </div>
       <div class="col-md-6 credit-link text-start text-md-end">
-        <p><a [routerLink]="['/terminos-y-condiciones']" routerLinkActive="router-link-active" >Terminos y Condiciones </a>|
-          <a  [routerLink]="['/politica-de-cookies']" routerLinkActive="router-link-active" >Política de Cookies</a> |
-          <a [routerLink]="['/aviso-legal']" routerLinkActive="router-link-active" >Aviso Legal</a>
+        <p><a [routerLink]="['/terminos-y-condiciones']" (click)="scrollToTop()" routerLinkActive="router-link-active" >Terminos y Condiciones </a>|
+          <a  [routerLink]="['/politica-de-cookies']" (click)="scrollToTop()" routerLinkActive="router-link-active" >Política de Cookies</a> |
+          <a [routerLink]="['/aviso-legal']" (click)="scrollToTop()" routerLinkActive="router-link-active" >Aviso Legal</a>
         </p>
       </div>
     </div>
