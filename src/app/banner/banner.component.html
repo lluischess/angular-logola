@@ -1,82 +1,109 @@
-<section style="background-image: url('assets/images/ChocoBanner.jpg');background-repeat: no-repeat;background-size: cover;">
-  <div class="container-lg">
-    <div class="row">
-      <div class="col-lg-6 pt-5 mt-5">
-        <h2 class="display-1 ls-1"><span class="fw-bold text-primary"> Todo lo que puedas</span><span class="fw-bold"> imaginar es real</span></h2>
-        <p class="fs-4">Descubre auténticos detalles de chocolate.</p>
-        <div class="d-flex gap-3">
-          <a href="#" data-bs-toggle="offcanvas" data-bs-target="#offcanvasCart" aria-controls="offcanvasCart" class="btn btn-primary text-uppercase fs-6 rounded-pill px-4 py-3 mt-3">Crea tu presupuesto</a>
+<section class="carousel-wrapper">
+  <div class="carousel-container" [ngStyle]="{ transform: 'translateX(' + offset + '%)' }">
+    <!-- Banner 1 -->
+    <div class="carousel-slide" style="background-image: url('assets/images/ChocoBanner.jpg');background-repeat: no-repeat;background-size: cover;">
+      <div class="container-lg">
+        <!-- Contenido del primer banner existente -->
+        <div class="row">
+          <div class="col-lg-6 pt-5 mt-5">
+            <h2 class="display-1 ls-1"><span class="fw-bold text-primary"> Todo lo que puedas</span><span class="fw-bold"> imaginar es real</span></h2>
+            <p class="fs-4">Descubre auténticos detalles de chocolate.</p>
+            <div class="d-flex gap-3">
+              <a href="#" data-bs-toggle="offcanvas" data-bs-target="#offcanvasCart" aria-controls="offcanvasCart" class="btn btn-primary text-uppercase fs-6 rounded-pill px-4 py-3 mt-3">Crea tu presupuesto</a>
+            </div>
+            <!-- Estadísticas del primer banner -->
+            <div class="row my-5">
+              <div class="col">
+                <div class="text-dark">
+                  <div class="col-auto"><p class="fs-1 fw-bold lh-sm mb-0">320+</p></div>
+                  <div class="col"><p class="text-uppercase lh-sm mb-0">Ideas</p></div>
+                </div>
+              </div>
+              <div class="col">
+                <div class="text-dark">
+                  <div class="col-auto"><p class="fs-1 fw-bold lh-sm mb-0">5000+</p></div>
+                  <div class="col"><p class="text-uppercase lh-sm mb-0">Clientes satisfechos</p></div>
+                </div>
+              </div>
+              <div class="col">
+                <div class="text-dark">
+                  <div class="col-auto"><p class="fs-1 fw-bold lh-sm mb-0">20.000+</p></div>
+                  <div class="col"><p class="text-uppercase lh-sm mb-0">Presupuestos enviados</p></div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="row my-5">
+
+        <div class="row row-cols-1 row-cols-sm-3 row-cols-lg-3 g-0 justify-content-center">
           <div class="col">
-            <div class="text-dark">
-              <div class="col-auto"><p class="fs-1 fw-bold lh-sm mb-0">320+</p></div>
-              <div class="col"><p class="text-uppercase lh-sm mb-0">Ideas</p></div>
+            <div class="card border-0 bg-primary rounded-0 p-4 text-light">
+              <div class="row">
+                <div class="col-md-3 text-center">
+                  <svg width="60" height="60"><use xlink:href="#fresh"></use></svg>
+                </div>
+                <div class="col-md-9">
+                  <div class="card-body p-0">
+                    <h5 class="text-light">Profesionalidad</h5>
+                    <p class="card-text">Somos un empresa con mas de 20 años de experiencia en el sector.</p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
           <div class="col">
-            <div class="text-dark">
-              <div class="col-auto"><p class="fs-1 fw-bold lh-sm mb-0">5000+</p></div>
-              <div class="col"><p class="text-uppercase lh-sm mb-0">Clientes satisfechos</p></div>
+            <div class="card border-0 bg-secondary rounded-0 p-4 text-light">
+              <div class="row">
+                <div class="col-md-3 text-center">
+                  <svg width="60" height="60"><use xlink:href="#organic"></use></svg>
+                </div>
+                <div class="col-md-9">
+                  <div class="card-body p-0">
+                    <h5 class="text-light">100% Organico</h5>
+                    <p class="card-text">Disponemos de cajas,botes y materiales organicos para favorecer al medio ambiente.</p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
           <div class="col">
-            <div class="text-dark">
-              <div class="col-auto"><p class="fs-1 fw-bold lh-sm mb-0">20.000+</p></div>
-              <div class="col"><p class="text-uppercase lh-sm mb-0">Presupuestos enviados</p></div>
+            <div class="card border-0 bg-danger rounded-0 p-4 text-light">
+              <div class="row">
+                <div class="col-md-3 text-center">
+                  <svg width="60" height="60"><use xlink:href="#delivery"></use></svg>
+                </div>
+                <div class="col-md-9">
+                  <div class="card-body p-0">
+                    <h5 class="text-light">Envios personalizados</h5>
+                    <p class="card-text">Realizamos envios a temperaturas bajas para preservar el producto.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Banner 2 -->
+    <div class="carousel-slide" style="background-image: url('assets/images/ChocoBanner.jpg');background-repeat: no-repeat;background-size: cover;">
+      <div class="container-lg">
+        <!-- Contenido del segundo banner -->
+        <div class="row">
+          <div class="col-lg-6 pt-5 mt-5">
+            <h2 class="display-1 ls-1"><span class="fw-bold text-primary">Exquisito y</span><span class="fw-bold"> ecológico</span></h2>
+            <p class="fs-4">Sabores únicos y empaques sostenibles.</p>
+            <div class="d-flex gap-3">
+              <a href="#" class="btn btn-secondary text-uppercase fs-6 rounded-pill px-4 py-3 mt-3">Ver productos</a>
             </div>
           </div>
         </div>
       </div>
     </div>
-
-    <div class="row row-cols-1 row-cols-sm-3 row-cols-lg-3 g-0 justify-content-center">
-      <div class="col">
-        <div class="card border-0 bg-primary rounded-0 p-4 text-light">
-          <div class="row">
-            <div class="col-md-3 text-center">
-              <svg width="60" height="60"><use xlink:href="#fresh"></use></svg>
-            </div>
-            <div class="col-md-9">
-              <div class="card-body p-0">
-                <h5 class="text-light">Profesionalidad</h5>
-                <p class="card-text">Somos un empresa con mas de 20 años de experiencia en el sector.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="col">
-        <div class="card border-0 bg-secondary rounded-0 p-4 text-light">
-          <div class="row">
-            <div class="col-md-3 text-center">
-              <svg width="60" height="60"><use xlink:href="#organic"></use></svg>
-            </div>
-            <div class="col-md-9">
-              <div class="card-body p-0">
-                <h5 class="text-light">100% Organico</h5>
-                <p class="card-text">Disponemos de cajas,botes y materiales organicos para favorecer al medio ambiente.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="col">
-        <div class="card border-0 bg-danger rounded-0 p-4 text-light">
-          <div class="row">
-            <div class="col-md-3 text-center">
-              <svg width="60" height="60"><use xlink:href="#delivery"></use></svg>
-            </div>
-            <div class="col-md-9">
-              <div class="card-body p-0">
-                <h5 class="text-light">Envios personalizados</h5>
-                <p class="card-text">Realizamos envios a temperaturas bajas para preservar el producto.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
   </div>
+
+  <!-- Flechas de navegación -->
+  <button class="carousel-control prev" (click)="prevSlide()">&#10094;</button>
+  <button class="carousel-control next" (click)="nextSlide()">&#10095;</button>
 </section>

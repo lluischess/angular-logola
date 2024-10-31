@@ -1,0 +1,39 @@
+.carousel-wrapper {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  height: 100vh;
+}
+
+.carousel-container {
+  display: flex;
+  transition: transform 0.5s ease;
+  width: 200%; /* Ancho para los dos banners */
+}
+
+.carousel-slide {
+  width: 50%; /* Cada banner ocupa la mitad del ancho del contenedor */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.carousel-control {
+  position: absolute;
+  top: 50%;
+  font-size: 2rem;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.5);
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  transform: translateY(-50%);
+}
+
+.prev {
+  left: 10px;
+}
+
+.next {
+  right: 10px;
+}
