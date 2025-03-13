@@ -36,6 +36,14 @@ export const routes: Routes = [
     component: PageProductComponent
   },
   {
+    path: 'logoadmin',
+    loadChildren: () => import('./shared/back/backoffice/backoffice.module').then(m => m.BackofficeModule)
+  },
+  {
+    path: 'dashboard',
+    loadChildren: () => import('./shared/back/auth/auth.module').then(m => m.AuthModule)
+  },
+  {
     path: '**',  // Ruta para cualquier URL no encontrada
     redirectTo: '',
     pathMatch: 'full'
