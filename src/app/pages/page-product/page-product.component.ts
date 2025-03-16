@@ -1,18 +1,28 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation, CUSTOM_ELEMENTS_SCHEMA, ViewChild, AfterViewInit, ElementRef } from '@angular/core';
 import { CartServiceService } from '../../shared/services/cart-service.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterModule } from '@angular/router';
+
+// Importar Swiper
+import { register } from 'swiper/element/bundle';
+
+// Registrar Swiper como elemento web
+register();
 
 @Component({
   selector: 'app-page-product',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './page-product.component.html',
-  styleUrl: './page-product.component.css'
+  styleUrls: ['./page-product.component.css'],
+  encapsulation: ViewEncapsulation.None
 })
-export class PageProductComponent {
-
+export class PageProductComponent implements OnInit, AfterViewInit {
+  @ViewChild('swiper') swiper!: ElementRef;
   public producto: any;
+  public relatedProducts: any[] = [];
+
   productos = [
     {
       id: 1,
@@ -128,82 +138,72 @@ export class PageProductComponent {
     }
   ];
 
-  public relatedProducts = [
-    {
-      id: 1,
-      nombre: 'BOMBÓN NAVIDAD EN BOLSA UNITARIA PERSONALIZADA',
-      categoria: 'chocolates',
-      referencia: 'BE-015-156',
-      imagen: 'assets/images/BE-015-156.jpg',
-      medidas: 'Medidas 72 x 59 mm'
-    },
-    {
-      id: 2,
-      nombre: 'Bote personalizado con Bolas de Cereales con Chocolate',
-      categoria: 'chocolates',
-      referencia: 'EN-148',
-      imagen: 'assets/images/EN-148.jpg',
-      medidas: 'Medidas 72 x 59 mm'
-    },
-    {
-      id: 3,
-      nombre: 'Bote personalizado con Catanias',
-      categoria: 'chocolates',
-      referencia: 'EN-134',
-      imagen: 'assets/images/EN-134.jpg',
-      medidas: 'Medidas 72 x 59 mm'
-    },
-    {
-      id: 4,
-      nombre: 'Catánias 35g en estuche Medium Faja',
-      categoria: 'chocolates',
-      referencia: 'SS-201-003',
-      imagen: 'assets/images/SS-201-003.jpg',
-      medidas: 'Medidas 60 x 60 x 55 mm'
-    },
-    {
-      id: 5,
-      nombre: 'Bombon de Yogur y Fresa cubo medium',
-      categoria: 'chocolates',
-      referencia: 'SS-202',
-      imagen: 'assets/images/SS-202.jpg',
-      medidas: 'Medidas  60 x 40 x 55 mm'
-    },
-    {
-      id: 6,
-      nombre: 'Chocolates Levels Piramid',
-      categoria: 'chocolates',
-      referencia: 'CO-000',
-      imagen: 'assets/images/CO-000.jpg',
-      medidas: 'Medidas 13 x 13 x 9,5 cm'
-    },
-    {
-      id: 7,
-      nombre: 'Cub Gajos Jelly',
-      categoria: 'caramelos',
-      referencia: 'FC-056-01',
-      imagen: 'assets/images/FC-056-01.jpg',
-      medidas: 'Medidas 5 x 5 x 5 cm'
-    }
-  ];
-
-  constructor(private cartService: CartServiceService, private route: ActivatedRoute) {}
+  constructor(
+    private cartService: CartServiceService, 
+    private route: ActivatedRoute,
+    private el: ElementRef
+  ) {}
 
   ngOnInit(): void {
-    // Obtiene el ID del producto desde la ruta
     const productId = this.route.snapshot.paramMap.get('id');
-
-    // Filtra para obtener el producto correspondiente
     this.producto = this.productos.find(p => p.id === +productId!);
-
-    // Si no se encuentra el producto, puedes manejar el error de alguna manera
+    
     if (!this.producto) {
       console.error('Producto no encontrado');
-      // Podrías redirigir a una página 404 o mostrar un mensaje de error
+      return;
+    }
+
+    // Obtener productos relacionados (excluyendo el producto actual)
+    this.relatedProducts = this.productos
+      .filter(p => p.id !== this.producto.id)
+      .slice(0, 8); // Limitamos a 8 productos relacionados
+  }
+
+  ngAfterViewInit() {
+    const swiperEl = this.swiper.nativeElement;
+    
+    // Configurar Swiper
+    Object.assign(swiperEl, {
+      slidesPerView: 1,
+      spaceBetween: 30,
+      watchOverflow: true,
+      breakpoints: {
+        640: { slidesPerView: 2, spaceBetween: 30 },
+        768: { slidesPerView: 3, spaceBetween: 30 },
+        1024: { slidesPerView: 4, spaceBetween: 30 }
+      }
+    });
+    
+    // Inicializar Swiper
+    swiperEl.initialize();
+
+    // Configurar los botones de navegación
+    const prevButton = this.el.nativeElement.querySelector('.products-carousel-prev');
+    const nextButton = this.el.nativeElement.querySelector('.products-carousel-next');
+
+    if (prevButton && nextButton) {
+      prevButton.addEventListener('click', () => {
+        swiperEl.swiper.slidePrev();
+      });
+
+      nextButton.addEventListener('click', () => {
+        swiperEl.swiper.slideNext();
+      });
+
+      // Actualizar estado de los botones
+      swiperEl.addEventListener('slidechange', () => {
+        prevButton.classList.toggle('swiper-button-disabled', swiperEl.swiper.isBeginning);
+        nextButton.classList.toggle('swiper-button-disabled', swiperEl.swiper.isEnd);
+        
+        prevButton.disabled = swiperEl.swiper.isBeginning;
+        nextButton.disabled = swiperEl.swiper.isEnd;
+
+        prevButton.setAttribute('aria-disabled', swiperEl.swiper.isBeginning.toString());
+        nextButton.setAttribute('aria-disabled', swiperEl.swiper.isEnd.toString());
+      });
     }
   }
 
-  // Función para añadir productos al carrito
   addToCart(product: any) {
     this.cartService.addToCart(product);
     console.log(`${product.nombre} añadido al carrito`);

@@ -21,9 +21,9 @@
           </p>
           <!-- Botón de acción (Añadir al presupuesto o comprar) -->
           <div class="action-buttons mt-4 mb-3">
-            <a href="#" class="btn btn-primary rounded-1 px-4 py-2">
+            <button (click)="addToCart(producto)" class="btn btn-primary rounded-1 px-4 py-2">
               <svg width="18" height="18" class="me-2"><use xlink:href="#cart"></use></svg> Añadir al presupuesto
-            </a>
+            </button>
           </div>
           <!-- Tabla de especificaciones -->
           <table class="table table-striped">
@@ -62,57 +62,50 @@
   <div class="container-lg overflow-hidden py-5">
     <div class="row">
       <div class="col-md-12">
-
         <div class="section-header d-flex justify-content-between my-4">
-
           <h2 class="section-title">Detalles Relacionados</h2>
-
           <div class="d-flex align-items-center">
             <div class="swiper-buttons">
-              <button class="swiper-prev products-carousel-prev btn btn-primary">❮</button>
-              <button class="swiper-next products-carousel-next btn btn-primary">❯</button>
+              <button class="swiper-prev products-carousel-prev btn btn-primary" tabindex="-1" aria-label="Previous slide">❮</button>
+              <button class="swiper-next products-carousel-next btn btn-primary" tabindex="0" aria-label="Next slide">❯</button>
             </div>
           </div>
         </div>
-
       </div>
     </div>
+
     <div class="row">
       <div class="col-md-12">
-
-        <div class="swiper">
-          <div class="swiper-wrapper">
-
-            <div class="product-item swiper-slide" *ngFor="let related of relatedProducts">
-              <figure>
-                <a href="index.html" title="{{ related.nombre }}">
-                  <!-- Añadir la clase img-fluid para que las imágenes se ajusten al contenedor -->
-                  <img [src]="related.imagen" alt="Product Thumbnail" class="tab-image img-fluid" style="max-height: 225px;">
-                </a>
-              </figure>
-              <div class="text-center d-flex flex-column justify-content-between">
-                <h3 class="fs-6 fw-normal">{{ related.nombre | titlecase }}</h3>
-                <span class="text-muted">{{related.referencia | uppercase}}</span>
-                <div class="d-flex justify-content-center align-items-center gap-2">
-                  <span class="text-dark fw-semibold">{{ related.medidas }}</span>
-                </div>
-                <div class="button-area p-3 pt-0">
-                  <div class="row g-1 mt-2">
-                    <div class="col-12">
-                      <a (click)="addToCart(related)" class="btn btn-primary rounded-1 p-2 fs-7 btn-cart">
-                        <svg width="18" height="18"><use xlink:href="#cart"></use></svg> Añadir al presupuesto
-                      </a>
-                    </div>
+        <swiper-container
+          #swiper
+          slides-per-view="1"
+          space-between="30"
+          init="false">
+          <swiper-slide *ngFor="let related of relatedProducts" class="product-item swiper-slide" role="group">
+            <figure>
+              <a [routerLink]="['/producto', related.id]" [title]="related.nombre">
+                <img [src]="related.imagen" [alt]="related.nombre" class="tab-image img-fluid" style="max-height: 225px;">
+              </a>
+            </figure>
+            <div class="text-center d-flex flex-column justify-content-between">
+              <h3 class="fs-6 fw-normal">{{ related.nombre | titlecase }}</h3>
+              <span class="text-muted">{{related.referencia | uppercase}}</span>
+              <div class="d-flex justify-content-center align-items-center gap-2">
+                <span class="text-dark fw-semibold">{{ related.medidas }}</span>
+              </div>
+              <div class="button-area p-3 pt-0">
+                <div class="row g-1 mt-2">
+                  <div class="col-12">
+                    <button (click)="addToCart(related)" class="btn btn-primary rounded-1 p-2 fs-7 btn-cart w-100">
+                      <svg width="18" height="18"><use xlink:href="#cart"></use></svg> Añadir al presupuesto
+                    </button>
                   </div>
                 </div>
               </div>
             </div>
-
-          </div>
-        </div>
-
+          </swiper-slide>
+        </swiper-container>
       </div>
     </div>
   </div>
 </section>
-
