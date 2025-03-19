@@ -96,9 +96,10 @@
               <div class="button-area p-3 pt-0">
                 <div class="row g-1 mt-2">
                   <div class="col-12">
-                    <button (click)="addToCart(related)" class="btn btn-primary rounded-1 p-2 fs-7 btn-cart w-100">
-                      <svg width="18" height="18"><use xlink:href="#cart"></use></svg> Añadir al presupuesto
-                    </button>
+                     <!-- Botón de añadir al presupuesto -->
+                  <a (click)="addToCart(related)" data-bs-toggle="offcanvas" data-bs-target="#offcanvasCart" aria-controls="offcanvasCart" class="btn btn-primary rounded-1 p-2 fs-7 btn-cart w-100">
+                    <svg width="18" height="18"><use xlink:href="#cart"></use></svg> Añadir al presupuesto
+                  </a>
                   </div>
                 </div>
               </div>

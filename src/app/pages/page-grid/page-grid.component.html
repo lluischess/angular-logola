@@ -12,10 +12,10 @@
     <!-- Grid de productos -->
     <div class="row">
       <div class="col-md-12">
-        <!-- Grid de productos adaptado para 4 columnas en escritorio y 2 en móvil -->
-        <div class="product-grid row row-cols-2 row-cols-lg-4 g-4">
+        <!-- Grid de productos adaptado para 4 columnas en escritorio y 1 en móvil -->
+        <div class="product-grid row row-cols-1 row-cols-lg-4 g-4">
           <!-- Repetir los productos con *ngFor -->
-          <div class="col" *ngFor="let producto of productosFiltrados">
+          <div class="col mb-3" *ngFor="let producto of productosFiltrados">
             <div class="product-item h-100 d-flex flex-column">
               <!-- Imagen del producto -->
               <figure>

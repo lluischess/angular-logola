@@ -139,7 +139,7 @@ export class PageProductComponent implements OnInit, AfterViewInit {
   ];
 
   constructor(
-    private cartService: CartServiceService, 
+    private cartService: CartServiceService,
     private route: ActivatedRoute,
     private el: ElementRef
   ) {}
@@ -147,7 +147,7 @@ export class PageProductComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     const productId = this.route.snapshot.paramMap.get('id');
     this.producto = this.productos.find(p => p.id === +productId!);
-    
+
     if (!this.producto) {
       console.error('Producto no encontrado');
       return;
@@ -161,7 +161,7 @@ export class PageProductComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit() {
     const swiperEl = this.swiper.nativeElement;
-    
+
     // Configurar Swiper
     Object.assign(swiperEl, {
       slidesPerView: 1,
@@ -173,7 +173,7 @@ export class PageProductComponent implements OnInit, AfterViewInit {
         1024: { slidesPerView: 4, spaceBetween: 30 }
       }
     });
-    
+
     // Inicializar Swiper
     swiperEl.initialize();
 
@@ -194,7 +194,7 @@ export class PageProductComponent implements OnInit, AfterViewInit {
       swiperEl.addEventListener('slidechange', () => {
         prevButton.classList.toggle('swiper-button-disabled', swiperEl.swiper.isBeginning);
         nextButton.classList.toggle('swiper-button-disabled', swiperEl.swiper.isEnd);
-        
+
         prevButton.disabled = swiperEl.swiper.isBeginning;
         nextButton.disabled = swiperEl.swiper.isEnd;
 
