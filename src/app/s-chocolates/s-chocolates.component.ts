@@ -1,14 +1,53 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { RouterModule } from '@angular/router';
+import { register } from 'swiper/element/bundle';
+import { CartServiceService } from '../shared/services/cart-service.service';
+
+register(); // Register Swiper custom elements
 
 @Component({
   selector: 'app-s-chocolates',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './s-chocolates.component.html',
-  styleUrl: './s-chocolates.component.css'
+  styleUrls: ['./s-chocolates.component.css']
 })
-export class SChocolatesComponent {
+export class SChocolatesComponent implements AfterViewInit {
+  @ViewChild('swiper') swiper!: ElementRef;
+
+  constructor(private cartService: CartServiceService) {}
+
+  ngAfterViewInit() {
+    const swiperEl = this.swiper.nativeElement;
+    const swiperParams = {
+      slidesPerView: 4,
+      spaceBetween: 30,
+      navigation: {
+        prevEl: '.chocolates-carousel-prev',
+        nextEl: '.chocolates-carousel-next',
+      },
+      breakpoints: {
+        320: {
+          slidesPerView: 1,
+        },
+        768: {
+          slidesPerView: 2,
+        },
+        1024: {
+          slidesPerView: 3,
+        },
+        1200: {
+          slidesPerView: 4,
+        },
+      },
+    };
+
+    Object.assign(swiperEl, swiperParams);
+    swiperEl.initialize();
+  }
+
   productos = [
     {
       id: 1,
@@ -53,4 +92,9 @@ export class SChocolatesComponent {
       medidas: 'Medidas 13 x 13 x 9,5 cm'
     }
   ];
+
+  addToCart(producto: any) {
+    this.cartService.addToCart(producto);
+    console.log(`${producto.nombre} añadido al carrito`);
+  }
 }

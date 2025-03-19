@@ -1,14 +1,55 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { RouterModule } from '@angular/router';
+import { register } from 'swiper/element/bundle';
+import { CartServiceService } from '../shared/services/cart-service.service';
+
+
+register(); // Register Swiper custom elements
 
 @Component({
   selector: 'app-s-caramelos',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './s-caramelos.component.html',
-  styleUrl: './s-caramelos.component.css'
+  styleUrls: ['./s-caramelos.component.css']
 })
-export class SCaramelosComponent {
+export class SCaramelosComponent implements AfterViewInit {
+  @ViewChild('swiper') swiper!: ElementRef;
+
+  constructor(private cartService: CartServiceService) {}
+
+
+  ngAfterViewInit() {
+    const swiperEl = this.swiper.nativeElement;
+    const swiperParams = {
+      slidesPerView: 4,
+      spaceBetween: 30,
+      navigation: {
+        prevEl: '.caramelos-carousel-prev',
+        nextEl: '.caramelos-carousel-next',
+      },
+      breakpoints: {
+        320: {
+          slidesPerView: 1,
+        },
+        768: {
+          slidesPerView: 2,
+        },
+        1024: {
+          slidesPerView: 3,
+        },
+        1200: {
+          slidesPerView: 4,
+        },
+      },
+    };
+
+    Object.assign(swiperEl, swiperParams);
+    swiperEl.initialize();
+  }
+
   productos = [
     {
       id: 1,
@@ -53,4 +94,10 @@ export class SCaramelosComponent {
       medidas: 'Medidas 13 x 13 x 9,5 cm'
     }
   ];
+
+  // Función para añadir productos al carrito
+  addToCart(product: any) {
+    this.cartService.addToCart(product);
+    console.log(`${product.nombre} añadido al carrito`);
+  }
 }
