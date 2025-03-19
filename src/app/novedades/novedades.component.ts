@@ -1,14 +1,17 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
+import { RouterModule } from '@angular/router';
+import { CartServiceService } from '../shared/services/cart-service.service';
 
 @Component({
   selector: 'app-novedades',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './novedades.component.html',
-  styleUrl: './novedades.component.css'
+  styleUrls: ['./novedades.component.css']
 })
 export class NovedadesComponent {
+  constructor(private cartService: CartServiceService) {}
   productos = [
     {
       id: 1,
@@ -53,4 +56,9 @@ export class NovedadesComponent {
       medidas: 'Medidas 13 x 13 x 9,5 cm'
     }
   ];
+
+  addToCart(producto: any) {
+    this.cartService.addToCart(producto);
+    console.log(`${producto.nombre} añadido al carrito`);
+  }
 }
