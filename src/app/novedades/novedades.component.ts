@@ -1,7 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { register } from 'swiper/element/bundle';
 import { CartServiceService } from '../shared/services/cart-service.service';
+
+// Declarar Bootstrap para TypeScript
+declare var bootstrap: any;
 
 @Component({
   selector: 'app-novedades',
@@ -60,5 +64,30 @@ export class NovedadesComponent {
   addToCart(producto: any) {
     this.cartService.addToCart(producto);
     console.log(`${producto.nombre} añadido al carrito`);
+    
+    // Abrir el offcanvas del carrito automáticamente
+    const offcanvasElement = document.getElementById('offcanvasCart');
+    if (offcanvasElement) {
+      // Verificar si ya existe una instancia del offcanvas
+      let offcanvas = bootstrap.Offcanvas.getInstance(offcanvasElement);
+      if (!offcanvas) {
+        offcanvas = new bootstrap.Offcanvas(offcanvasElement);
+      }
+      
+      // Añadir event listener para limpiar el backdrop cuando se cierre
+      offcanvasElement.addEventListener('hidden.bs.offcanvas', () => {
+        // Limpiar cualquier backdrop que pueda quedar
+        const backdrop = document.querySelector('.offcanvas-backdrop');
+        if (backdrop) {
+          backdrop.remove();
+        }
+        // Restaurar el scroll del body
+        document.body.classList.remove('modal-open');
+        document.body.style.overflow = '';
+        document.body.style.paddingRight = '';
+      }, { once: true });
+      
+      offcanvas.show();
+    }
   }
 }

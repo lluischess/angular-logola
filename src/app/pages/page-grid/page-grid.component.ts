@@ -3,6 +3,9 @@ import { Component } from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { CartServiceService } from '../../shared/services/cart-service.service';
 
+// Declarar Bootstrap para TypeScript
+declare var bootstrap: any;
+
 @Component({
   selector: 'app-page-grid',
   standalone: true,
@@ -164,6 +167,31 @@ export class PageGridComponent {
   addToCart(product: any) {
     this.cartService.addToCart(product);
     console.log(`${product.nombre} añadido al carrito`);
+    
+    // Abrir el offcanvas del carrito automáticamente
+    const offcanvasElement = document.getElementById('offcanvasCart');
+    if (offcanvasElement) {
+      // Verificar si ya existe una instancia del offcanvas
+      let offcanvas = bootstrap.Offcanvas.getInstance(offcanvasElement);
+      if (!offcanvas) {
+        offcanvas = new bootstrap.Offcanvas(offcanvasElement);
+      }
+      
+      // Añadir event listener para limpiar el backdrop cuando se cierre
+      offcanvasElement.addEventListener('hidden.bs.offcanvas', () => {
+        // Limpiar cualquier backdrop que pueda quedar
+        const backdrop = document.querySelector('.offcanvas-backdrop');
+        if (backdrop) {
+          backdrop.remove();
+        }
+        // Restaurar el scroll del body
+        document.body.classList.remove('modal-open');
+        document.body.style.overflow = '';
+        document.body.style.paddingRight = '';
+      }, { once: true });
+      
+      offcanvas.show();
+    }
   }
 
   // Función que se llamará cuando el usuario haga submit en el buscador

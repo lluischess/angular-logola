@@ -6,6 +6,9 @@ import { ActivatedRoute, RouterModule } from '@angular/router';
 // Importar Swiper
 import { register } from 'swiper/element/bundle';
 
+// Declarar Bootstrap para TypeScript
+declare var bootstrap: any;
+
 // Registrar Swiper como elemento web
 register();
 
@@ -207,5 +210,30 @@ export class PageProductComponent implements OnInit, AfterViewInit {
   addToCart(product: any) {
     this.cartService.addToCart(product);
     console.log(`${product.nombre} añadido al carrito`);
+    
+    // Abrir el offcanvas del carrito automáticamente
+    const offcanvasElement = document.getElementById('offcanvasCart');
+    if (offcanvasElement) {
+      // Verificar si ya existe una instancia del offcanvas
+      let offcanvas = bootstrap.Offcanvas.getInstance(offcanvasElement);
+      if (!offcanvas) {
+        offcanvas = new bootstrap.Offcanvas(offcanvasElement);
+      }
+      
+      // Añadir event listener para limpiar el backdrop cuando se cierre
+      offcanvasElement.addEventListener('hidden.bs.offcanvas', () => {
+        // Limpiar cualquier backdrop que pueda quedar
+        const backdrop = document.querySelector('.offcanvas-backdrop');
+        if (backdrop) {
+          backdrop.remove();
+        }
+        // Restaurar el scroll del body
+        document.body.classList.remove('modal-open');
+        document.body.style.overflow = '';
+        document.body.style.paddingRight = '';
+      }, { once: true });
+      
+      offcanvas.show();
+    }
   }
 }
