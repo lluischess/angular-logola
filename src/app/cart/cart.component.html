@@ -81,6 +81,17 @@
           </div>
         </div>
 
+        <!-- Teléfono -->
+        <div class="mb-3">
+          <label for="phone" class="form-label">Teléfono de contacto *</label>
+          <input type="tel" id="phone" class="form-control" formControlName="phone" required 
+                 placeholder="Ej: 123 456 789">
+          <div *ngIf="termsForm.get('phone')?.touched && termsForm.get('phone')?.invalid" class="text-danger">
+            <span *ngIf="termsForm.get('phone')?.errors?.['required']">El teléfono es requerido.</span>
+            <span *ngIf="termsForm.get('phone')?.errors?.['pattern']">El teléfono solo puede contener números y espacios.</span>
+          </div>
+        </div>
+
         <!-- Empresa (opcional) -->
         <div class="mb-3">
           <label for="company" class="form-label">Empresa</label>
@@ -93,11 +104,28 @@
           <input type="file" id="logo" class="form-control" (change)="onFileSelected($event)">
         </div>
 
+        <!-- Checkbox para ofertas (opcional) -->
+        <div class="form-check offers-checkbox mb-3">
+          <input class="form-check-input" type="checkbox" id="receiveOffers" formControlName="receiveOffers">
+          <label class="form-check-label" for="receiveOffers">
+            🎁 Deseo recibir ofertas y novedades en mi correo electrónico
+          </label>
+        </div>
+
+        <!-- Google reCAPTCHA v2 -->
+        <div class="mb-3">
+          <label class="form-label">Verificación *</label>
+          <div id="recaptcha-container"></div>
+          <div *ngIf="!isRecaptchaValid && termsForm.touched" class="text-danger mt-2">
+            Por favor, completa la verificación reCAPTCHA.
+          </div>
+        </div>
+
         <!-- Aceptar términos -->
-        <div class="form-check mb-3">
+        <div class="form-check terms-checkbox required mb-3">
           <input class="form-check-input" type="checkbox" id="acceptTerms" formControlName="acceptTerms">
           <label class="form-check-label" for="acceptTerms">
-            Acepto que podemos enviarte correos electrónicos.
+            ✅ Acepto que podemos enviarte correos electrónicos. *
           </label>
           <div *ngIf="termsForm.get('acceptTerms')?.touched && termsForm.get('acceptTerms')?.invalid" class="text-danger">
             Debes aceptar los términos para continuar.

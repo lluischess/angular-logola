@@ -118,3 +118,156 @@ button[type="submit"] {
 .form-container .form-control {
   margin-bottom: 15px; /* Espaciado entre los inputs */
 }
+
+/* ===== ESTILOS PERSONALIZADOS PARA CHECKBOXES MODERNOS ===== */
+
+/* Contenedor del checkbox */
+.form-check {
+  position: relative;
+  padding-left: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+/* Ocultar el checkbox original */
+.form-check-input {
+  position: absolute;
+  left: 0;
+  z-index: -1;
+  opacity: 0;
+}
+
+/* Estilo del label */
+.form-check-label {
+  position: relative;
+  cursor: pointer;
+  font-weight: 500;
+  color: #495057;
+  transition: color 0.3s ease;
+  line-height: 1.5;
+}
+
+.form-check-label:hover {
+  color: #007bff;
+}
+
+/* Crear checkbox personalizado (caja) */
+.form-check-label::before {
+  content: '';
+  position: absolute;
+  left: -2.5rem;
+  top: 0.125rem;
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 2px solid #dee2e6;
+  border-radius: 0.375rem;
+  background-color: #fff;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Crear checkmark (✓) */
+.form-check-label::after {
+  content: '';
+  position: absolute;
+  left: -2.25rem;
+  top: 0.375rem;
+  width: 0.75rem;
+  height: 0.375rem;
+  border: 2px solid #fff;
+  border-top: none;
+  border-right: none;
+  transform: rotate(-45deg) scale(0);
+  transition: transform 0.2s ease;
+}
+
+/* Estado checked (marcado) */
+.form-check-input:checked + .form-check-label::before {
+  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+  border-color: #007bff;
+  box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
+}
+
+.form-check-input:checked + .form-check-label::after {
+  transform: rotate(-45deg) scale(1);
+}
+
+/* Estado focus */
+.form-check-input:focus + .form-check-label::before {
+  border-color: #80bdff;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* Efecto hover */
+.form-check-label:hover::before {
+  border-color: #007bff;
+  box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2);
+  transform: translateY(-1px);
+}
+
+/* ===== ESTILOS ESPECIALES PARA DIFERENTES TIPOS DE CHECKBOX ===== */
+
+/* Checkbox para ofertas (verde) */
+.form-check.offers-checkbox .form-check-label::before {
+  border-color: #28a745;
+}
+
+.form-check.offers-checkbox .form-check-input:checked + .form-check-label::before {
+  background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
+  border-color: #28a745;
+  box-shadow: 0 4px 8px rgba(40, 167, 69, 0.3);
+}
+
+.form-check.offers-checkbox .form-check-label:hover::before {
+  border-color: #28a745;
+  box-shadow: 0 4px 8px rgba(40, 167, 69, 0.2);
+}
+
+/* Checkbox para términos (rojo - obligatorio) */
+.form-check.terms-checkbox .form-check-label::before {
+  border-color: #dc3545;
+}
+
+.form-check.terms-checkbox .form-check-input:checked + .form-check-label::before {
+  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+  border-color: #dc3545;
+  box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
+}
+
+.form-check.terms-checkbox .form-check-label:hover::before {
+  border-color: #dc3545;
+  box-shadow: 0 4px 8px rgba(220, 53, 69, 0.2);
+}
+
+/* Animación de pulso para campos requeridos no marcados */
+.form-check.required .form-check-input:not(:checked) + .form-check-label::before {
+  animation: pulse-required 2s infinite;
+}
+
+@keyframes pulse-required {
+  0% {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  50% {
+    box-shadow: 0 4px 8px rgba(220, 53, 69, 0.4), 0 0 0 0.1rem rgba(220, 53, 69, 0.2);
+  }
+  100% {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+}
+
+/* Efecto de éxito cuando se marca un campo requerido */
+.form-check.required .form-check-input:checked + .form-check-label::before {
+  animation: success-pulse 0.6s ease-out;
+}
+
+@keyframes success-pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}

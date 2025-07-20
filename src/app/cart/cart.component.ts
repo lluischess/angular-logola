@@ -1,7 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, AfterViewInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CartServiceService } from '../shared/services/cart-service.service';
+
+// Declarar grecaptcha para TypeScript
+declare var grecaptcha: any;
 
 @Component({
   selector: 'app-cart',
@@ -10,10 +13,12 @@ import { CartServiceService } from '../shared/services/cart-service.service';
   templateUrl: './cart.component.html',
   styleUrls: ['./cart.component.css']  // Cambié styleUrl a styleUrls
 })
-export class CartComponent {
+export class CartComponent implements AfterViewInit {
   cartItems: any[] = [];
   termsForm: FormGroup;
   totalUnits: number = 0;  // Variable para total de unidades
+  isRecaptchaValid: boolean = false;
+  recaptchaResponse: string = '';
 
   getCartItems() {
     // Función que retorna los items del carrito (ejemplo)
@@ -35,14 +40,61 @@ export class CartComponent {
     this.updateTotalUnits();  // Inicializa el total de unidades
   }
 
+  ngAfterViewInit() {
+    // Inicializar reCAPTCHA después de que la vista se haya cargado
+    // Usar setTimeout para asegurar que el DOM esté completamente renderizado
+    setTimeout(() => {
+      this.loadRecaptcha();
+    }, 100);
+  }
+
+  loadRecaptcha() {
+    // Esperar a que el script de reCAPTCHA se cargue y el elemento DOM exista
+    const checkRecaptcha = () => {
+      const container = document.getElementById('recaptcha-container');
+      
+      if (typeof grecaptcha !== 'undefined' && container) {
+        try {
+          grecaptcha.render('recaptcha-container', {
+            'sitekey': '6LcwpokrAAAAAKFnlFweJDaRBfapAWJJlbkq_N5x',
+            'callback': (response: string) => this.onRecaptchaSuccess(response),
+            'expired-callback': () => this.onRecaptchaExpired()
+          });
+        } catch (error) {
+          console.error('Error al renderizar reCAPTCHA:', error);
+          // Reintentar después de 200ms si hay error
+          setTimeout(checkRecaptcha, 200);
+        }
+      } else {
+        // Reintentar después de 100ms si reCAPTCHA o el elemento aún no están disponibles
+        setTimeout(checkRecaptcha, 100);
+      }
+    };
+    checkRecaptcha();
+  }
+
+  onRecaptchaSuccess(response: string) {
+    this.recaptchaResponse = response;
+    this.isRecaptchaValid = true;
+    console.log('reCAPTCHA completado exitosamente');
+  }
+
+  onRecaptchaExpired() {
+    this.recaptchaResponse = '';
+    this.isRecaptchaValid = false;
+    console.log('reCAPTCHA expirado');
+  }
+
   constructor(private fb: FormBuilder, private cartService: CartServiceService) {
     // Inicializar el formulario de términos
     this.termsForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       name: ['', Validators.required],
+      phone: ['', [Validators.required, Validators.pattern(/^[0-9\s]+$/)]],  // Solo números y espacios
       company: [''],  // Campo opcional
       logo: [null],  // Campo opcional para archivo de logotipo
-      acceptTerms: [false, Validators.requiredTrue]
+      acceptTerms: [false, Validators.requiredTrue],
+      receiveOffers: [false]  // Checkbox opcional para ofertas
     });
   }
 
@@ -86,19 +138,167 @@ export class CartComponent {
     }
   }
 
+
+
+  // Validar formulario completo antes del envío
+  validateForm(): { isValid: boolean; errors: string[] } {
+    const errors: string[] = [];
+    
+    // Validar email
+    const email = this.termsForm.get('email');
+    if (!email?.value) {
+      errors.push('El email es obligatorio');
+    } else if (email.invalid) {
+      errors.push('El formato del email no es válido');
+    }
+    
+    // Validar nombre
+    const name = this.termsForm.get('name');
+    if (!name?.value) {
+      errors.push('El nombre es obligatorio');
+    } else if (name.value.trim().length < 2) {
+      errors.push('El nombre debe tener al menos 2 caracteres');
+    }
+    
+    // Validar teléfono
+    const phone = this.termsForm.get('phone');
+    if (!phone?.value) {
+      errors.push('El teléfono es obligatorio');
+    } else if (phone.invalid) {
+      errors.push('El teléfono solo puede contener números y espacios');
+    } else if (phone.value.replace(/\s/g, '').length < 9) {
+      errors.push('El teléfono debe tener al menos 9 dígitos');
+    }
+    
+    // Validar términos
+    const acceptTerms = this.termsForm.get('acceptTerms');
+    if (!acceptTerms?.value) {
+      errors.push('Debes aceptar los términos para continuar');
+    }
+    
+    // Validar reCAPTCHA
+    if (!this.isRecaptchaValid) {
+      errors.push('Por favor, completa la verificación reCAPTCHA');
+    }
+    
+    // Validar que hay productos en el carrito
+    if (this.cartItems.length === 0) {
+      errors.push('No hay productos en el carrito para solicitar presupuesto');
+    }
+    
+    return {
+      isValid: errors.length === 0,
+      errors: errors
+    };
+  }
+  
+  // Mostrar errores de validación
+  showValidationErrors(errors: string[]) {
+    let errorMessage = '❌ Por favor, corrige los siguientes errores:\n\n';
+    errors.forEach((error, index) => {
+      errorMessage += `${index + 1}. ${error}\n`;
+    });
+    alert(errorMessage);
+  }
+  
   // Manejar el envío del formulario
   onSubmit() {
-    if (this.termsForm.valid) {
-      const formData = new FormData();
-      formData.append('email', this.termsForm.get('email')?.value);
-      formData.append('name', this.termsForm.get('name')?.value);
-      formData.append('company', this.termsForm.get('company')?.value || '');
-      formData.append('logo', this.termsForm.get('logo')?.value);
-
-      // Aquí puedes manejar el envío del formulario, por ejemplo, con una petición HTTP.
-      console.log('Formulario enviado', formData);
+    // Marcar todos los campos como touched para mostrar errores visuales
+    Object.keys(this.termsForm.controls).forEach(key => {
+      this.termsForm.get(key)?.markAsTouched();
+    });
+    
+    // Validar formulario completo
+    const validation = this.validateForm();
+    
+    if (validation.isValid) {
+      // Preparar datos para envío
+      const formData = this.prepareFormData();
+      
+      // Simular envío exitoso (aquí se conectará al backend más adelante)
+      this.handleSuccessfulSubmission(formData);
+      
     } else {
-      console.log('Formulario no válido');
+      // Mostrar errores de validación
+      this.showValidationErrors(validation.errors);
+      console.log('Errores de validación:', validation.errors);
     }
+  }
+  
+  // Preparar datos del formulario
+  prepareFormData(): FormData {
+    const formData = new FormData();
+    
+    // Datos del formulario
+    formData.append('email', this.termsForm.get('email')?.value?.trim());
+    formData.append('name', this.termsForm.get('name')?.value?.trim());
+    formData.append('phone', this.termsForm.get('phone')?.value?.trim());
+    formData.append('company', this.termsForm.get('company')?.value?.trim() || '');
+    formData.append('receiveOffers', this.termsForm.get('receiveOffers')?.value);
+    formData.append('recaptchaResponse', this.recaptchaResponse);
+    
+    // Agregar archivo de logo si existe
+    const logoFile = this.termsForm.get('logo')?.value;
+    if (logoFile) {
+      formData.append('logo', logoFile);
+    }
+    
+    // Agregar productos del carrito
+    formData.append('cartItems', JSON.stringify(this.cartItems));
+    formData.append('totalUnits', this.totalUnits.toString());
+    
+    return formData;
+  }
+  
+  // Manejar envío exitoso
+  handleSuccessfulSubmission(formData: FormData) {
+    console.log('✅ Formulario validado correctamente');
+    console.log('📋 Datos del presupuesto:', {
+      email: formData.get('email'),
+      name: formData.get('name'),
+      phone: formData.get('phone'),
+      company: formData.get('company'),
+      receiveOffers: formData.get('receiveOffers'),
+      cartItems: JSON.parse(formData.get('cartItems') as string),
+      totalUnits: formData.get('totalUnits')
+    });
+    
+    // Resetear reCAPTCHA
+    if (typeof grecaptcha !== 'undefined') {
+      grecaptcha.reset();
+    }
+    this.isRecaptchaValid = false;
+    this.recaptchaResponse = '';
+    
+    // Mensaje de éxito
+    alert('✅ ¡Presupuesto enviado correctamente!\n\nHemos recibido tu solicitud con los siguientes datos:\n' +
+          `📧 Email: ${formData.get('email')}\n` +
+          `👤 Nombre: ${formData.get('name')}\n` +
+          `📞 Teléfono: ${formData.get('phone')}\n` +
+          `🛒 Productos: ${this.cartItems.length} artículos\n\n` +
+          'Nos pondremos en contacto contigo pronto.');
+    
+    // Opcional: Limpiar formulario después del envío exitoso
+    // this.resetForm();
+  }
+  
+  // Resetear formulario (opcional)
+  resetForm() {
+    this.termsForm.reset({
+      email: '',
+      name: '',
+      phone: '',
+      company: '',
+      logo: null,
+      acceptTerms: false,
+      receiveOffers: false
+    });
+    
+    // Resetear reCAPTCHA
+    if (typeof grecaptcha !== 'undefined') {
+      grecaptcha.reset();
+    }
+    this.isRecaptchaValid = false;
+    this.recaptchaResponse = '';
   }
 }
