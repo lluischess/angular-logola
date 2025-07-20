@@ -46,10 +46,7 @@ export class CartComponent {
     });
   }
 
-  // Actualizar el valor del slider
-  updateSliderValue(index: number, event: any) {
-    this.cartItems[index].sliderValue = event.target.value;
-  }
+
 
   updateQuantity(index: number) {
     // Asigna el valor actual del input a la cantidad del producto
@@ -77,9 +74,7 @@ export class CartComponent {
     this.updateTotalUnits();
   }
 
-  toggleExplanation(index: number) {
-    this.cartItems[index].showExplanation = !this.cartItems[index].showExplanation;
-  }
+
 
   // Para manejar la subida de archivos
   onFileSelected(event: any) {

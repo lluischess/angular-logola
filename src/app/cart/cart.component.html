@@ -39,26 +39,7 @@
             <button type="button" class="btn btn-close" aria-label="Remove" (click)="removeItem(item.id)"></button>
           </li>
 
-          <!-- Slider-container fuera del <li> pero dentro del bucle de productos -->
-          <div class="slider-container mt-2 mb-3">
-            <!-- Icono de interrogante -->
-            <div class="position-relative">
-              <span (click)="toggleExplanation(i)" class="text-primary cursor-pointer">
-                <i class="bi bi-question-circle" aria-hidden="true"></i>
-              </span>
 
-              <!-- Tooltip o explicación que aparece al hacer clic -->
-              <div *ngIf="item.showExplanation" class="tooltip-explanation">
-                <span (click)="toggleExplanation(i)" class="close-tooltip">&times;</span> <!-- Cerrar el tooltip -->
-                Este deslizador te permite seleccionar un valor maximo de presupuesto por unidad, esto nos ayuda a agilizar y ajustar su presupuesto. Entre 1€ y 100€.
-              </div>
-            </div>
-
-            <!-- Input deslizante (slider) -->
-            <input type="range" class="form-range" min="1" max="100" [(ngModel)]="item.sliderValue"
-                  (input)="updateSliderValue(i, $event)" />
-            <span>{{ item.sliderValue }}</span>
-          </div>
         </ng-container>
 
         <!-- Total -->
