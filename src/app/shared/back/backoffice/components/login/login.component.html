@@ -1,0 +1,89 @@
+<div class="login-container">
+  <div class="login-card">
+    <!-- Header del login -->
+    <div class="login-header">
+      <div class="logo">
+        <h1>🍫 Logola Admin</h1>
+        <p>Panel de Administración</p>
+      </div>
+    </div>
+
+    <!-- Formulario de login -->
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
+      
+      <!-- Campo Usuario -->
+      <div class="form-group">
+        <label for="username" class="form-label">Usuario</label>
+        <div class="input-wrapper">
+          <input 
+            type="text" 
+            id="username"
+            formControlName="username" 
+            placeholder="Ingrese su usuario"
+            [disabled]="isLoading"
+            class="form-input"
+            [class.error]="hasError('username', 'required')">
+          <span class="input-icon">👤</span>
+        </div>
+        <div class="error-message" *ngIf="hasError('username', 'required')">
+          El usuario es requerido
+        </div>
+      </div>
+
+      <!-- Campo Contraseña -->
+      <div class="form-group">
+        <label for="password" class="form-label">Contraseña</label>
+        <div class="input-wrapper">
+          <input 
+            [type]="hidePassword ? 'password' : 'text'"
+            id="password"
+            formControlName="password" 
+            placeholder="Ingrese su contraseña"
+            [disabled]="isLoading"
+            class="form-input"
+            [class.error]="hasError('password', 'required') || hasError('password', 'minlength')">
+          <button 
+            type="button"
+            class="password-toggle"
+            (click)="togglePasswordVisibility()"
+            [disabled]="isLoading">
+            {{ hidePassword ? '👁️' : '🙈' }}
+          </button>
+        </div>
+        <div class="error-message" *ngIf="hasError('password', 'required')">
+          La contraseña es requerida
+        </div>
+        <div class="error-message" *ngIf="hasError('password', 'minlength')">
+          La contraseña debe tener al menos 6 caracteres
+        </div>
+      </div>
+
+      <!-- Mensaje de error general -->
+      <div class="alert alert-error" *ngIf="errorMessage">
+        <span class="alert-icon">⚠️</span>
+        {{ errorMessage }}
+      </div>
+
+      <!-- Botón de login -->
+      <button 
+        type="submit" 
+        class="btn-login"
+        [disabled]="loginForm.invalid || isLoading">
+        <span *ngIf="isLoading" class="loading-spinner">⏳</span>
+        <span *ngIf="!isLoading" class="login-icon">🔐</span>
+        {{ isLoading ? 'Iniciando sesión...' : 'Iniciar Sesión' }}
+      </button>
+    </form>
+
+    <!-- Información de credenciales demo -->
+    <div class="demo-info">
+      <div class="demo-card">
+        <h4>ℹ️ Credenciales de Prueba</h4>
+        <div class="demo-credentials">
+          <p><strong>Usuario:</strong> admin</p>
+          <p><strong>Contraseña:</strong> admin123</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
