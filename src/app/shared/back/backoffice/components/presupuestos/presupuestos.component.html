@@ -1,0 +1,233 @@
+<div class="dashboard-container">
+  <!-- Menú lateral -->
+  <aside class="sidebar" [class.collapsed]="sidebarCollapsed">
+    <!-- Header del sidebar -->
+    <div class="sidebar-header">
+      <div class="logo" *ngIf="!sidebarCollapsed">
+        <h2>🍫 Logolate</h2>
+        <span>Admin Panel</span>
+      </div>
+      <div class="logo-mini" *ngIf="sidebarCollapsed">
+        <span>🍫</span>
+      </div>
+    </div>
+
+    <!-- Navegación -->
+    <nav class="sidebar-nav">
+      <ul class="nav-list">
+        <li class="nav-item" *ngFor="let item of menuItems" [class.active]="item.active">
+          <a 
+            class="nav-link" 
+            (click)="navigateTo(item.route)"
+            [title]="item.label">
+            <span class="nav-icon">{{ item.icon }}</span>
+            <span class="nav-label" *ngIf="!sidebarCollapsed">{{ item.label }}</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- Usuario y logout -->
+    <div class="sidebar-footer">
+      <div class="user-info" *ngIf="!sidebarCollapsed && currentUser">
+        <div class="user-avatar">👤</div>
+        <div class="user-details">
+          <span class="user-name">{{ currentUser.username }}</span>
+          <span class="user-role">Administrador</span>
+        </div>
+      </div>
+      <button 
+        class="logout-btn" 
+        (click)="logout()"
+        [title]="'Cerrar Sesión'">
+        <span class="logout-icon">🚪</span>
+        <span class="logout-text" *ngIf="!sidebarCollapsed">Salir</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Contenido principal -->
+  <main class="main-content">
+    <!-- Header superior -->
+    <header class="top-header">
+      <div class="header-left">
+        <button class="sidebar-toggle" (click)="toggleSidebar()">
+          <span class="toggle-icon">☰</span>
+        </button>
+        <h1 class="page-title">Presupuestos</h1>
+      </div>
+      <div class="header-right">
+        <div class="welcome-message" *ngIf="currentUser">
+          <span>¡Bienvenido, {{ currentUser.username }}!</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="presupuestos-container">
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-content">
+      <h1>🍫 Presupuestos</h1>
+      <p>Gestiona todos los presupuestos de Logolate</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn-clear" (click)="clearFilters()" title="Limpiar filtros">
+        🗑️ Limpiar filtros
+      </button>
+      <span class="results-count">{{ filteredPresupuestos.length }} resultados</span>
+    </div>
+  </div>
+
+  <!-- Filtros -->
+  <div class="filters-section">
+    <div class="filters-grid">
+      <div class="filter-group">
+        <label>ID</label>
+        <input 
+          type="text" 
+          [(ngModel)]="filtroId" 
+          (input)="applyFilters()"
+          placeholder="Buscar por ID..."
+          class="filter-input">
+      </div>
+      
+      <div class="filter-group">
+        <label>Empresa</label>
+        <input 
+          type="text" 
+          [(ngModel)]="filtroEmpresa" 
+          (input)="applyFilters()"
+          placeholder="Buscar por empresa..."
+          class="filter-input">
+      </div>
+      
+      <div class="filter-group">
+        <label>Cantidad</label>
+        <input 
+          type="text" 
+          [(ngModel)]="filtroCantidad" 
+          (input)="applyFilters()"
+          placeholder="Buscar por cantidad..."
+          class="filter-input">
+      </div>
+      
+      <div class="filter-group">
+        <label>Teléfono</label>
+        <input 
+          type="text" 
+          [(ngModel)]="filtroTelefono" 
+          (input)="applyFilters()"
+          placeholder="Buscar por teléfono..."
+          class="filter-input">
+      </div>
+      
+      <div class="filter-group">
+        <label>Email</label>
+        <input 
+          type="text" 
+          [(ngModel)]="filtroEmail" 
+          (input)="applyFilters()"
+          placeholder="Buscar por email..."
+          class="filter-input">
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabla de presupuestos -->
+  <div class="table-container">
+    <div class="table-wrapper">
+      <table class="presupuestos-table">
+        <thead>
+          <tr>
+            <th class="sortable-header" (click)="sortBy('id')">
+              ID <span class="sort-icon">{{ getSortIcon('id') }}</span>
+            </th>
+            <th class="sortable-header" (click)="sortBy('nombreEmpresa')">
+              Empresa <span class="sort-icon">{{ getSortIcon('nombreEmpresa') }}</span>
+            </th>
+            <th class="sortable-header" (click)="sortBy('cantidadTotal')">
+              Cantidad Total <span class="sort-icon">{{ getSortIcon('cantidadTotal') }}</span>
+            </th>
+            <th class="sortable-header" (click)="sortBy('telefono')">
+              Teléfono <span class="sort-icon">{{ getSortIcon('telefono') }}</span>
+            </th>
+            <th class="sortable-header" (click)="sortBy('email')">
+              Email <span class="sort-icon">{{ getSortIcon('email') }}</span>
+            </th>
+            <th class="sortable-header" (click)="sortBy('fecha')">
+              Fecha <span class="sort-icon">{{ getSortIcon('fecha') }}</span>
+            </th>
+            <th class="sortable-header" (click)="sortBy('estado')">
+              Estado <span class="sort-icon">{{ getSortIcon('estado') }}</span>
+            </th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let presupuesto of filteredPresupuestos; trackBy: trackByFn" 
+              class="table-row">
+            <td class="id-cell">
+              <span class="id-badge">#{{ presupuesto.id }}</span>
+            </td>
+            <td class="empresa-cell">
+              <div class="empresa-info">
+                <span class="empresa-name">{{ presupuesto.nombreEmpresa }}</span>
+              </div>
+            </td>
+            <td class="cantidad-cell">
+              <div class="cantidad-info">
+                <span class="cantidad-number">{{ presupuesto.cantidadTotal }}</span>
+                <span class="cantidad-label">productos</span>
+              </div>
+            </td>
+            <td class="telefono-cell">
+              <a href="tel:{{ presupuesto.telefono }}" class="telefono-link">
+                📞 {{ presupuesto.telefono }}
+              </a>
+            </td>
+            <td class="email-cell">
+              <a href="mailto:{{ presupuesto.email }}" class="email-link">
+                ✉️ {{ presupuesto.email }}
+              </a>
+            </td>
+            <td class="fecha-cell">
+              {{ presupuesto.fecha | date:'dd/MM/yyyy' }}
+            </td>
+            <td class="estado-cell">
+              <span class="estado-badge" [ngClass]="getEstadoClass(presupuesto.estado)">
+                {{ presupuesto.estado | titlecase }}
+              </span>
+            </td>
+            <td class="acciones-cell">
+              <div class="acciones-group">
+                <button 
+                  class="btn-action btn-view" 
+                  (click)="viewPresupuesto(presupuesto.id)"
+                  title="Ver presupuesto">
+                  👁️
+                </button>
+                <button 
+                  class="btn-action btn-edit" 
+                  (click)="editPresupuesto(presupuesto.id)"
+                  title="Editar presupuesto">
+                  ✏️
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    
+    <!-- Mensaje cuando no hay resultados -->
+    <div *ngIf="filteredPresupuestos.length === 0" class="no-results">
+      <div class="no-results-content">
+        <span class="no-results-icon">🔍</span>
+        <h3>No se encontraron presupuestos</h3>
+        <p>Intenta ajustar los filtros de búsqueda</p>
+      </div>
+    </div>
+  </div>
+    </div>
+  </main>
+</div>

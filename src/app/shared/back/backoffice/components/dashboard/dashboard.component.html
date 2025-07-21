@@ -1,1 +1,178 @@
-<p>dashboard works!</p>
+<div class="dashboard-container">
+  <!-- Menú lateral -->
+  <aside class="sidebar" [class.collapsed]="sidebarCollapsed">
+    <!-- Header del sidebar -->
+    <div class="sidebar-header">
+      <div class="logo" *ngIf="!sidebarCollapsed">
+        <h2>🍫 Logolate</h2>
+        <span>Admin Panel</span>
+      </div>
+      <div class="logo-mini" *ngIf="sidebarCollapsed">
+        <span>🍫</span>
+      </div>
+    </div>
+
+    <!-- Navegación -->
+    <nav class="sidebar-nav">
+      <ul class="nav-list">
+        <li class="nav-item" *ngFor="let item of menuItems" [class.active]="item.active">
+          <a 
+            class="nav-link" 
+            (click)="navigateTo(item.route)"
+            [title]="item.label">
+            <span class="nav-icon">{{ item.icon }}</span>
+            <span class="nav-label" *ngIf="!sidebarCollapsed">{{ item.label }}</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- Usuario y logout -->
+    <div class="sidebar-footer">
+      <div class="user-info" *ngIf="!sidebarCollapsed && currentUser">
+        <div class="user-avatar">👤</div>
+        <div class="user-details">
+          <span class="user-name">{{ currentUser.username }}</span>
+          <span class="user-role">Administrador</span>
+        </div>
+      </div>
+      <button 
+        class="logout-btn" 
+        (click)="logout()"
+        [title]="'Cerrar Sesión'">
+        <span class="logout-icon">🚪</span>
+        <span class="logout-text" *ngIf="!sidebarCollapsed">Salir</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Contenido principal -->
+  <main class="main-content">
+    <!-- Header superior -->
+    <header class="top-header">
+      <div class="header-left">
+        <button class="sidebar-toggle" (click)="toggleSidebar()">
+          <span class="toggle-icon">☰</span>
+        </button>
+        <h1 class="page-title">Dashboard</h1>
+      </div>
+      <div class="header-right">
+        <div class="welcome-message" *ngIf="currentUser">
+          <span>¡Bienvenido, {{ currentUser.username }}!</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Contenido del dashboard -->
+    <div class="dashboard-content">
+      <!-- Estadísticas principales -->
+      <section class="stats-section">
+        <h2 class="section-title">📊 Resumen General</h2>
+        <div class="stats-grid">
+          <!-- Total Productos -->
+          <div class="stat-card products">
+            <div class="stat-icon">🍫</div>
+            <div class="stat-info">
+              <h3 class="stat-number">{{ formatNumber(stats.totalProductos) }}</h3>
+              <p class="stat-label">Total Productos</p>
+            </div>
+            <div class="stat-trend positive">+12%</div>
+          </div>
+
+          <!-- Total Presupuestos -->
+          <div class="stat-card budgets">
+            <div class="stat-icon">📋</div>
+            <div class="stat-info">
+              <h3 class="stat-number">{{ formatNumber(stats.totalPresupuestos) }}</h3>
+              <p class="stat-label">Total Presupuestos</p>
+            </div>
+            <div class="stat-trend positive">+8%</div>
+          </div>
+
+          <!-- Total Categorías -->
+          <div class="stat-card categories">
+            <div class="stat-icon">📂</div>
+            <div class="stat-info">
+              <h3 class="stat-number">{{ formatNumber(stats.totalCategorias) }}</h3>
+              <p class="stat-label">Total Categorías</p>
+            </div>
+            <div class="stat-trend neutral">0%</div>
+          </div>
+
+          <!-- Ingresos del mes -->
+          <div class="stat-card revenue">
+            <div class="stat-icon">💰</div>
+            <div class="stat-info">
+              <h3 class="stat-number">{{ formatCurrency(stats.ingresosMes) }}</h3>
+              <p class="stat-label">Ingresos del Mes</p>
+            </div>
+            <div class="stat-trend positive">+15%</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Estadísticas adicionales -->
+      <section class="additional-stats">
+        <div class="stats-row">
+          <!-- Ventas de hoy -->
+          <div class="mini-stat-card sales">
+            <div class="mini-stat-header">
+              <span class="mini-stat-icon">🛒</span>
+              <h4>Ventas Hoy</h4>
+            </div>
+            <div class="mini-stat-value">{{ formatNumber(stats.ventasHoy) }}</div>
+            <div class="mini-stat-change positive">+3 desde ayer</div>
+          </div>
+
+          <!-- Pedidos pendientes -->
+          <div class="mini-stat-card pending">
+            <div class="mini-stat-header">
+              <span class="mini-stat-icon">⏳</span>
+              <h4>Pedidos Pendientes</h4>
+            </div>
+            <div class="mini-stat-value">{{ formatNumber(stats.pedidosPendientes) }}</div>
+            <div class="mini-stat-change neutral">Sin cambios</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Acciones rápidas -->
+      <section class="quick-actions">
+        <h2 class="section-title">⚡ Acciones Rápidas</h2>
+        <div class="actions-grid">
+          <button class="action-card" (click)="navigateTo('/logoadmin/productos')">
+            <div class="action-icon">➕</div>
+            <div class="action-info">
+              <h3>Nuevo Producto</h3>
+              <p>Agregar un producto al catálogo</p>
+            </div>
+          </button>
+
+          <button class="action-card" (click)="navigateTo('/logoadmin/presupuestos')">
+            <div class="action-icon">📝</div>
+            <div class="action-info">
+              <h3>Ver Presupuestos</h3>
+              <p>Gestionar solicitudes de presupuesto</p>
+            </div>
+          </button>
+
+          <button class="action-card" (click)="navigateTo('/logoadmin/categorias')">
+            <div class="action-icon">🏷️</div>
+            <div class="action-info">
+              <h3>Gestionar Categorías</h3>
+              <p>Organizar productos por categorías</p>
+            </div>
+          </button>
+
+          <button class="action-card" (click)="navigateTo('/logoadmin/configuracion')">
+            <div class="action-icon">⚙️</div>
+            <div class="action-info">
+              <h3>Configuración</h3>
+              <p>Ajustes generales del sistema</p>
+            </div>
+          </button>
+        </div>
+      </section>
+    </div>
+  </main>
+</div>

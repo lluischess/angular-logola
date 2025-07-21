@@ -1,19 +1,12 @@
-import { Component } from '@angular/core';
-import { RouterModule, RouterOutlet } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { Router, NavigationEnd, RouterModule, RouterOutlet } from '@angular/router';
 import { CartComponent } from './cart/cart.component';
 import { NavComponent } from './nav/nav.component';
 import { HeaderComponent } from './header/header.component';
-import { BannerComponent } from './banner/banner.component';
-import { NovedadesComponent } from './novedades/novedades.component';
-import { PromoComponent } from './promo/promo.component';
-import { VentajasComponent } from './ventajas/ventajas.component';
 import { FooterComponent } from './footer/footer.component';
 import { EndComponent } from './end/end.component';
-import { SChocolatesComponent } from './s-chocolates/s-chocolates.component';
-import { SCaramelosComponent } from './s-caramelos/s-caramelos.component';
-import { routes } from './app.routes';
 import { CommonModule } from '@angular/common';
-import { PageHomeComponent } from './pages/page-home/page-home.component';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
@@ -24,20 +17,28 @@ import { PageHomeComponent } from './pages/page-home/page-home.component';
     CartComponent,
     NavComponent,
     HeaderComponent,
-    BannerComponent,
-    NovedadesComponent,
-    PromoComponent,
-    VentajasComponent,
     FooterComponent,
     EndComponent,
-    SChocolatesComponent,
-    SCaramelosComponent,
-    RouterModule,
-    PageHomeComponent
+    RouterModule
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   title = 'angular-logola';
+  showHeaderFooter = true;
+
+  constructor(private router: Router) {}
+
+  ngOnInit() {
+    this.router.events
+      .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
+      .subscribe((event) => {
+        // Hide header and footer for /logoadmin routes
+        this.showHeaderFooter = !event.url.startsWith('/logoadmin');
+      });
+    
+    // Check initial route
+    this.showHeaderFooter = !this.router.url.startsWith('/logoadmin');
+  }
 }

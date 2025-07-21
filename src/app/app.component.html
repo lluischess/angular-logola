@@ -1,11 +1,11 @@
 <router-outlet/>
-<app-cart/>
-<app-nav/>
-<header>
+<app-cart *ngIf="showHeaderFooter"/>
+<app-nav *ngIf="showHeaderFooter"/>
+<header *ngIf="showHeaderFooter">
   <app-header/>
 </header>
 <body>
   <router-outlet/>
 </body>
-<app-footer/>
-<app-end/>
+<app-footer *ngIf="showHeaderFooter"/>
+<app-end *ngIf="showHeaderFooter"/>
