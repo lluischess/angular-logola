@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
+import { AuthService } from '../../../services/auth.service';
 
 /**
  * Componente principal del dashboard del backoffice
@@ -67,7 +68,10 @@ export class DashboardComponent implements OnInit {
     }
   ];
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private authService: AuthService
+  ) {}
 
   ngOnInit(): void {
     // Cargar datos del usuario desde localStorage
@@ -81,9 +85,13 @@ export class DashboardComponent implements OnInit {
    * Cargar datos del usuario desde localStorage
    */
   private loadUserData(): void {
-    const userData = localStorage.getItem('backoffice_user');
-    if (userData) {
-      this.currentUser = JSON.parse(userData);
+    const username = this.authService.getCurrentUser();
+    if (username) {
+      this.currentUser = {
+        username: username,
+        role: 'admin',
+        loginTime: new Date().toISOString()
+      };
     }
   }
 
@@ -128,12 +136,8 @@ export class DashboardComponent implements OnInit {
    * Cerrar sesión
    */
   logout(): void {
-    // Limpiar localStorage
-    localStorage.removeItem('backoffice_token');
-    localStorage.removeItem('backoffice_user');
-    
-    // Redirigir al login
-    this.router.navigate(['/logoadmin']);
+    // Usar AuthService para cerrar sesión
+    this.authService.logout();
   }
 
   /**

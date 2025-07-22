@@ -4,13 +4,14 @@ import { LoginComponent } from './components/login/login.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { PresupuestosComponent } from './components/presupuestos/presupuestos.component';
 import { ProductosComponent } from './components/productos/productos.component';
+import { AuthGuard } from '../guards/auth.guard';
 
 const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
-  { path: 'dashboard', component: DashboardComponent },
-  { path: 'presupuestos', component: PresupuestosComponent },
-  { path: 'productos', component: ProductosComponent },
+  { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
+  { path: 'presupuestos', component: PresupuestosComponent, canActivate: [AuthGuard] },
+  { path: 'productos', component: ProductosComponent, canActivate: [AuthGuard] },
   {
     path: '**',
     redirectTo: '',

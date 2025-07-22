@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { AuthService } from '../../../services/auth.service';
 
 /**
  * Componente de login para el backoffice
@@ -25,7 +26,8 @@ export class LoginComponent {
 
   constructor(
     private fb: FormBuilder,
-    private router: Router
+    private router: Router,
+    private authService: AuthService
   ) {
     // Inicializar formulario reactivo con validaciones
     this.loginForm = this.fb.group({
@@ -51,22 +53,19 @@ export class LoginComponent {
       
       const { username, password } = this.loginForm.value;
 
-      // Simular autenticación (sin backend por ahora)
+      // Usar AuthService para autenticación
       setTimeout(() => {
         if (username === 'admin' && password === 'admin123') {
-          // Login exitoso
-          console.log('Login exitoso');
+          // Intentar login con AuthService
+          const loginSuccess = this.authService.login(username, password);
           
-          // Guardar token simulado en localStorage
-          localStorage.setItem('backoffice_token', 'fake-jwt-token');
-          localStorage.setItem('backoffice_user', JSON.stringify({
-            username: username,
-            role: 'admin',
-            loginTime: new Date().toISOString()
-          }));
-          
-          // Redirigir al dashboard
-          this.router.navigate(['/logoadmin/dashboard']);
+          if (loginSuccess) {
+            console.log('Login exitoso');
+            // Redirigir al dashboard
+            this.router.navigate(['/logoadmin/dashboard']);
+          } else {
+            this.errorMessage = 'Error interno del sistema.';
+          }
         } else {
           // Login fallido
           this.errorMessage = 'Credenciales incorrectas. Verifique usuario y contraseña.';
