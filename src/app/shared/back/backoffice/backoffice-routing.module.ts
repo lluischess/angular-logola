@@ -4,6 +4,8 @@ import { LoginComponent } from './components/login/login.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { PresupuestosComponent } from './components/presupuestos/presupuestos.component';
 import { ProductosComponent } from './components/productos/productos.component';
+import { CategoriasComponent } from './components/categorias/categorias.component';
+import { ConfiguracionComponent } from './components/configuracion/configuracion.component';
 import { AuthGuard } from '../guards/auth.guard';
 
 const routes: Routes = [
@@ -12,6 +14,8 @@ const routes: Routes = [
   { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
   { path: 'presupuestos', component: PresupuestosComponent, canActivate: [AuthGuard] },
   { path: 'productos', component: ProductosComponent, canActivate: [AuthGuard] },
+  { path: 'categorias', component: CategoriasComponent, canActivate: [AuthGuard] },
+  { path: 'configuracion', component: ConfiguracionComponent, canActivate: [AuthGuard] },
   {
     path: '**',
     redirectTo: '',

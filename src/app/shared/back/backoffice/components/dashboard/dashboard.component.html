@@ -76,7 +76,6 @@
               <h3 class="stat-number">{{ formatNumber(stats.totalProductos) }}</h3>
               <p class="stat-label">Total Productos</p>
             </div>
-            <div class="stat-trend positive">+12%</div>
           </div>
 
           <!-- Total Presupuestos -->
@@ -86,7 +85,6 @@
               <h3 class="stat-number">{{ formatNumber(stats.totalPresupuestos) }}</h3>
               <p class="stat-label">Total Presupuestos</p>
             </div>
-            <div class="stat-trend positive">+8%</div>
           </div>
 
           <!-- Total Categorías -->
@@ -96,45 +94,20 @@
               <h3 class="stat-number">{{ formatNumber(stats.totalCategorias) }}</h3>
               <p class="stat-label">Total Categorías</p>
             </div>
-            <div class="stat-trend neutral">0%</div>
           </div>
 
-          <!-- Ingresos del mes -->
-          <div class="stat-card revenue">
-            <div class="stat-icon">💰</div>
+          <!-- Presupuestos Aprobados -->
+          <div class="stat-card approved">
+            <div class="stat-icon">✅</div>
             <div class="stat-info">
-              <h3 class="stat-number">{{ formatCurrency(stats.ingresosMes) }}</h3>
-              <p class="stat-label">Ingresos del Mes</p>
+              <h3 class="stat-number">{{ formatNumber(stats.presupuestosAprobados) }}</h3>
+              <p class="stat-label">Presupuestos Aprobados</p>
             </div>
-            <div class="stat-trend positive">+15%</div>
           </div>
         </div>
       </section>
 
-      <!-- Estadísticas adicionales -->
-      <section class="additional-stats">
-        <div class="stats-row">
-          <!-- Ventas de hoy -->
-          <div class="mini-stat-card sales">
-            <div class="mini-stat-header">
-              <span class="mini-stat-icon">🛒</span>
-              <h4>Ventas Hoy</h4>
-            </div>
-            <div class="mini-stat-value">{{ formatNumber(stats.ventasHoy) }}</div>
-            <div class="mini-stat-change positive">+3 desde ayer</div>
-          </div>
 
-          <!-- Pedidos pendientes -->
-          <div class="mini-stat-card pending">
-            <div class="mini-stat-header">
-              <span class="mini-stat-icon">⏳</span>
-              <h4>Pedidos Pendientes</h4>
-            </div>
-            <div class="mini-stat-value">{{ formatNumber(stats.pedidosPendientes) }}</div>
-            <div class="mini-stat-change neutral">Sin cambios</div>
-          </div>
-        </div>
-      </section>
 
       <!-- Acciones rápidas -->
       <section class="quick-actions">

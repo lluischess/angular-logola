@@ -1,0 +1,461 @@
+<div class="dashboard-container">
+  <!-- Menú lateral -->
+  <aside class="sidebar" [class.collapsed]="sidebarCollapsed">
+    <!-- Header del sidebar -->
+    <div class="sidebar-header">
+      <div class="logo" *ngIf="!sidebarCollapsed">
+        <h2>🍫 Logolate</h2>
+        <span>Admin Panel</span>
+      </div>
+      <div class="logo-mini" *ngIf="sidebarCollapsed">
+        <span>🍫</span>
+      </div>
+    </div>
+
+    <!-- Navegación -->
+    <nav class="sidebar-nav">
+      <ul class="nav-list">
+        <li class="nav-item" *ngFor="let item of menuItems" [class.active]="item.active">
+          <a 
+            class="nav-link" 
+            (click)="navigateTo(item.route)"
+            [title]="item.label">
+            <span class="nav-icon">{{ item.icon }}</span>
+            <span class="nav-label" *ngIf="!sidebarCollapsed">{{ item.label }}</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- Usuario y logout -->
+    <div class="sidebar-footer">
+      <div class="user-info" *ngIf="!sidebarCollapsed && currentUser">
+        <div class="user-avatar">👤</div>
+        <div class="user-details">
+          <span class="user-name">{{ currentUser.username }}</span>
+          <span class="user-role">Administrador</span>
+        </div>
+      </div>
+      <button 
+        class="logout-btn" 
+        (click)="logout()"
+        [title]="'Cerrar Sesión'">
+        <span class="logout-icon">🚪</span>
+        <span class="logout-text" *ngIf="!sidebarCollapsed">Salir</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Contenido principal -->
+  <main class="main-content">
+    <!-- Header superior -->
+    <header class="top-header">
+      <div class="header-left">
+        <button class="sidebar-toggle" (click)="toggleSidebar()">
+          <span class="toggle-icon">☰</span>
+        </button>
+        <h1 class="page-title">Opciones Generales</h1>
+      </div>
+      <div class="header-right">
+        <div class="welcome-message" *ngIf="currentUser">
+          <span>¡Bienvenido, {{ currentUser.username }}!</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Contenido de configuración -->
+    <div class="configuracion-content">
+      <!-- Loading State -->
+      <div *ngIf="isLoading" class="loading-container">
+        <div class="spinner"></div>
+        <p>Cargando configuración...</p>
+      </div>
+
+      <!-- Configuración Principal -->
+      <div *ngIf="!isLoading" class="config-container">
+        <!-- Pestañas -->
+        <div class="tabs-container">
+          <div class="tabs-header">
+            <button 
+              *ngFor="let tab of tabs" 
+              class="tab-button"
+              [class.active]="activeTab === tab.id"
+              (click)="setActiveTab(tab.id)">
+              <span class="tab-icon">{{ tab.icon }}</span>
+              <span class="tab-label">{{ tab.label }}</span>
+            </button>
+          </div>
+
+          <!-- Contenido de las pestañas -->
+          <div class="tab-content">
+            <!-- Pestaña SEO -->
+            <div *ngIf="activeTab === 'seo'" class="tab-panel">
+              <div class="panel-header">
+                <h2>🔍 Configuración SEO</h2>
+                <p>Optimiza tu sitio web para motores de búsqueda</p>
+              </div>
+
+              <form [formGroup]="seoForm" class="config-form">
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="homeTitle">Título de la página principal *</label>
+                    <input 
+                      type="text" 
+                      id="homeTitle"
+                      formControlName="homeTitle"
+                      class="form-control"
+                      maxlength="60"
+                      placeholder="Ej: Logolate - Dulces Artesanales Premium">
+                    <small class="form-hint">Máximo 60 caracteres. Aparece en la pestaña del navegador y en Google.</small>
+                    <div *ngIf="seoForm.get('homeTitle')?.invalid && seoForm.get('homeTitle')?.touched" class="error-message">
+                      El título es requerido y debe tener máximo 60 caracteres.
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="homeDescription">Meta descripción *</label>
+                    <textarea 
+                      id="homeDescription"
+                      formControlName="homeDescription"
+                      class="form-control"
+                      rows="3"
+                      maxlength="160"
+                      placeholder="Describe brevemente tu sitio web..."></textarea>
+                    <small class="form-hint">Máximo 160 caracteres. Aparece en los resultados de Google.</small>
+                    <div *ngIf="seoForm.get('homeDescription')?.invalid && seoForm.get('homeDescription')?.touched" class="error-message">
+                      La descripción es requerida y debe tener máximo 160 caracteres.
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="homeKeywords">Palabras clave *</label>
+                    <input 
+                      type="text" 
+                      id="homeKeywords"
+                      formControlName="homeKeywords"
+                      class="form-control"
+                      placeholder="chocolates, caramelos, dulces artesanales">
+                    <small class="form-hint">Separa las palabras clave con comas.</small>
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <div class="form-group col-half">
+                    <label for="siteName">Nombre del sitio *</label>
+                    <input 
+                      type="text" 
+                      id="siteName"
+                      formControlName="siteName"
+                      class="form-control"
+                      placeholder="Logolate">
+                  </div>
+                  <div class="form-group col-half">
+                    <label for="defaultImage">Imagen por defecto</label>
+                    <input 
+                      type="text" 
+                      id="defaultImage"
+                      formControlName="defaultImage"
+                      class="form-control"
+                      placeholder="/assets/images/logo-social.jpg">
+                    <small class="form-hint">URL de la imagen para redes sociales.</small>
+                  </div>
+                </div>
+              </form>
+            </div>
+
+            <!-- Pestaña Footer -->
+            <div *ngIf="activeTab === 'footer'" class="tab-panel">
+              <div class="panel-header">
+                <h2>📄 Configuración del Footer</h2>
+                <p>Gestiona la información de contacto y contenido del pie de página</p>
+              </div>
+
+              <form [formGroup]="footerForm" class="config-form">
+                <div class="form-section">
+                  <h3>Información de Contacto</h3>
+                  
+                  <div class="form-row">
+                    <div class="form-group col-half">
+                      <label for="contactoTelefono">Teléfono *</label>
+                      <input 
+                        type="tel" 
+                        id="contactoTelefono"
+                        formControlName="contactoTelefono"
+                        class="form-control"
+                        placeholder="+34 123 456 789">
+                    </div>
+                    <div class="form-group col-half">
+                      <label for="contactoEmail">Email *</label>
+                      <input 
+                        type="email" 
+                        id="contactoEmail"
+                        formControlName="contactoEmail"
+                        class="form-control"
+                        placeholder="info@logolate.com">
+                    </div>
+                  </div>
+
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label for="contactoDireccion">Dirección *</label>
+                      <input 
+                        type="text" 
+                        id="contactoDireccion"
+                        formControlName="contactoDireccion"
+                        class="form-control"
+                        placeholder="Calle Dulce, 123, 28001 Madrid">
+                    </div>
+                  </div>
+
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label for="horarioAtencion">Horario de atención *</label>
+                      <input 
+                        type="text" 
+                        id="horarioAtencion"
+                        formControlName="horarioAtencion"
+                        class="form-control"
+                        placeholder="Lunes a Viernes: 9:00 - 18:00">
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-section">
+                  <h3>Contenido</h3>
+                  
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label for="queEsLogolate">"¿Qué es Logolate?" *</label>
+                      <textarea 
+                        id="queEsLogolate"
+                        formControlName="queEsLogolate"
+                        class="form-control"
+                        rows="4"
+                        maxlength="500"
+                        placeholder="Describe qué es Logolate..."></textarea>
+                      <small class="form-hint">Máximo 500 caracteres.</small>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-section">
+                  <h3>Redes Sociales</h3>
+                  
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label for="instagram">Instagram</label>
+                      <input 
+                        type="url" 
+                        id="instagram"
+                        formControlName="instagram"
+                        class="form-control"
+                        placeholder="https://instagram.com/logolate">
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+
+            <!-- Pestaña General -->
+            <div *ngIf="activeTab === 'general'" class="tab-panel">
+              <div class="panel-header">
+                <h2>⚙️ Configuración General</h2>
+                <p>Logos, colores y configuraciones básicas del sitio</p>
+              </div>
+
+              <form [formGroup]="generalForm" class="config-form">
+                <div class="form-section">
+                  <h3>Logos e Imágenes</h3>
+                  
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label for="logoHeader">Logo del header</label>
+                      <input 
+                        type="text" 
+                        id="logoHeader"
+                        formControlName="logoHeader"
+                        class="form-control"
+                        placeholder="/assets/images/logo-header.png">
+                      <small class="form-hint">Recomendado: 200x60px, formato PNG con fondo transparente.</small>
+                    </div>
+                  </div>
+
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label for="logoFooter">Logo del footer</label>
+                      <input 
+                        type="text" 
+                        id="logoFooter"
+                        formControlName="logoFooter"
+                        class="form-control"
+                        placeholder="/assets/images/logo-footer.png">
+                      <small class="form-hint">Recomendado: 150x45px, formato PNG.</small>
+                    </div>
+                  </div>
+
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label for="favicon">Favicon</label>
+                      <input 
+                        type="text" 
+                        id="favicon"
+                        formControlName="favicon"
+                        class="form-control"
+                        placeholder="/assets/images/favicon.ico">
+                      <small class="form-hint">Recomendado: 32x32px, formato ICO o PNG.</small>
+                    </div>
+                  </div>
+                </div>
+
+
+              </form>
+            </div>
+
+            <!-- Pestaña Banner -->
+            <div *ngIf="activeTab === 'banner'" class="tab-panel">
+              <div class="panel-header">
+                <h2>🎨 Configuración de Banners</h2>
+                <p>Gestiona los banners del hero principal</p>
+                <button class="btn btn-primary" (click)="addBanner()">
+                  <span>➕</span> Agregar Banner
+                </button>
+              </div>
+
+              <div class="banners-list">
+                <div *ngFor="let banner of configuracionData.banner.banners; let i = index" class="banner-item">
+                  <div class="banner-header">
+                    <h4>Banner {{ i + 1 }}</h4>
+                    <div class="banner-actions">
+                      <label class="toggle-switch">
+                        <input type="checkbox" [(ngModel)]="banner.activo">
+                        <span class="slider"></span>
+                      </label>
+                      <button class="btn btn-danger btn-sm" (click)="removeBanner(banner.id)">
+                        🗑️
+                      </button>
+                    </div>
+                  </div>
+
+                  <div class="banner-form">
+                    <div class="form-row">
+                      <div class="form-group col-half">
+                        <label>Título</label>
+                        <input 
+                          type="text" 
+                          [(ngModel)]="banner.titulo"
+                          class="form-control"
+                          placeholder="Título del banner">
+                      </div>
+                      <div class="form-group col-half">
+                        <label>Subtítulo</label>
+                        <input 
+                          type="text" 
+                          [(ngModel)]="banner.subtitulo"
+                          class="form-control"
+                          placeholder="Subtítulo del banner">
+                      </div>
+                    </div>
+
+                    <div class="form-row">
+                      <div class="form-group">
+                        <label>Imagen</label>
+                        <input 
+                          type="text" 
+                          [(ngModel)]="banner.imagen"
+                          class="form-control"
+                          placeholder="/assets/images/banner.jpg">
+                      </div>
+                    </div>
+
+                    <div class="form-row">
+                      <div class="form-group col-half">
+                        <label>Enlace</label>
+                        <input 
+                          type="text" 
+                          [(ngModel)]="banner.enlace"
+                          class="form-control"
+                          placeholder="/productos">
+                      </div>
+                      <div class="form-group col-half">
+                        <label>Orden</label>
+                        <input 
+                          type="number" 
+                          [(ngModel)]="banner.orden"
+                          class="form-control"
+                          min="1">
+                      </div>
+                    </div>
+
+                    <div class="form-row">
+                      <div class="form-group">
+                        <label>Nombre del botón</label>
+                        <input 
+                          type="text" 
+                          [(ngModel)]="banner.nombreBoton"
+                          class="form-control"
+                          placeholder="Ver Más">
+                        <small class="form-hint">Texto que aparecerá en el botón del banner.</small>
+                      </div>
+                    </div>
+
+                    <div class="form-row">
+                      <div class="form-group col-half">
+                        <label>Color del botón</label>
+                        <div class="color-input-group">
+                          <input 
+                            type="color" 
+                            [(ngModel)]="banner.colorBoton"
+                            class="color-picker">
+                          <input 
+                            type="text" 
+                            [(ngModel)]="banner.colorBoton"
+                            class="form-control color-text"
+                            placeholder="#3B82F6">
+                        </div>
+                        <small class="form-hint">Color de fondo del botón.</small>
+                      </div>
+                      <div class="form-group col-half">
+                        <label>Color de los títulos</label>
+                        <div class="color-input-group">
+                          <input 
+                            type="color" 
+                            [(ngModel)]="banner.colorTitulos"
+                            class="color-picker">
+                          <input 
+                            type="text" 
+                            [(ngModel)]="banner.colorTitulos"
+                            class="form-control color-text"
+                            placeholder="#FFFFFF">
+                        </div>
+                        <small class="form-hint">Color del título y subtítulo.</small>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div *ngIf="configuracionData.banner.banners.length === 0" class="empty-banners">
+                  <p>No hay banners configurados. Haz clic en "Agregar Banner" para crear uno.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Botones de acción -->
+          <div class="form-actions">
+            <button 
+              class="btn btn-primary btn-lg"
+              (click)="saveCurrentTab()"
+              [disabled]="isSaving">
+              <span *ngIf="!isSaving">💾 Guardar Cambios</span>
+              <span *ngIf="isSaving">⏳ Guardando...</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>

@@ -26,9 +26,7 @@ export class DashboardComponent implements OnInit {
     totalProductos: 0,
     totalPresupuestos: 0,
     totalCategorias: 0,
-    ventasHoy: 0,
-    pedidosPendientes: 0,
-    ingresosMes: 0
+    presupuestosAprobados: 0
   };
 
   // Estado del menú lateral
@@ -105,9 +103,7 @@ export class DashboardComponent implements OnInit {
         totalProductos: 156,
         totalPresupuestos: 23,
         totalCategorias: 8,
-        ventasHoy: 12,
-        pedidosPendientes: 5,
-        ingresosMes: 15420.50
+        presupuestosAprobados: 18
       };
     }, 800);
   }
