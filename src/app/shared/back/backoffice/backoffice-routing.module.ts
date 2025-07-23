@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { LoginComponent } from './components/login/login.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { PresupuestosComponent } from './components/presupuestos/presupuestos.component';
+import { PresupuestoDetalleComponent } from './components/presupuesto-detalle/presupuesto-detalle.component';
 import { ProductosComponent } from './components/productos/productos.component';
 import { CategoriasComponent } from './components/categorias/categorias.component';
 import { ConfiguracionComponent } from './components/configuracion/configuracion.component';
@@ -13,6 +14,7 @@ const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
   { path: 'presupuestos', component: PresupuestosComponent, canActivate: [AuthGuard] },
+  { path: 'presupuestos/:id', component: PresupuestoDetalleComponent, canActivate: [AuthGuard] },
   { path: 'productos', component: ProductosComponent, canActivate: [AuthGuard] },
   { path: 'categorias', component: CategoriasComponent, canActivate: [AuthGuard] },
   { path: 'configuracion', component: ConfiguracionComponent, canActivate: [AuthGuard] },

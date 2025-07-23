@@ -8,11 +8,26 @@ import { SidebarService } from '../../../services/sidebar.service';
 export interface Presupuesto {
   id: number;
   nombreEmpresa: string;
-  cantidadTotal: number;
-  telefono: string;
+  nombreContacto: string;
   email: string;
+  telefono: string;
+  direccion: string;
   fecha: Date;
   estado: 'pendiente' | 'aprobado' | 'rechazado';
+  productos: ProductoPresupuesto[];
+  logoEmpresa: string; // URL de la imagen del logotipo
+  aceptaCorreosPublicitarios: boolean;
+  cantidadTotal: number; // Para compatibilidad con código existente
+}
+
+export interface ProductoPresupuesto {
+  id: number;
+  nombre: string;
+  categoria: string;
+  cantidad: number;
+  precioUnitario: number;
+  precioTotal: number;
+  imagen: string;
 }
 
 @Component({
@@ -93,56 +108,104 @@ export class PresupuestosComponent implements OnInit {
       {
         id: 1001,
         nombreEmpresa: 'Dulces Barcelona S.L.',
-        cantidadTotal: 250,
-        telefono: '+34 932 123 456',
+        nombreContacto: 'María García López',
         email: 'pedidos@dulcesbarcelona.com',
+        telefono: '+34 932 123 456',
+        direccion: 'Carrer de Balmes, 123, 08008 Barcelona',
         fecha: new Date('2024-01-15'),
-        estado: 'pendiente'
+        estado: 'pendiente',
+        productos: [
+          { id: 1, nombre: 'Chocolates Premium', categoria: 'Chocolates', cantidad: 100, precioUnitario: 12.50, precioTotal: 1250, imagen: '/assets/images/chocolate-premium.jpg' },
+          { id: 2, nombre: 'Caramelos Artesanales', categoria: 'Caramelos', cantidad: 150, precioUnitario: 8.00, precioTotal: 1200, imagen: '/assets/images/caramelos-artesanales.jpg' }
+        ],
+        logoEmpresa: '/assets/images/logos/dulces-barcelona.jpg',
+        aceptaCorreosPublicitarios: true,
+        cantidadTotal: 250
       },
       {
         id: 1002,
         nombreEmpresa: 'Chocolates Madrid',
-        cantidadTotal: 180,
-        telefono: '+34 915 987 654',
+        nombreContacto: 'Carlos Rodríguez Sánchez',
         email: 'info@chocolatesmadrid.es',
+        telefono: '+34 915 987 654',
+        direccion: 'Calle Gran Vía, 45, 28013 Madrid',
         fecha: new Date('2024-01-16'),
-        estado: 'aprobado'
+        estado: 'aprobado',
+        productos: [
+          { id: 3, nombre: 'Bombones Gourmet', categoria: 'Chocolates', cantidad: 80, precioUnitario: 15.00, precioTotal: 1200, imagen: '/assets/images/bombones-gourmet.jpg' },
+          { id: 4, nombre: 'Trufas de Chocolate', categoria: 'Chocolates', cantidad: 100, precioUnitario: 10.00, precioTotal: 1000, imagen: '/assets/images/trufas-chocolate.jpg' }
+        ],
+        logoEmpresa: '/assets/images/logos/chocolates-madrid.jpg',
+        aceptaCorreosPublicitarios: false,
+        cantidadTotal: 180
       },
       {
         id: 1003,
         nombreEmpresa: 'Caramelos Valencia',
-        cantidadTotal: 320,
-        telefono: '+34 963 456 789',
+        nombreContacto: 'Ana Martínez Pérez',
         email: 'compras@caramelosvalencia.com',
+        telefono: '+34 963 456 789',
+        direccion: 'Avenida del Puerto, 78, 46023 Valencia',
         fecha: new Date('2024-01-17'),
-        estado: 'pendiente'
+        estado: 'pendiente',
+        productos: [
+          { id: 5, nombre: 'Caramelos de Frutas', categoria: 'Caramelos', cantidad: 200, precioUnitario: 6.50, precioTotal: 1300, imagen: '/assets/images/caramelos-frutas.jpg' },
+          { id: 6, nombre: 'Gominolas Artesanales', categoria: 'Gominolas', cantidad: 120, precioUnitario: 9.00, precioTotal: 1080, imagen: '/assets/images/gominolas-artesanales.jpg' }
+        ],
+        logoEmpresa: '/assets/images/logos/caramelos-valencia.jpg',
+        aceptaCorreosPublicitarios: true,
+        cantidadTotal: 320
       },
       {
         id: 1004,
         nombreEmpresa: 'Golosinas Sevilla',
-        cantidadTotal: 95,
-        telefono: '+34 954 321 987',
+        nombreContacto: 'Francisco Jiménez Ruiz',
         email: 'contacto@golosinassevilla.es',
+        telefono: '+34 954 321 987',
+        direccion: 'Calle Sierpes, 12, 41004 Sevilla',
         fecha: new Date('2024-01-18'),
-        estado: 'rechazado'
+        estado: 'rechazado',
+        productos: [
+          { id: 7, nombre: 'Chicles Artesanales', categoria: 'Chicles', cantidad: 50, precioUnitario: 4.50, precioTotal: 225, imagen: '/assets/images/chicles-artesanales.jpg' },
+          { id: 8, nombre: 'Piruletas Gourmet', categoria: 'Piruletas', cantidad: 45, precioUnitario: 7.00, precioTotal: 315, imagen: '/assets/images/piruletas-gourmet.jpg' }
+        ],
+        logoEmpresa: '/assets/images/logos/golosinas-sevilla.jpg',
+        aceptaCorreosPublicitarios: false,
+        cantidadTotal: 95
       },
       {
         id: 1005,
         nombreEmpresa: 'Confitería Bilbao',
-        cantidadTotal: 420,
-        telefono: '+34 944 567 123',
+        nombreContacto: 'Elena Vázquez González',
         email: 'ventas@confiteriabilbao.com',
+        telefono: '+34 944 567 123',
+        direccion: 'Gran Vía Don Diego López de Haro, 56, 48011 Bilbao',
         fecha: new Date('2024-01-19'),
-        estado: 'aprobado'
+        estado: 'aprobado',
+        productos: [
+          { id: 9, nombre: 'Turrón Artesanal', categoria: 'Turrón', cantidad: 200, precioUnitario: 18.00, precioTotal: 3600, imagen: '/assets/images/turron-artesanal.jpg' },
+          { id: 10, nombre: 'Mazapán Premium', categoria: 'Mazapán', cantidad: 220, precioUnitario: 14.00, precioTotal: 3080, imagen: '/assets/images/mazapan-premium.jpg' }
+        ],
+        logoEmpresa: '/assets/images/logos/confiteria-bilbao.jpg',
+        aceptaCorreosPublicitarios: true,
+        cantidadTotal: 420
       },
       {
         id: 1006,
         nombreEmpresa: 'Dulces Artesanos',
-        cantidadTotal: 150,
-        telefono: '+34 987 654 321',
+        nombreContacto: 'Roberto Fernández Castro',
         email: 'info@dulcesartesanos.es',
+        telefono: '+34 987 654 321',
+        direccion: 'Plaza Mayor, 8, 37002 Salamanca',
         fecha: new Date('2024-01-20'),
-        estado: 'pendiente'
+        estado: 'pendiente',
+        productos: [
+          { id: 11, nombre: 'Galletas Artesanales', categoria: 'Galletas', cantidad: 100, precioUnitario: 8.50, precioTotal: 850, imagen: '/assets/images/galletas-artesanales.jpg' },
+          { id: 12, nombre: 'Mermeladas Gourmet', categoria: 'Mermeladas', cantidad: 50, precioUnitario: 12.00, precioTotal: 600, imagen: '/assets/images/mermeladas-gourmet.jpg' }
+        ],
+        logoEmpresa: '/assets/images/logos/dulces-artesanos.jpg',
+        aceptaCorreosPublicitarios: true,
+        cantidadTotal: 150
       }
     ];
   }
@@ -294,7 +357,8 @@ export class PresupuestosComponent implements OnInit {
 
   viewPresupuesto(id: number) {
     console.log('Ver presupuesto:', id);
-    // Aquí implementarías la lógica para ver el detalle del presupuesto
+    // Navegar a la ficha de detalle del presupuesto
+    this.router.navigate(['/logoadmin/presupuestos', id]);
   }
 
   editPresupuesto(id: number) {
