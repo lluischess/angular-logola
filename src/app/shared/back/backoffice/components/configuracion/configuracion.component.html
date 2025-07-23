@@ -10,6 +10,10 @@
       <div class="logo-mini" *ngIf="sidebarCollapsed">
         <span>🍫</span>
       </div>
+      <!-- Botón de cerrar para móvil -->
+      <button class="sidebar-close" (click)="toggleSidebar()" *ngIf="!sidebarCollapsed">
+        ✕
+      </button>
     </div>
 
     <!-- Navegación -->

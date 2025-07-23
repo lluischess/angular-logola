@@ -654,6 +654,52 @@
 
 /* Responsive */
 @media (max-width: 768px) {
+  .dashboard-container {
+    position: relative;
+  }
+  
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 9999;
+    transform: translateX(-100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow-y: auto;
+  }
+  
+  .sidebar:not(.collapsed) {
+    transform: translateX(0);
+  }
+  
+  .sidebar.collapsed {
+    transform: translateX(-100%);
+  }
+  
+  .main-content {
+    width: 100%;
+    margin-left: 0;
+  }
+  
+  .sidebar-toggle {
+    z-index: 10000;
+    position: relative;
+  }
+  
+  /* Overlay para cerrar el menú al hacer clic fuera */
+  .sidebar:not(.collapsed)::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: -1;
+  }
+  
   .productos-container {
     padding: 1rem;
   }
@@ -688,6 +734,40 @@
   
   .acciones-group {
     flex-direction: column;
+  }
+  
+  /* Botón de cerrar en el sidebar móvil */
+  .sidebar-header {
+    position: relative;
+  }
+  
+  .sidebar-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: white;
+    font-size: 24px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+  }
+  
+  .sidebar-close:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+}
+
+/* Para pantallas más grandes, mantener el comportamiento original */
+@media (min-width: 769px) {
+  .sidebar-close {
+    display: none;
   }
 }
 
