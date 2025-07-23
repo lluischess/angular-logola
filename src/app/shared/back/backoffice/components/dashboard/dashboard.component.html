@@ -11,7 +11,7 @@
         <span>🍫</span>
       </div>
       <!-- Botón de cerrar para móvil -->
-      <button class="sidebar-close" (click)="toggleSidebar()" *ngIf="!sidebarCollapsed">
+      <button class="sidebar-close" (click)="toggleSidebar()" *ngIf="!sidebarService.isCollapsed && isMobile()">
         ✕
       </button>
     </div>

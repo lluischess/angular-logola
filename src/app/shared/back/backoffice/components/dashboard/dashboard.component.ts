@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
+import { SidebarService } from '../../../services/sidebar.service';
 
 /**
  * Componente principal del dashboard del backoffice
@@ -68,7 +69,8 @@ export class DashboardComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    public sidebarService: SidebarService
   ) {}
 
   ngOnInit(): void {
@@ -112,7 +114,7 @@ export class DashboardComponent implements OnInit {
    * Alternar estado del menú lateral
    */
   toggleSidebar(): void {
-    this.sidebarCollapsed = !this.sidebarCollapsed;
+    this.sidebarService.toggleSidebar();
   }
 
   /**
@@ -123,6 +125,13 @@ export class DashboardComponent implements OnInit {
     this.menuItems.forEach(item => {
       item.active = item.route === route;
     });
+    
+    // Auto-ocultar menú en móvil al seleccionar nav-item
+    const isMobile = window.innerWidth <= 768;
+    if (isMobile && !this.sidebarService.isCollapsed) {
+      this.sidebarService.closeSidebar();
+      console.log('Auto-ocultando menú en móvil al seleccionar nav-item - ancho:', window.innerWidth);
+    }
     
     // Navegar a la ruta
     this.router.navigate([route]);
@@ -151,5 +160,12 @@ export class DashboardComponent implements OnInit {
       style: 'currency',
       currency: 'EUR'
     }).format(amount);
+  }
+
+  /**
+   * Verificar si es dispositivo móvil
+   */
+  isMobile(): boolean {
+    return window.innerWidth <= 768;
   }
 }
