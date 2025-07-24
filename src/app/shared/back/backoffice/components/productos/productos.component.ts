@@ -426,9 +426,12 @@ export class ProductosComponent implements OnInit {
     // Aquí iría la lógica para ver el detalle del producto
   }
 
+  createProducto(): void {
+    this.router.navigate(['/logoadmin/productos/nuevo']);
+  }
+
   editProducto(id: number): void {
-    console.log('Editar producto:', id);
-    // Aquí iría la lógica para editar el producto
+    this.router.navigate(['/logoadmin/productos/editar', id]);
   }
 
   deleteProducto(id: number): void {

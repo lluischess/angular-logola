@@ -13,11 +13,12 @@ export interface Presupuesto {
   telefono: string;
   direccion: string;
   fecha: Date;
-  estado: 'pendiente' | 'aprobado' | 'rechazado';
+  estado: 'pendiente' | 'aprobado' | 'rechazado' | 'enviado';
   productos: ProductoPresupuesto[];
   logoEmpresa: string; // URL de la imagen del logotipo
   aceptaCorreosPublicitarios: boolean;
   cantidadTotal: number; // Para compatibilidad con código existente
+  apuntes?: string; // Campo de notas/apuntes adicionales
 }
 
 export interface ProductoPresupuesto {

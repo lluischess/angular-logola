@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
 import { SidebarService } from '../../../services/sidebar.service';
@@ -8,7 +9,7 @@ import { Presupuesto, ProductoPresupuesto } from '../presupuestos/presupuestos.c
 @Component({
   selector: 'app-presupuesto-detalle',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, FormsModule],
   templateUrl: './presupuesto-detalle.component.html',
   styleUrls: ['./presupuesto-detalle.component.css']
 })
@@ -16,6 +17,8 @@ export class PresupuestoDetalleComponent implements OnInit {
   presupuesto: Presupuesto | null = null;
   isLoading = true;
   currentUser: any = null;
+  editingNotes = false;
+  tempNotes = '';
 
   // Opciones del menú lateral
   menuItems = [
@@ -94,7 +97,8 @@ export class PresupuestoDetalleComponent implements OnInit {
         ],
         logoEmpresa: '/assets/images/logos/dulces-barcelona.jpg',
         aceptaCorreosPublicitarios: true,
-        cantidadTotal: 250
+        cantidadTotal: 250,
+        apuntes: 'Cliente recurrente. Prefiere entregas los martes. Solicita facturación a final de mes.'
       },
       {
         id: 1002,
@@ -111,7 +115,8 @@ export class PresupuestoDetalleComponent implements OnInit {
         ],
         logoEmpresa: '/assets/images/logos/chocolates-madrid.jpg',
         aceptaCorreosPublicitarios: false,
-        cantidadTotal: 180
+        cantidadTotal: 180,
+        apuntes: 'Empresa premium. Requiere embalaje especial y certificado de calidad.'
       },
       {
         id: 1003,
@@ -128,7 +133,8 @@ export class PresupuestoDetalleComponent implements OnInit {
         ],
         logoEmpresa: '/assets/images/logos/caramelos-valencia.jpg',
         aceptaCorreosPublicitarios: true,
-        cantidadTotal: 320
+        cantidadTotal: 320,
+        apuntes: 'Nuevo cliente. Interesado en productos sin azúcar. Contactar antes del envío.'
       }
     ];
 
@@ -141,6 +147,7 @@ export class PresupuestoDetalleComponent implements OnInit {
       case 'aprobado': return 'estado-aprobado';
       case 'rechazado': return 'estado-rechazado';
       case 'pendiente': return 'estado-pendiente';
+      case 'enviado': return 'estado-enviado';
       default: return '';
     }
   }
@@ -150,6 +157,7 @@ export class PresupuestoDetalleComponent implements OnInit {
       case 'aprobado': return '✅';
       case 'rechazado': return '❌';
       case 'pendiente': return '⏳';
+      case 'enviado': return '📧';
       default: return '❓';
     }
   }
@@ -177,16 +185,12 @@ export class PresupuestoDetalleComponent implements OnInit {
     }
   }
 
-  cambiarEstado(nuevoEstado: 'pendiente' | 'aprobado' | 'rechazado'): void {
+  cambiarEstado(nuevoEstado: 'pendiente' | 'aprobado' | 'rechazado' | 'enviado'): void {
     if (this.presupuesto) {
       this.presupuesto.estado = nuevoEstado;
       console.log('Estado cambiado a:', nuevoEstado);
       // Implementar lógica de guardado
     }
-  }
-
-  imprimirPresupuesto(): void {
-    window.print();
   }
 
   exportarPDF(): void {
@@ -196,6 +200,26 @@ export class PresupuestoDetalleComponent implements OnInit {
 
   volverALista(): void {
     this.router.navigate(['/logoadmin/presupuestos']);
+  }
+
+  // Métodos para gestión de apuntes
+  editarApuntes(): void {
+    this.editingNotes = true;
+    this.tempNotes = this.presupuesto?.apuntes || '';
+  }
+
+  guardarApuntes(): void {
+    if (this.presupuesto) {
+      this.presupuesto.apuntes = this.tempNotes;
+      this.editingNotes = false;
+      console.log('Apuntes guardados:', this.tempNotes);
+      // Implementar lógica de guardado en el backend
+    }
+  }
+
+  cancelarEdicionApuntes(): void {
+    this.editingNotes = false;
+    this.tempNotes = '';
   }
 
   // Sidebar methods

@@ -90,9 +90,6 @@
             <button class="btn btn-primary" (click)="editarPresupuesto()">
               ✏️ Editar
             </button>
-            <button class="btn btn-outline" (click)="imprimirPresupuesto()">
-              🖨️ Imprimir
-            </button>
             <button class="btn btn-outline" (click)="exportarPDF()">
               📄 PDF
             </button>
@@ -190,6 +187,12 @@
                   ✅ Aprobar
                 </button>
                 <button 
+                  class="btn btn-info" 
+                  (click)="cambiarEstado('enviado')"
+                  [disabled]="presupuesto.estado === 'enviado'">
+                  📧 Enviado
+                </button>
+                <button 
                   class="btn btn-danger" 
                   (click)="cambiarEstado('rechazado')"
                   [disabled]="presupuesto.estado === 'rechazado'">
@@ -239,12 +242,59 @@
           <h2>📎 Resumen de Cantidades</h2>
           <div class="resumen-cantidades">
             <div class="resumen-item">
-              <span class="resumen-label">Cantidad Total de Productos:</span>
-              <span class="resumen-value">{{ presupuesto.cantidadTotal }} unidades</span>
+              <span class="resumen-label">Cantidad Total</span>
+              <span class="resumen-value">{{ presupuesto.cantidadTotal }}</span>
             </div>
             <div class="resumen-item">
-              <span class="resumen-label">Número de Productos Diferentes:</span>
-              <span class="resumen-value">{{ presupuesto.productos.length }} productos</span>
+              <span class="resumen-label">Productos Diferentes</span>
+              <span class="resumen-value">{{ presupuesto.productos.length }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sección de Apuntes -->
+        <div class="info-section">
+          <h2>📝 Apuntes y Notas</h2>
+          <div class="apuntes-container">
+            <!-- Modo visualización -->
+            <div *ngIf="!editingNotes" class="apuntes-display">
+              <div class="apuntes-content">
+                <p *ngIf="presupuesto.apuntes" class="apuntes-text">{{ presupuesto.apuntes }}</p>
+                <p *ngIf="!presupuesto.apuntes" class="apuntes-empty">
+                  <em>No hay apuntes aún. Haz clic en "Editar" para añadir información adicional.</em>
+                </p>
+              </div>
+              <div class="apuntes-actions">
+                <button class="btn btn-outline" (click)="editarApuntes()">
+                  ✏️ Editar Apuntes
+                </button>
+              </div>
+            </div>
+
+            <!-- Modo edición -->
+            <div *ngIf="editingNotes" class="apuntes-edit">
+              <div class="apuntes-form">
+                <label for="apuntes-textarea" class="form-label">Apuntes y notas adicionales:</label>
+                <textarea 
+                  id="apuntes-textarea"
+                  class="form-textarea" 
+                  [(ngModel)]="tempNotes" 
+                  placeholder="Escribe aquí cualquier información adicional sobre este presupuesto..."
+                  rows="5"
+                  maxlength="1000">
+                </textarea>
+                <div class="character-count">
+                  {{ tempNotes.length }}/1000 caracteres
+                </div>
+              </div>
+              <div class="apuntes-actions">
+                <button class="btn btn-success" (click)="guardarApuntes()">
+                  ✓ Guardar
+                </button>
+                <button class="btn btn-secondary" (click)="cancelarEdicionApuntes()">
+                  ✖ Cancelar
+                </button>
+              </div>
             </div>
           </div>
         </div>

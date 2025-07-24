@@ -1,0 +1,580 @@
+/* Estilos simplificados para garantizar visibilidad */
+
+/* Reset básico */
+* {
+  box-sizing: border-box;
+}
+
+/* Layout principal */
+.backoffice-layout {
+  display: flex;
+  min-height: 100vh;
+  background: #f8f9fa;
+}
+
+/* Sidebar básico */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 250px;
+  height: 100vh;
+  background: linear-gradient(180deg, #2c3e50 0%, #34495e 100%);
+  color: white;
+  z-index: 1000;
+  overflow-y: auto;
+}
+
+.sidebar-header {
+  padding: 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.logo-text {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #ecf0f1;
+}
+
+.sidebar-menu {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+}
+
+.menu-item {
+  margin: 0;
+}
+
+.menu-link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.875rem 1.5rem;
+  color: #bdc3c7;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.menu-link:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ecf0f1;
+}
+
+.menu-item.active .menu-link {
+  background: rgba(255, 255, 255, 0.15);
+  color: #ecf0f1;
+}
+
+.sidebar-footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 1rem;
+}
+
+.logout-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.75rem;
+  background: rgba(231, 76, 60, 0.2);
+  color: #ecf0f1;
+  border: 1px solid rgba(231, 76, 60, 0.3);
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* Contenido principal */
+.main-content {
+  flex: 1;
+  margin-left: 250px;
+  background: #f8f9fa;
+}
+
+/* Header */
+.main-header {
+  background: white;
+  padding: 1rem 2rem;
+  border-bottom: 1px solid #e9ecef;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.page-title {
+  margin: 0;
+  color: #2c3e50;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.sidebar-toggle {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+}
+
+.hamburger {
+  display: block;
+  width: 20px;
+  height: 2px;
+  background: #6c757d;
+  margin: 3px 0;
+}
+
+.welcome-text {
+  color: #6c757d;
+  font-size: 0.9rem;
+}
+
+/* Formulario */
+.form-container {
+  max-width: 1000px;
+  margin: 2rem auto;
+  padding: 0 2rem;
+}
+
+.categoria-form {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+/* Estado de publicación */
+.publication-status {
+  background: linear-gradient(135deg, #8B4513 0%, #D2691E 100%);
+  padding: 2rem;
+  color: white;
+}
+
+.status-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.status-info h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.3rem;
+  font-weight: 600;
+}
+
+.status-info p {
+  margin: 0;
+  opacity: 0.9;
+  font-size: 0.95rem;
+}
+
+.status-toggle {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* Toggle Switch */
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.3);
+  transition: 0.4s;
+  border-radius: 34px;
+}
+
+.toggle-slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: 0.4s;
+  border-radius: 50%;
+}
+
+input:checked + .toggle-slider {
+  background-color: rgba(255, 255, 255, 0.5);
+}
+
+input:checked + .toggle-slider:before {
+  transform: translateX(26px);
+}
+
+.toggle-label {
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+/* Tabs - SIMPLIFICADO */
+.tabs-container {
+  border-top: 1px solid #e9ecef;
+}
+
+.tabs-nav {
+  display: flex;
+  background: #f8f9fa;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.tab-btn {
+  flex: 1;
+  padding: 1rem 2rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #6c757d;
+  transition: all 0.3s ease;
+  border-bottom: 3px solid transparent;
+}
+
+.tab-btn:hover {
+  background: #e9ecef;
+  color: #495057;
+}
+
+.tab-btn.active {
+  background: white;
+  color: #8B4513;
+  border-bottom-color: #8B4513;
+}
+
+/* CONTENIDO DE TABS - CRÍTICO PARA VISIBILIDAD */
+.tab-content {
+  padding: 2rem;
+  background: white;
+  min-height: 500px;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.tab-pane {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  position: relative;
+  z-index: 1;
+}
+
+/* FORMULARIO - ESTILOS CRÍTICOS */
+.form-section {
+  margin-bottom: 2rem;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.form-section h2 {
+  color: #2c3e50;
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #8B4513;
+  display: block !important;
+  visibility: visible !important;
+}
+
+.section-description {
+  color: #6c757d;
+  margin-bottom: 1.5rem;
+  font-size: 0.95rem;
+  display: block !important;
+  visibility: visible !important;
+}
+
+.form-row {
+  display: flex !important;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+  width: 100%;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.form-group {
+  flex: 1;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  min-width: 0;
+}
+
+.form-label {
+  display: block !important;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #495057 !important;
+  font-size: 0.95rem;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.form-control {
+  width: 100% !important;
+  padding: 0.75rem !important;
+  border: 2px solid #e9ecef !important;
+  border-radius: 8px !important;
+  font-size: 1rem !important;
+  background: white !important;
+  display: block !important;
+  box-sizing: border-box !important;
+  color: #495057 !important;
+  line-height: 1.5 !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.form-control:focus {
+  outline: none !important;
+  border-color: #8B4513 !important;
+  box-shadow: 0 0 0 3px rgba(139, 69, 19, 0.1) !important;
+}
+
+/* Textarea específico */
+textarea.form-control {
+  resize: vertical;
+  min-height: 80px;
+}
+
+/* Input group */
+.input-group {
+  display: flex !important;
+  align-items: stretch;
+}
+
+.input-group-text {
+  background: #f8f9fa;
+  border: 2px solid #e9ecef;
+  border-right: none;
+  padding: 0.75rem;
+  font-size: 0.9rem;
+  color: #6c757d;
+  border-radius: 8px 0 0 8px;
+  white-space: nowrap;
+}
+
+.input-group .form-control {
+  border-radius: 0 8px 8px 0 !important;
+  border-left: none !important;
+}
+
+/* Checkbox personalizado */
+.checkbox-group {
+  margin-top: 0.5rem;
+}
+
+.checkbox-item {
+  display: flex !important;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 2px solid #e9ecef;
+  cursor: pointer;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.checkbox-item input[type="checkbox"] {
+  display: none;
+}
+
+.checkbox-custom {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #8B4513;
+  border-radius: 4px;
+  position: relative;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.checkbox-item input[type="checkbox"]:checked + .checkbox-custom {
+  background: #8B4513;
+}
+
+.checkbox-item input[type="checkbox"]:checked + .checkbox-custom::after {
+  content: '✓';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-weight: bold;
+  font-size: 12px;
+}
+
+.checkbox-content {
+  flex: 1;
+}
+
+.checkbox-title {
+  display: block !important;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 0.25rem;
+  visibility: visible !important;
+}
+
+.checkbox-description {
+  display: block !important;
+  font-size: 0.85rem;
+  color: #6c757d;
+  line-height: 1.4;
+  visibility: visible !important;
+}
+
+/* Mensajes de validación */
+.invalid-feedback {
+  display: block !important;
+  color: #dc3545 !important;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+  visibility: visible !important;
+}
+
+.form-text {
+  display: block !important;
+  margin-top: 0.25rem;
+  font-size: 0.875rem;
+  color: #6c757d !important;
+  visibility: visible !important;
+}
+
+.form-text.text-warning {
+  color: #ffc107 !important;
+}
+
+.form-text.text-danger {
+  color: #dc3545 !important;
+}
+
+/* Acciones del formulario */
+.form-actions {
+  padding: 2rem;
+  background: #f8f9fa;
+  border-top: 1px solid #e9ecef;
+  display: flex !important;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+.btn {
+  padding: 0.75rem 2rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #8B4513 0%, #D2691E 100%);
+  color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(139, 69, 19, 0.3);
+}
+
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background: #6c757d;
+  color: white;
+}
+
+.btn-secondary:hover {
+  background: #5a6268;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .main-content {
+    margin-left: 0;
+  }
+  
+  .sidebar-toggle {
+    display: block;
+  }
+  
+  .form-container {
+    margin: 1rem;
+    padding: 0;
+  }
+  
+  .tab-content {
+    padding: 1rem;
+  }
+  
+  .form-row {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .status-card {
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+  }
+  
+  .form-actions {
+    flex-direction: column;
+  }
+  
+  .form-actions .btn {
+    width: 100%;
+  }
+}

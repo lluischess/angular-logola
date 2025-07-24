@@ -79,7 +79,16 @@
   <!-- Categories Table -->
   <div *ngIf="!isLoading" class="table-container">
     <div class="table-header">
-      <h3>Lista de Categorías ({{ categorias.length }})</h3>
+      <div class="header-left">
+        <h3>Lista de Categorías</h3>
+        <span class="category-count">{{ categorias.length }} categorías</span>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-add-category" (click)="createCategoria()">
+          <span class="btn-icon">🏷️</span>
+          <span class="btn-text">Nueva Categoría</span>
+        </button>
+      </div>
     </div>
 
     <div class="table-responsive">
@@ -111,15 +120,23 @@
               </span>
             </td>
             <td class="acciones-column">
-              <button 
-                class="btn btn-toggle"
-                [class.btn-success]="!categoria.publicada"
-                [class.btn-warning]="categoria.publicada"
-                (click)="togglePublicacion(categoria)"
-                [title]="categoria.publicada ? 'Despublicar' : 'Publicar'">
-                <i class="fas" [ngClass]="categoria.publicada ? 'fa-eye-slash' : 'fa-eye'"></i>
-                {{ categoria.publicada ? 'Despublicar' : 'Publicar' }}
-              </button>
+              <div class="action-buttons">
+                <button 
+                  class="btn btn-edit"
+                  (click)="editCategoria(categoria.id)"
+                  title="Editar categoría">
+                  ✏️ Editar
+                </button>
+                <button 
+                  class="btn btn-toggle"
+                  [class.btn-success]="!categoria.publicada"
+                  [class.btn-warning]="categoria.publicada"
+                  (click)="togglePublicacion(categoria)"
+                  [title]="categoria.publicada ? 'Despublicar' : 'Publicar'">
+                  <i class="fas" [ngClass]="categoria.publicada ? 'fa-eye-slash' : 'fa-eye'"></i>
+                  {{ categoria.publicada ? 'Despublicar' : 'Publicar' }}
+                </button>
+              </div>
             </td>
           </tr>
         </tbody>

@@ -63,6 +63,12 @@
   border: 1px solid #f5c6cb;
 }
 
+.estado-enviado {
+  background-color: #d1ecf1;
+  color: #0c5460;
+  border: 1px solid #bee5eb;
+}
+
 /* Secciones de información */
 .info-section {
   margin-bottom: 30px;
@@ -389,6 +395,15 @@
   background-color: #c82333;
 }
 
+.btn-info {
+  background-color: #17a2b8;
+  color: white;
+}
+
+.btn-info:hover {
+  background-color: #138496;
+}
+
 .btn-outline {
   background-color: transparent;
   color: #8B4513;
@@ -467,6 +482,166 @@
   margin-bottom: 20px;
 }
 
+/* Sección de Apuntes */
+.apuntes-container {
+  padding: 20px;
+}
+
+.apuntes-display {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.apuntes-content {
+  min-height: 60px;
+}
+
+.apuntes-text {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+  border-left: 4px solid #8B4513;
+  margin: 0;
+  line-height: 1.6;
+  color: #495057;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.apuntes-empty {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+  border: 2px dashed #dee2e6;
+  margin: 0;
+  text-align: center;
+  color: #6c757d;
+}
+
+.apuntes-edit {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.apuntes-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.form-label {
+  font-weight: 600;
+  color: #495057;
+  margin-bottom: 8px;
+}
+
+.form-textarea {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #dee2e6;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  resize: vertical;
+  min-height: 120px;
+  transition: border-color 0.2s ease;
+}
+
+.form-textarea:focus {
+  outline: none;
+  border-color: #8B4513;
+  box-shadow: 0 0 0 3px rgba(139, 69, 19, 0.1);
+}
+
+.form-textarea::placeholder {
+  color: #adb5bd;
+  font-style: italic;
+}
+
+.character-count {
+  text-align: right;
+  font-size: 0.85rem;
+  color: #6c757d;
+  margin-top: 5px;
+}
+
+.apuntes-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-start;
+}
+
+/* Resumen de Cantidades - Diseño mejorado */
+.resumen-cantidades {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 25px;
+  padding: 25px;
+  margin: 30px 0;
+  background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+  border-radius: 15px;
+  border: 1px solid #e9ecef;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+.resumen-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 20px;
+  background: white;
+  border-radius: 12px;
+  border: 1px solid #e9ecef;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.resumen-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #8B4513, #D2691E);
+}
+
+.resumen-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+}
+
+.resumen-label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #6c757d;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.resumen-value {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.resumen-value::after {
+  content: attr(data-unit);
+  font-size: 0.7rem;
+  font-weight: 400;
+  color: #8B4513;
+  margin-left: 5px;
+  vertical-align: top;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .presupuesto-detalle {
@@ -526,6 +701,30 @@
   .estado-buttons .btn {
     flex: 1;
     min-width: 100px;
+  }
+
+  /* Apuntes responsive */
+  .apuntes-container {
+    padding: 15px;
+  }
+
+  .apuntes-text,
+  .apuntes-empty {
+    padding: 15px;
+  }
+
+  .form-textarea {
+    font-size: 0.9rem;
+    min-height: 100px;
+  }
+
+  .apuntes-actions {
+    flex-direction: column;
+  }
+
+  .apuntes-actions .btn {
+    width: 100%;
+    justify-content: center;
   }
 }
 

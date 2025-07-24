@@ -1,0 +1,290 @@
+<div class="backoffice-layout">
+  <!-- Sidebar -->
+  <aside class="sidebar" [class.collapsed]="sidebarOpen">
+    <!-- Header del sidebar -->
+    <div class="sidebar-header">
+      <div class="logo">
+        <h2>🍫 Logolate</h2>
+        <span>Admin Panel</span>
+      </div>
+    </div>
+
+    <!-- Navegación -->
+    <nav class="sidebar-nav">
+      <ul class="nav-list">
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/logoadmin/dashboard" title="Dashboard">
+            <span class="nav-icon">📊</span>
+            <span class="nav-label">Dashboard</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/logoadmin/presupuestos" title="Presupuestos">
+            <span class="nav-icon">💰</span>
+            <span class="nav-label">Presupuestos</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/logoadmin/productos" title="Productos">
+            <span class="nav-icon">🍫</span>
+            <span class="nav-label">Productos</span>
+          </a>
+        </li>
+        <li class="nav-item active">
+          <a class="nav-link" routerLink="/logoadmin/categorias" title="Categorías">
+            <span class="nav-icon">📂</span>
+            <span class="nav-label">Categorías</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/logoadmin/configuracion" title="Configuración">
+            <span class="nav-icon">⚙️</span>
+            <span class="nav-label">Configuración</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- Usuario y logout -->
+    <div class="sidebar-footer">
+      <div class="user-info">
+        <div class="user-avatar">👤</div>
+        <div class="user-details">
+          <span class="user-name">Admin</span>
+          <span class="user-role">Administrador</span>
+        </div>
+      </div>
+      <button class="logout-btn" (click)="logout()" title="Cerrar Sesión">
+        <span class="logout-icon">🚪</span>
+        <span class="logout-text">Salir</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <!-- Header -->
+    <header class="main-header">
+      <div class="header-left">
+        <button class="sidebar-toggle" (click)="toggleSidebar()">
+          <span class="hamburger"></span>
+          <span class="hamburger"></span>
+          <span class="hamburger"></span>
+        </button>
+        <h1 class="page-title">
+          {{ isEditMode ? 'Editar Categoría' : 'Nueva Categoría' }}
+        </h1>
+      </div>
+      <div class="header-right">
+        <span class="welcome-text">¡Bienvenido, Admin!</span>
+      </div>
+    </header>
+
+    <!-- Form Content -->
+    <div class="form-container">
+      <form [formGroup]="categoriaForm" (ngSubmit)="onSubmit()" class="categoria-form">
+        
+        <!-- Estado de Publicación (destacado en la parte superior) -->
+        <div class="publication-status">
+          <div class="status-card">
+            <div class="status-info">
+              <h3>Estado de Publicación</h3>
+              <p>Controla si esta categoría es visible en el sitio web</p>
+            </div>
+            <div class="status-toggle">
+              <label class="toggle-switch">
+                <input type="checkbox" formControlName="publicada">
+                <span class="toggle-slider"></span>
+              </label>
+              <span class="toggle-label">
+                {{ categoriaForm.get('publicada')?.value ? 'Publicada' : 'No Publicada' }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tabs Navigation -->
+        <div class="tabs-container">
+          <div class="tabs-nav">
+            <button 
+              type="button" 
+              class="tab-btn" 
+              [class.active]="activeTab === 'general'"
+              (click)="setActiveTab('general')">
+              📝 General
+            </button>
+            <button 
+              type="button" 
+              class="tab-btn" 
+              [class.active]="activeTab === 'seo'"
+              (click)="setActiveTab('seo')">
+              🔍 SEO
+            </button>
+          </div>
+
+          <!-- Tab Content -->
+          <div class="tab-content">
+            
+            <!-- General Tab -->
+            <div *ngIf="activeTab === 'general'" class="tab-pane">
+              <div class="form-section">
+                <h2>Información General</h2>
+                
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="nombre" class="form-label">
+                      Nombre de la Categoría *
+                    </label>
+                    <input 
+                      type="text" 
+                      id="nombre"
+                      class="form-control"
+                      formControlName="nombre"
+                      placeholder="Ej: Chocolates Premium"
+                      [class.is-invalid]="nombre?.invalid && nombre?.touched">
+                    <div *ngIf="nombre?.invalid && nombre?.touched" class="invalid-feedback">
+                      <div *ngIf="nombre?.errors?.['required']">El nombre es obligatorio</div>
+                      <div *ngIf="nombre?.errors?.['minlength']">El nombre debe tener al menos 2 caracteres</div>
+                      <div *ngIf="nombre?.errors?.['maxlength']">El nombre no puede exceder 100 caracteres</div>
+                    </div>
+                    <small class="form-text">{{ getCharacterCount('nombre') }}/100 caracteres</small>
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <div class="form-group">
+                    <label class="form-label">Configuración Especial</label>
+                    <div class="checkbox-group">
+                      <label class="checkbox-item">
+                        <input type="checkbox" formControlName="esNovedades">
+                        <span class="checkbox-custom"></span>
+                        <div class="checkbox-content">
+                          <span class="checkbox-title">Marcar como "Novedades"</span>
+                          <span class="checkbox-description">
+                            Esta categoría aparecerá como "Novedades" en la página principal (primeros 6 productos)
+                          </span>
+                        </div>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- SEO Tab -->
+            <div *ngIf="activeTab === 'seo'" class="tab-pane">
+              <div class="form-section">
+                <h2>Optimización SEO</h2>
+                <p class="section-description">
+                  Configura los metadatos para mejorar el posicionamiento en buscadores
+                </p>
+                
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="metaTitulo" class="form-label">
+                      Meta Título
+                    </label>
+                    <input 
+                      type="text" 
+                      id="metaTitulo"
+                      class="form-control"
+                      formControlName="metaTitulo"
+                      placeholder="Título que aparece en Google (se genera automáticamente)"
+                      [class.is-invalid]="metaTitulo?.invalid && metaTitulo?.touched">
+                    <div *ngIf="metaTitulo?.invalid && metaTitulo?.touched" class="invalid-feedback">
+                      <div *ngIf="metaTitulo?.errors?.['maxlength']">El meta título no puede exceder 60 caracteres</div>
+                    </div>
+                    <small class="form-text" 
+                           [class.text-warning]="getCharacterCount('metaTitulo') > 50"
+                           [class.text-danger]="getCharacterCount('metaTitulo') > 60">
+                      {{ getCharacterCount('metaTitulo') }}/60 caracteres (óptimo: 50-60)
+                    </small>
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="metaDescripcion" class="form-label">
+                      Meta Descripción
+                    </label>
+                    <textarea 
+                      id="metaDescripcion"
+                      class="form-control"
+                      formControlName="metaDescripcion"
+                      rows="3"
+                      placeholder="Descripción que aparece en los resultados de Google"
+                      [class.is-invalid]="metaDescripcion?.invalid && metaDescripcion?.touched"></textarea>
+                    <div *ngIf="metaDescripcion?.invalid && metaDescripcion?.touched" class="invalid-feedback">
+                      <div *ngIf="metaDescripcion?.errors?.['maxlength']">La meta descripción no puede exceder 160 caracteres</div>
+                    </div>
+                    <small class="form-text" 
+                           [class.text-warning]="getCharacterCount('metaDescripcion') > 140"
+                           [class.text-danger]="getCharacterCount('metaDescripcion') > 160">
+                      {{ getCharacterCount('metaDescripcion') }}/160 caracteres (óptimo: 140-160)
+                    </small>
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="palabrasClave" class="form-label">
+                      Palabras Clave
+                    </label>
+                    <input 
+                      type="text" 
+                      id="palabrasClave"
+                      class="form-control"
+                      formControlName="palabrasClave"
+                      placeholder="chocolate, premium, artesanal, cacao"
+                      [class.is-invalid]="palabrasClave?.invalid && palabrasClave?.touched">
+                    <div *ngIf="palabrasClave?.invalid && palabrasClave?.touched" class="invalid-feedback">
+                      <div *ngIf="palabrasClave?.errors?.['maxlength']">Las palabras clave no pueden exceder 200 caracteres</div>
+                    </div>
+                    <small class="form-text">
+                      {{ getCharacterCount('palabrasClave') }}/200 caracteres. Separa con comas.
+                    </small>
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="urlSlug" class="form-label">
+                      URL Slug *
+                    </label>
+                    <div class="input-group">
+                      <span class="input-group-text">logolate.com/categoria/</span>
+                      <input 
+                        type="text" 
+                        id="urlSlug"
+                        class="form-control"
+                        formControlName="urlSlug"
+                        placeholder="chocolates-premium"
+                        [class.is-invalid]="urlSlug?.invalid && urlSlug?.touched">
+                    </div>
+                    <div *ngIf="urlSlug?.invalid && urlSlug?.touched" class="invalid-feedback">
+                      <div *ngIf="urlSlug?.errors?.['required']">La URL slug es obligatoria</div>
+                      <div *ngIf="urlSlug?.errors?.['maxlength']">La URL slug no puede exceder 100 caracteres</div>
+                    </div>
+                    <small class="form-text">
+                      Se genera automáticamente del nombre. Solo letras, números y guiones.
+                    </small>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" (click)="onCancel()">
+            Cancelar
+          </button>
+          <button type="submit" class="btn btn-primary" [disabled]="categoriaForm.invalid">
+            {{ isEditMode ? 'Actualizar Categoría' : 'Crear Categoría' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

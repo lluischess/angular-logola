@@ -205,6 +205,20 @@ export class CategoriasComponent implements OnInit {
   }
 
   /**
+   * Navegar a crear nueva categoría
+   */
+  createCategoria(): void {
+    this.router.navigate(['/logoadmin/categorias/nueva']);
+  }
+
+  /**
+   * Navegar a editar categoría
+   */
+  editCategoria(id: number): void {
+    this.router.navigate(['/logoadmin/categorias/editar', id]);
+  }
+
+  /**
    * Cerrar sesión
    */
   logout(): void {
