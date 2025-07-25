@@ -92,6 +92,7 @@ export class CartComponent implements AfterViewInit {
       name: ['', Validators.required],
       phone: ['', [Validators.required, Validators.pattern(/^[0-9\s]+$/)]],  // Solo números y espacios
       company: [''],  // Campo opcional
+      address: [''],  // Campo opcional para dirección
       logo: [null],  // Campo opcional para archivo de logotipo
       acceptTerms: [false, Validators.requiredTrue],
       receiveOffers: [false]  // Checkbox opcional para ofertas
@@ -234,6 +235,7 @@ export class CartComponent implements AfterViewInit {
     formData.append('name', this.termsForm.get('name')?.value?.trim());
     formData.append('phone', this.termsForm.get('phone')?.value?.trim());
     formData.append('company', this.termsForm.get('company')?.value?.trim() || '');
+    formData.append('address', this.termsForm.get('address')?.value?.trim() || '');
     formData.append('receiveOffers', this.termsForm.get('receiveOffers')?.value);
     formData.append('recaptchaResponse', this.recaptchaResponse);
     
@@ -289,6 +291,7 @@ export class CartComponent implements AfterViewInit {
       name: '',
       phone: '',
       company: '',
+      address: '',
       logo: null,
       acceptTerms: false,
       receiveOffers: false

@@ -18,6 +18,23 @@
   justify-content: center;
 }
 
+/* Estilos específicos para móvil */
+@media (max-width: 768px) {
+  .carousel-slide:nth-child(2) {
+    align-items: flex-start;
+    padding-top: 2rem;
+  }
+  
+  .carousel-slide:nth-child(2) .container-lg {
+    padding-top: 1rem;
+  }
+  
+  .carousel-slide:nth-child(2) .col-lg-6 {
+    padding-top: 1rem !important;
+    margin-top: 1rem !important;
+  }
+}
+
 .carousel-control {
   position: absolute;
   top: 50%;
