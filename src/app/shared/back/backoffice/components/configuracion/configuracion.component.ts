@@ -42,6 +42,20 @@ interface ConfiguracionData {
       colorTitulos: string;
     }>;
   };
+  imagenes: {
+    galeria: Array<{
+      id: number;
+      nombre: string;
+      archivo: string;
+      url: string;
+      tamano: number;
+      tipo: string;
+      fechaSubida: string;
+      categoria: string;
+      descripcion: string;
+    }>;
+    categorias: string[];
+  };
 }
 
 @Component({
@@ -62,7 +76,8 @@ export class ConfiguracionComponent implements OnInit {
     { id: 'seo', label: 'SEO', icon: '🔍' },
     { id: 'footer', label: 'Footer', icon: '📄' },
     { id: 'general', label: 'General', icon: '⚙️' },
-    { id: 'banner', label: 'Banner', icon: '🎨' }
+    { id: 'banner', label: 'Banner', icon: '🎨' },
+    { id: 'imagenes', label: 'Imágenes', icon: '🖼️' }
   ];
 
   // Formularios para cada pestaña
@@ -74,6 +89,8 @@ export class ConfiguracionComponent implements OnInit {
   // Estado de carga
   isLoading = true;
   isSaving = false;
+  sidebarOpen = false;
+  recentUploads: Array<{name: string, uploadDate: Date}> = [];
 
   // Opciones del menú lateral
   menuItems = [
@@ -160,6 +177,33 @@ export class ConfiguracionComponent implements OnInit {
           colorTitulos: '#FFFFFF'
         }
       ]
+    },
+    imagenes: {
+      galeria: [
+        {
+          id: 1,
+          nombre: 'Logo Principal',
+          archivo: 'logo-principal.png',
+          url: '/assets/images/logo-principal.png',
+          tamano: 45678,
+          tipo: 'image/png',
+          fechaSubida: '2024-01-15T10:30:00Z',
+          categoria: 'logos',
+          descripcion: 'Logo principal de la empresa'
+        },
+        {
+          id: 2,
+          nombre: 'Banner Inicio',
+          archivo: 'banner-inicio.jpg',
+          url: '/assets/images/banner-inicio.jpg',
+          tamano: 123456,
+          tipo: 'image/jpeg',
+          fechaSubida: '2024-01-20T14:15:00Z',
+          categoria: 'banners',
+          descripcion: 'Banner principal de la página de inicio'
+        }
+      ],
+      categorias: ['logos', 'banners', 'productos', 'iconos', 'fondos']
     }
   };
 
@@ -273,6 +317,10 @@ export class ConfiguracionComponent implements OnInit {
         formToSave = this.bannerForm;
         dataSection = 'Banner';
         break;
+      case 'imagenes':
+        // Para imágenes no usamos formulario tradicional, solo guardamos
+        this.saveImagenes();
+        return;
       default:
         return;
     }
@@ -321,6 +369,185 @@ export class ConfiguracionComponent implements OnInit {
       this.configuracionData.banner.banners = this.configuracionData.banner.banners
         .filter(banner => banner.id !== bannerId);
     }
+  }
+
+  /**
+   * Guardar configuración de imágenes
+   */
+  saveImagenes(): void {
+    this.isSaving = true;
+    
+    // Simular guardado
+    setTimeout(() => {
+      console.log('Guardando configuración de Imágenes:', this.configuracionData.imagenes);
+      this.isSaving = false;
+      
+      // Mostrar mensaje de éxito
+      alert('Configuración de Imágenes guardada exitosamente');
+    }, 1000);
+  }
+
+  /**
+   * Subir nueva imagen (versión compleja - mantenida para compatibilidad)
+   */
+  uploadImage(event: any): void {
+    const file = event.target.files[0];
+    if (file) {
+      // Validar tipo de archivo
+      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+      if (!allowedTypes.includes(file.type)) {
+        alert('Tipo de archivo no permitido. Solo se permiten imágenes (JPEG, PNG, GIF, WebP)');
+        return;
+      }
+
+      // Validar tamano (máximo 5MB)
+      const maxSize = 5 * 1024 * 1024; // 5MB
+      if (file.size > maxSize) {
+        alert('El archivo es demasiado grande. El tamano máximo permitido es 5MB.');
+        return;
+      }
+
+      // Crear nueva imagen
+      const newImage = {
+        id: this.configuracionData.imagenes.galeria.length + 1,
+        nombre: file.name.split('.')[0],
+        archivo: file.name,
+        url: URL.createObjectURL(file), // En producción sería la URL del servidor
+        tamano: file.size,
+        tipo: file.type,
+        fechaSubida: new Date().toISOString(),
+        categoria: 'sin-categoria',
+        descripcion: ''
+      };
+
+      this.configuracionData.imagenes.galeria.push(newImage);
+      
+      // Limpiar input
+      event.target.value = '';
+      
+      console.log('Imagen subida:', newImage);
+    }
+  }
+
+  /**
+   * Subir imágenes de forma simple a /assets/images/
+   */
+  uploadSimpleImage(event: any): void {
+    const files = event.target.files;
+    if (files && files.length > 0) {
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        
+        // Validar tipo de archivo
+        const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+        if (!allowedTypes.includes(file.type)) {
+          alert(`Archivo ${file.name}: Tipo no permitido. Solo se permiten imágenes (JPEG, PNG, GIF, WebP)`);
+          continue;
+        }
+
+        // Validar tamaño (máximo 5MB)
+        const maxSize = 5 * 1024 * 1024; // 5MB
+        if (file.size > maxSize) {
+          alert(`Archivo ${file.name}: Demasiado grande. El tamaño máximo permitido es 5MB.`);
+          continue;
+        }
+
+        // Simular subida exitosa y agregar a la lista de recientes
+        const uploadInfo = {
+          name: file.name,
+          uploadDate: new Date()
+        };
+        
+        this.recentUploads.unshift(uploadInfo);
+        
+        // Mantener solo las últimas 10 subidas
+        if (this.recentUploads.length > 10) {
+          this.recentUploads = this.recentUploads.slice(0, 10);
+        }
+        
+        console.log(`Imagen ${file.name} subida exitosamente a /assets/images/`);
+      }
+      
+      // Limpiar input
+      event.target.value = '';
+      
+      // Mostrar mensaje de éxito
+      const fileCount = files.length;
+      const message = fileCount === 1 
+        ? 'Imagen subida exitosamente a /assets/images/' 
+        : `${fileCount} imágenes subidas exitosamente a /assets/images/`;
+      
+      alert(message);
+    }
+  }
+
+  /**
+   * Eliminar imagen
+   */
+  removeImage(imageId: number): void {
+    if (confirm('¿Está seguro de que desea eliminar esta imagen?')) {
+      this.configuracionData.imagenes.galeria = this.configuracionData.imagenes.galeria
+        .filter(image => image.id !== imageId);
+    }
+  }
+
+  /**
+   * Actualizar categoría de imagen
+   */
+  updateImageCategory(imageId: number, categoria: string): void {
+    const image = this.configuracionData.imagenes.galeria.find(img => img.id === imageId);
+    if (image) {
+      image.categoria = categoria;
+    }
+  }
+
+  /**
+   * Actualizar descripción de imagen
+   */
+  updateImageDescription(imageId: number, descripcion: string): void {
+    const image = this.configuracionData.imagenes.galeria.find(img => img.id === imageId);
+    if (image) {
+      image.descripcion = descripcion;
+    }
+  }
+
+  /**
+   * Formatear tamano de archivo
+   */
+  formatFileSize(bytes: number): string {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  }
+
+  /**
+   * Copiar texto al portapapeles
+   */
+  copyToClipboard(text: string): void {
+    navigator.clipboard.writeText(text).then(() => {
+      console.log('URL copiada al portapapeles');
+      // Aquí podrías mostrar una notificación de éxito
+    }).catch(err => {
+      console.error('Error al copiar al portapapeles:', err);
+    });
+  }
+
+  /**
+   * Manejar cambio de categoría de imagen
+   */
+  onImageCategoryChange(imageId: number, event: Event): void {
+    const target = event.target as HTMLSelectElement;
+    this.updateImageCategory(imageId, target.value);
+  }
+
+  /**
+   * Manejar cambio de descripción de imagen
+   */
+  onImageDescriptionChange(imageId: number, event: Event): void {
+    const target = event.target as HTMLTextAreaElement;
+    this.updateImageDescription(imageId, target.value);
   }
 
   /**

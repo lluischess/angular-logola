@@ -446,6 +446,56 @@
                 </div>
               </div>
             </div>
+
+            <!-- Pestaña Imágenes -->
+            <div *ngIf="activeTab === 'imagenes'" class="tab-panel">
+              <div class="panel-header">
+                <h2>🖼️ Subir Imágenes</h2>
+                <p>Sube imágenes a la carpeta /assets/images/ de tu sitio web</p>
+              </div>
+
+              <div class="simple-upload-section">
+                <div class="upload-area">
+                  <input 
+                    type="file" 
+                    id="imageUpload" 
+                    accept="image/*" 
+                    multiple
+                    (change)="uploadSimpleImage($event)"
+                    style="display: none;">
+                  
+                  <div class="upload-box" onclick="document.getElementById('imageUpload').click()">
+                    <div class="upload-icon">📤</div>
+                    <h3>Subir Imágenes</h3>
+                    <p>Haz clic aquí o arrastra las imágenes</p>
+                    <button type="button" class="btn btn-primary btn-lg">
+                      Seleccionar Imágenes
+                    </button>
+                  </div>
+                  
+                  <div class="upload-info">
+                    <small class="text-muted">
+                      • Formatos permitidos: JPEG, PNG, GIF, WebP<br>
+                      • Tamaño máximo por imagen: 5MB<br>
+                      • Las imágenes se guardarán en /assets/images/
+                    </small>
+                  </div>
+                </div>
+
+                <!-- Lista de imágenes subidas recientemente -->
+                <div class="recent-uploads" *ngIf="recentUploads.length > 0">
+                  <h4>Imágenes subidas recientemente:</h4>
+                  <div class="recent-list">
+                    <div *ngFor="let upload of recentUploads" class="recent-item">
+                      <span class="file-icon">🖼️</span>
+                      <span class="file-name">{{ upload.name }}</span>
+                      <span class="file-status success">✅ Subida exitosa</span>
+                      <small class="file-path">/assets/images/{{ upload.name }}</small>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
 
           <!-- Botones de acción -->
