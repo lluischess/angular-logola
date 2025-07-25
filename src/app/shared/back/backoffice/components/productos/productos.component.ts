@@ -41,6 +41,10 @@ export class ProductosComponent implements OnInit {
   sortColumn: string = 'categoria';
   sortDirection: 'asc' | 'desc' = 'asc';
   
+  // Arrow buttons for reordering
+  reorderingProduct: Producto | null = null;
+  showReorderFeedback: boolean = false;
+  
   // Sidebar
   sidebarCollapsed = false;
   currentUser: any = null;
@@ -444,6 +448,100 @@ export class ProductosComponent implements OnInit {
 
   trackByFn(index: number, item: Producto): number {
     return item.id;
+  }
+
+  // Arrow button methods for reordering
+  moveProductUp(producto: Producto): void {
+    const categoryProducts = this.productos.filter(p => p.categoria === producto.categoria);
+    categoryProducts.sort((a, b) => a.ordenCategoria - b.ordenCategoria);
+    
+    const currentIndex = categoryProducts.findIndex(p => p.id === producto.id);
+    
+    // Can't move up if already at the top
+    if (currentIndex <= 0) {
+      this.showTemporaryMessage(`"${producto.nombre}" ya está en la primera posición de ${producto.categoria}`, 'warning');
+      return;
+    }
+    
+    // Swap with previous product
+    const previousProduct = categoryProducts[currentIndex - 1];
+    const tempOrder = producto.ordenCategoria;
+    producto.ordenCategoria = previousProduct.ordenCategoria;
+    previousProduct.ordenCategoria = tempOrder;
+    
+    this.updateAfterReorder(producto, 'subió');
+  }
+
+  moveProductDown(producto: Producto): void {
+    const categoryProducts = this.productos.filter(p => p.categoria === producto.categoria);
+    categoryProducts.sort((a, b) => a.ordenCategoria - b.ordenCategoria);
+    
+    const currentIndex = categoryProducts.findIndex(p => p.id === producto.id);
+    
+    // Can't move down if already at the bottom
+    if (currentIndex >= categoryProducts.length - 1) {
+      this.showTemporaryMessage(`"${producto.nombre}" ya está en la última posición de ${producto.categoria}`, 'warning');
+      return;
+    }
+    
+    // Swap with next product
+    const nextProduct = categoryProducts[currentIndex + 1];
+    const tempOrder = producto.ordenCategoria;
+    producto.ordenCategoria = nextProduct.ordenCategoria;
+    nextProduct.ordenCategoria = tempOrder;
+    
+    this.updateAfterReorder(producto, 'bajó');
+  }
+
+  private updateAfterReorder(producto: Producto, action: string): void {
+    // Set reordering product for visual feedback
+    this.reorderingProduct = producto;
+    this.showReorderFeedback = true;
+    
+    // Re-sort and filter
+    this.sortData();
+    this.applyFilters();
+    
+    // Show success message
+    this.showTemporaryMessage(
+      `"${producto.nombre}" ${action} a la posición ${producto.ordenCategoria} en ${producto.categoria}`, 
+      'success'
+    );
+    
+    // Reset feedback after animation
+    setTimeout(() => {
+      this.reorderingProduct = null;
+      this.showReorderFeedback = false;
+    }, 1500);
+  }
+
+  private showTemporaryMessage(message: string, type: 'success' | 'warning'): void {
+    console.log(`[${type.toUpperCase()}] ${message}`);
+    // Here you could implement a toast notification system if desired
+  }
+
+  canMoveUp(producto: Producto): boolean {
+    const categoryProducts = this.productos.filter(p => p.categoria === producto.categoria);
+    categoryProducts.sort((a, b) => a.ordenCategoria - b.ordenCategoria);
+    const currentIndex = categoryProducts.findIndex(p => p.id === producto.id);
+    return currentIndex > 0;
+  }
+
+  canMoveDown(producto: Producto): boolean {
+    const categoryProducts = this.productos.filter(p => p.categoria === producto.categoria);
+    categoryProducts.sort((a, b) => a.ordenCategoria - b.ordenCategoria);
+    const currentIndex = categoryProducts.findIndex(p => p.id === producto.id);
+    return currentIndex < categoryProducts.length - 1;
+  }
+
+  getRowClass(producto: Producto): string {
+    let classes = 'table-row';
+    
+    if (this.reorderingProduct && this.reorderingProduct.id === producto.id) {
+      classes += ' reordering-highlight';
+    }
+    
+    return classes;
   }
 
   // Sidebar methods

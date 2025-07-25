@@ -652,7 +652,296 @@
   font-size: 1rem;
 }
 
-/* Responsive */
+/* ===== ARROW BUTTONS REORDER STYLES ===== */
+
+/* Info banners */
+.reorder-info-banner {
+  background: linear-gradient(135deg, #e8f5e8 0%, #c8e6c9 100%);
+  border: 1px solid #4caf50;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  animation: fadeInSlide 0.3s ease-out;
+}
+
+.info-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: center;
+}
+
+.info-icon {
+  font-size: 20px;
+}
+
+.info-text {
+  color: #2e7d32;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.reorder-active-banner {
+  background: linear-gradient(135deg, #fff3e0 0%, #ffcc80 100%);
+  border: 2px solid #ff9800;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  animation: pulse 2s infinite;
+}
+
+.reorder-active-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: center;
+}
+
+.reorder-icon {
+  font-size: 20px;
+  animation: sparkle 1.5s ease-in-out infinite;
+}
+
+.reorder-text {
+  color: #e65100;
+  font-weight: 600;
+  font-size: 14px;
+  text-align: center;
+}
+
+@keyframes fadeInSlide {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 2px 8px rgba(255, 152, 0, 0.2);
+  }
+  50% {
+    transform: scale(1.02);
+    box-shadow: 0 4px 16px rgba(255, 152, 0, 0.4);
+  }
+}
+
+@keyframes sparkle {
+  0%, 100% { transform: scale(1) rotate(0deg); }
+  25% { transform: scale(1.1) rotate(5deg); }
+  75% { transform: scale(1.1) rotate(-5deg); }
+}
+
+/* Table rows */
+.table-row {
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.table-row:hover {
+  background-color: #f8fafc;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Reordering highlight */
+.table-row.reordering-highlight {
+  background: linear-gradient(135deg, #e8f5e8 0%, #c8e6c9 100%);
+  border: 2px solid #4caf50;
+  transform: scale(1.02);
+  box-shadow: 0 8px 24px rgba(76, 175, 80, 0.3);
+  animation: reorderPulse 1.5s ease-in-out;
+}
+
+@keyframes reorderPulse {
+  0%, 100% {
+    transform: scale(1.02);
+    box-shadow: 0 8px 24px rgba(76, 175, 80, 0.3);
+  }
+  50% {
+    transform: scale(1.04);
+    box-shadow: 0 12px 32px rgba(76, 175, 80, 0.4);
+  }
+}
+
+/* Order container */
+.orden-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: center;
+  padding: 4px;
+}
+
+/* Arrow buttons */
+.arrow-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.arrow-btn {
+  background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%);
+  border: none;
+  color: white;
+  width: 24px;
+  height: 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(33, 150, 243, 0.3);
+}
+
+.arrow-btn:hover:not(.disabled) {
+  background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
+  transform: scale(1.1);
+  box-shadow: 0 4px 8px rgba(33, 150, 243, 0.4);
+}
+
+.arrow-btn:active:not(.disabled) {
+  transform: scale(0.95);
+  box-shadow: 0 1px 2px rgba(33, 150, 243, 0.5);
+}
+
+.arrow-btn.disabled {
+  background: #e0e0e0;
+  color: #9e9e9e;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.arrow-up {
+  border-radius: 4px 4px 2px 2px;
+}
+
+.arrow-down {
+  border-radius: 2px 2px 4px 4px;
+}
+
+/* Order number styling */
+.orden-number {
+  font-weight: 600;
+  color: #1e293b;
+  background: #f1f5f9;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 14px;
+  min-width: 32px;
+  text-align: center;
+  display: inline-block;
+  border: 2px solid #e2e8f0;
+  transition: all 0.2s ease;
+}
+
+.reordering-highlight .orden-number {
+  background: #4caf50;
+  color: white;
+  border-color: #2e7d32;
+  animation: numberPulse 1.5s ease-in-out;
+}
+
+@keyframes numberPulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+/* Category-based button colors */
+.table-row[data-category="chocolates"] .arrow-btn:not(.disabled) {
+  background: linear-gradient(135deg, #8b4513 0%, #654321 100%);
+}
+
+.table-row[data-category="chocolates"] .arrow-btn:hover:not(.disabled) {
+  background: linear-gradient(135deg, #654321 0%, #4a2c17 100%);
+}
+
+.table-row[data-category="caramelos"] .arrow-btn:not(.disabled) {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+}
+
+.table-row[data-category="caramelos"] .arrow-btn:hover:not(.disabled) {
+  background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+}
+
+.table-row[data-category="novedades"] .arrow-btn:not(.disabled) {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+}
+
+.table-row[data-category="novedades"] .arrow-btn:hover:not(.disabled) {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+}
+
+.table-row[data-category="navidad"] .arrow-btn:not(.disabled) {
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+}
+
+.table-row[data-category="navidad"] .arrow-btn:hover:not(.disabled) {
+  background: linear-gradient(135deg, #b91c1c 0%, #991b1b 100%);
+}
+
+.table-row[data-category="galletas"] .arrow-btn:not(.disabled) {
+  background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+}
+
+.table-row[data-category="galletas"] .arrow-btn:hover:not(.disabled) {
+  background: linear-gradient(135deg, #6d28d9 0%, #5b21b6 100%);
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .arrow-btn {
+    width: 20px;
+    height: 18px;
+    font-size: 10px;
+  }
+  
+  .orden-container {
+    gap: 8px;
+  }
+  
+  .orden-number {
+    padding: 4px 8px;
+    font-size: 12px;
+    min-width: 28px;
+  }
+}
+
+@media (max-width: 768px) {
+  .arrow-buttons {
+    gap: 1px;
+  }
+  
+  .arrow-btn {
+    width: 18px;
+    height: 16px;
+    font-size: 9px;
+  }
+  
+  .orden-container {
+    gap: 6px;
+  }
+  
+  .orden-number {
+    padding: 3px 6px;
+    font-size: 11px;
+    min-width: 24px;
+  }
+}
+
+/* Responsive Design */
 @media (max-width: 768px) {
   .dashboard-container {
     position: relative;

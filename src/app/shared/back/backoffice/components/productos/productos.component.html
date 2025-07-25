@@ -152,6 +152,25 @@
     </div>
   </div>
 
+  <!-- Información sobre botones de flecha -->
+  <div class="reorder-info-banner" *ngIf="!showReorderFeedback">
+    <div class="info-content">
+      <span class="info-icon">⬆️⬇️</span>
+      <span class="info-text">Usa los botones ↑ ↓ en la columna "Orden" para reordenar productos dentro de la misma categoría</span>
+    </div>
+  </div>
+
+  <!-- Información durante el reordenamiento -->
+  <div class="reorder-active-banner" *ngIf="showReorderFeedback && reorderingProduct">
+    <div class="reorder-active-content">
+      <span class="reorder-icon">✨</span>
+      <span class="reorder-text">
+        Reordenando "{{ reorderingProduct.nombre }}" en {{ reorderingProduct.categoria | titlecase }}
+        - Nueva posición: {{ reorderingProduct.ordenCategoria }}
+      </span>
+    </div>
+  </div>
+
   <!-- Tabla de productos -->
   <div class="table-container">
     <div class="table-wrapper">
@@ -184,8 +203,9 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let producto of filteredProductos; trackBy: trackByFn" 
-              class="table-row">
+          <tr *ngFor="let producto of filteredProductos; let i = index; trackBy: trackByFn" 
+              [class]="getRowClass(producto)"
+              [attr.data-category]="producto.categoria">
             <td class="id-cell">
               <span class="id-badge">#{{ producto.id }}</span>
             </td>
@@ -220,7 +240,27 @@
               </span>
             </td>
             <td class="orden-cell">
-              <span class="orden-number">{{ producto.ordenCategoria }}</span>
+              <div class="orden-container">
+                <div class="arrow-buttons">
+                  <button 
+                    class="arrow-btn arrow-up"
+                    [class.disabled]="!canMoveUp(producto)"
+                    [disabled]="!canMoveUp(producto)"
+                    (click)="moveProductUp(producto)"
+                    title="Subir posición">
+                    ↑
+                  </button>
+                  <button 
+                    class="arrow-btn arrow-down"
+                    [class.disabled]="!canMoveDown(producto)"
+                    [disabled]="!canMoveDown(producto)"
+                    (click)="moveProductDown(producto)"
+                    title="Bajar posición">
+                    ↓
+                  </button>
+                </div>
+                <span class="orden-number">{{ producto.ordenCategoria }}</span>
+              </div>
             </td>
             <td class="acciones-cell">
               <div class="acciones-group">
