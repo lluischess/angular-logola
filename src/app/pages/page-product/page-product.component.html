@@ -2,10 +2,22 @@
   <div class="container-lg">
     <div class="row gy-4">
 
-      <!-- Imagen del producto (Responsive: Se muestra arriba en móvil) -->
+      <!-- Imágenes del producto (Responsive: Se muestra arriba en móvil) -->
       <div class="col-12 col-lg-6">
-        <div class="product-image text-center">
-          <img [src]="producto.imagen" alt="{{ producto.nombre }}" class="img-fluid rounded">
+        <div class="product-images">
+          <!-- Imagen principal -->
+          <div class="main-image mb-3">
+            <img [src]="producto.imagen" alt="{{ producto.nombre }}" class="img-fluid rounded w-100" style="max-height: 400px; object-fit: cover; cursor: pointer;object-fit: contain;" (click)="openImageModal(producto.imagen, producto.nombre)">
+          </div>
+          <!-- Imágenes secundarias -->
+          <div class="secondary-images d-flex gap-2">
+            <div class="secondary-image flex-fill">
+              <img [src]="producto.imagen" alt="{{ producto.nombre }} - Vista 2" class="img-fluid rounded w-100 secondary-img" (click)="openImageModal(producto.imagen, producto.nombre + ' - Vista 2')">
+            </div>
+            <div class="secondary-image flex-fill">
+              <img [src]="producto.imagen" alt="{{ producto.nombre }} - Vista 3" class="img-fluid rounded w-100 secondary-img" (click)="openImageModal(producto.imagen, producto.nombre + ' - Vista 3')">
+            </div>
+          </div>
         </div>
       </div>
 
@@ -110,3 +122,17 @@
     </div>
   </div>
 </section>
+
+<!-- Modal para mostrar imagen en grande -->
+<div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header border-0 pb-0">
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body text-center p-0">
+        <img [src]="modalImageSrc" [alt]="modalImageTitle" class="img-fluid w-100" style="max-height: 70vh; object-fit: contain;">
+      </div>
+    </div>
+  </div>
+</div>

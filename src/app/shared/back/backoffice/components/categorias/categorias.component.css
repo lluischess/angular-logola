@@ -188,7 +188,10 @@
 }
 
 .header-left {
-  display: inline-block;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
 }
 
 .sidebar-toggle {
@@ -199,9 +202,6 @@
   cursor: pointer;
   padding: 8px;
   transition: all 0.2s ease;
-  display: inline-block;
-  vertical-align: middle;
-  margin-right: 16px;
 }
 
 .sidebar-toggle:hover {
@@ -213,8 +213,6 @@
   font-weight: 600;
   color: #1e293b;
   margin: 0;
-  display: inline-block;
-  vertical-align: middle;
 }
 
 .header-right {
@@ -443,8 +441,9 @@
 
 .header-left {
   display: flex;
-  flex-direction: column;
-  gap: 5px;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
 }
 
 .header-left h3 {

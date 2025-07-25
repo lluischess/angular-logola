@@ -25,6 +25,10 @@ export class PageProductComponent implements OnInit, AfterViewInit {
   @ViewChild('swiper') swiper!: ElementRef;
   public producto: any;
   public relatedProducts: any[] = [];
+  
+  // Propiedades para el modal de imagen
+  public modalImageSrc: string = '';
+  public modalImageTitle: string = '';
 
   productos = [
     {
@@ -148,8 +152,15 @@ export class PageProductComponent implements OnInit, AfterViewInit {
   ) {}
 
   ngOnInit(): void {
-    const productId = this.route.snapshot.paramMap.get('id');
-    this.producto = this.productos.find(p => p.id === +productId!);
+    // Suscribirse a los cambios de parámetros de ruta
+    this.route.paramMap.subscribe(params => {
+      const productId = params.get('id');
+      this.loadProduct(+productId!);
+    });
+  }
+
+  private loadProduct(productId: number): void {
+    this.producto = this.productos.find(p => p.id === productId);
 
     if (!this.producto) {
       console.error('Producto no encontrado');
@@ -234,6 +245,18 @@ export class PageProductComponent implements OnInit, AfterViewInit {
       }, { once: true });
       
       offcanvas.show();
+    }
+  }
+
+  // Método para abrir el modal de imagen
+  openImageModal(imageSrc: string, imageTitle: string) {
+    this.modalImageSrc = imageSrc;
+    this.modalImageTitle = imageTitle;
+    
+    const modalElement = document.getElementById('imageModal');
+    if (modalElement) {
+      const modal = new bootstrap.Modal(modalElement);
+      modal.show();
     }
   }
 }

@@ -4,3 +4,110 @@
   margin-top: 50px;
   box-shadow: 0px 0px 22px rgba(0, 0, 0, 0);
 }
+
+/* Estilos para las imágenes del producto */
+.product-images {
+  position: relative;
+}
+
+.main-image {
+  overflow: hidden;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.main-image:hover {
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
+.main-image img {
+  transition: transform 0.3s ease;
+}
+
+.main-image:hover img {
+  transform: scale(1.05);
+}
+
+.secondary-images {
+  gap: 12px;
+}
+
+.secondary-image {
+  overflow: hidden;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.secondary-image:hover {
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  transform: translateY(-1px);
+}
+
+.secondary-image img {
+  transition: all 0.3s ease;
+}
+
+.secondary-image:hover img {
+  transform: scale(1.1);
+  filter: brightness(1.1);
+}
+
+/* Estilos específicos para las imágenes secundarias */
+.secondary-img {
+  height: 120px;
+  object-fit: contain;
+  cursor: pointer;
+  background-color: #ffffff;
+  padding: 8px;
+}
+
+.secondary-img:hover {
+  background-color: #e9ecef;
+}
+
+.secondary-image::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0);
+  transition: background 0.3s ease;
+  pointer-events: none;
+}
+
+.secondary-image:hover::after {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive para móviles */
+@media (max-width: 768px) {
+  .main-image img {
+    max-height: 300px !important;
+  }
+
+  .secondary-img {
+    height: 80px !important;
+    padding: 4px;
+  }
+
+  .secondary-images {
+    gap: 6px;
+  }
+}
+
+@media (max-width: 480px) {
+  .secondary-img {
+    height: 70px !important;
+    padding: 3px;
+  }
+
+  .secondary-images {
+    gap: 4px;
+  }
+}
