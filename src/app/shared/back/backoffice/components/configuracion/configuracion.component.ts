@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
-import { SidebarService } from '../../../services/sidebar.service';
+import { BackofficeLayoutComponent } from '../backoffice-layout/backoffice-layout.component';
 
 interface ConfiguracionData {
   seo: {
@@ -61,15 +61,11 @@ interface ConfiguracionData {
 @Component({
   selector: 'app-configuracion',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormsModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, BackofficeLayoutComponent],
   templateUrl: './configuracion.component.html',
   styleUrl: './configuracion.component.css'
 })
 export class ConfiguracionComponent implements OnInit {
-  // Estado del menú lateral
-  sidebarCollapsed = false;
-  currentUser: any = null;
-
   // Pestañas activas
   activeTab = 'seo';
   tabs = [
@@ -91,40 +87,6 @@ export class ConfiguracionComponent implements OnInit {
   isSaving = false;
   sidebarOpen = false;
   recentUploads: Array<{name: string, uploadDate: Date}> = [];
-
-  // Opciones del menú lateral
-  menuItems = [
-    {
-      icon: '📊',
-      label: 'Dashboard',
-      route: '/logoadmin/dashboard',
-      active: false
-    },
-    {
-      icon: '📋',
-      label: 'Presupuestos',
-      route: '/logoadmin/presupuestos',
-      active: false
-    },
-    {
-      icon: '🍫',
-      label: 'Productos',
-      route: '/logoadmin/productos',
-      active: false
-    },
-    {
-      icon: '📂',
-      label: 'Categorías',
-      route: '/logoadmin/categorias',
-      active: false
-    },
-    {
-      icon: '⚙️',
-      label: 'Opciones Generales',
-      route: '/logoadmin/configuracion',
-      active: true
-    }
-  ];
 
   // Datos de configuración
   configuracionData: ConfiguracionData = {
@@ -210,8 +172,7 @@ export class ConfiguracionComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private router: Router,
-    private authService: AuthService,
-    public sidebarService: SidebarService
+    private authService: AuthService
   ) {
     this.initializeForms();
   }
@@ -259,14 +220,8 @@ export class ConfiguracionComponent implements OnInit {
    * Cargar datos del usuario
    */
   private loadUserData(): void {
-    const username = this.authService.getCurrentUser();
-    if (username) {
-      this.currentUser = {
-        username: username,
-        role: 'admin',
-        loginTime: new Date().toISOString()
-      };
-    }
+    // El usuario se maneja ahora desde el layout reutilizable
+    // No necesitamos cargar datos del usuario aquí
   }
 
   /**
@@ -550,35 +505,5 @@ export class ConfiguracionComponent implements OnInit {
     this.updateImageDescription(imageId, target.value);
   }
 
-  /**
-   * Alternar estado del menú lateral
-   */
-  toggleSidebar(): void {
-    this.sidebarCollapsed = !this.sidebarCollapsed;
-  }
 
-  /**
-   * Navegar a una ruta y actualizar menú activo
-   */
-  navigateTo(route: string): void {
-    this.menuItems.forEach(item => {
-      item.active = item.route === route;
-    });
-    
-    // Auto-ocultar menú en móvil al seleccionar nav-item
-    const isMobile = window.innerWidth <= 768;
-    if (isMobile && !this.sidebarService.isCollapsed) {
-      this.sidebarService.closeSidebar();
-      console.log('Auto-ocultando menú en móvil al seleccionar nav-item - ancho:', window.innerWidth);
-    }
-    
-    this.router.navigate([route]);
-  }
-
-  /**
-   * Cerrar sesión
-   */
-  logout(): void {
-    this.authService.logout();
-  }
 }

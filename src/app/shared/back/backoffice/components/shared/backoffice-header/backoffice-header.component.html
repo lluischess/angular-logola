@@ -1,0 +1,14 @@
+<!-- Header superior - Estructura exacta del dashboard -->
+<header class="top-header">
+  <div class="header-left">
+    <button class="sidebar-toggle" (click)="toggleSidebar()">
+      <span class="toggle-icon">☰</span>
+    </button>
+    <h1 class="page-title">{{ pageTitle || 'Dashboard' }}</h1>
+  </div>
+  <div class="header-right">
+    <div class="welcome-message" *ngIf="currentUser">
+      <span>¡Bienvenido, {{ currentUser.username }}!</span>
+    </div>
+  </div>
+</header>

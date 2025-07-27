@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
-import { SidebarService } from '../../../services/sidebar.service';
+import { BackofficeLayoutComponent } from '../backoffice-layout/backoffice-layout.component';
 
 interface Categoria {
   id: number;
@@ -15,60 +15,20 @@ interface Categoria {
 @Component({
   selector: 'app-categorias',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, BackofficeLayoutComponent],
   templateUrl: './categorias.component.html',
   styleUrl: './categorias.component.css'
 })
 export class CategoriasComponent implements OnInit {
   categorias: Categoria[] = [];
   isLoading = true;
-  
-  // Estado del menú lateral
-  sidebarCollapsed = false;
-  currentUser: any = null;
-
-  // Opciones del menú lateral
-  menuItems = [
-    {
-      icon: '📊',
-      label: 'Dashboard',
-      route: '/logoadmin/dashboard',
-      active: false
-    },
-    {
-      icon: '📋',
-      label: 'Presupuestos',
-      route: '/logoadmin/presupuestos',
-      active: false
-    },
-    {
-      icon: '🍫',
-      label: 'Productos',
-      route: '/logoadmin/productos',
-      active: false
-    },
-    {
-      icon: '📂',
-      label: 'Categorías',
-      route: '/logoadmin/categorias',
-      active: true
-    },
-    {
-      icon: '⚙️',
-      label: 'Opciones Generales',
-      route: '/logoadmin/configuracion',
-      active: false
-    }
-  ];
 
   constructor(
     private router: Router,
-    private authService: AuthService,
-    public sidebarService: SidebarService
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
-    this.loadUserData();
     this.loadCategorias();
   }
 
@@ -164,47 +124,6 @@ export class CategoriasComponent implements OnInit {
   }
 
   /**
-   * Cargar datos del usuario
-   */
-  private loadUserData(): void {
-    const username = this.authService.getCurrentUser();
-    if (username) {
-      this.currentUser = {
-        username: username,
-        role: 'admin',
-        loginTime: new Date().toISOString()
-      };
-    }
-  }
-
-  /**
-   * Alternar estado del menú lateral
-   */
-  toggleSidebar(): void {
-    this.sidebarCollapsed = !this.sidebarCollapsed;
-  }
-
-  /**
-   * Navegar a una ruta y actualizar menú activo
-   */
-  navigateTo(route: string): void {
-    // Actualizar estado activo del menú
-    this.menuItems.forEach(item => {
-      item.active = item.route === route;
-    });
-    
-    // Auto-ocultar menú en móvil al seleccionar nav-item
-    const isMobile = window.innerWidth <= 768;
-    if (isMobile && !this.sidebarService.isCollapsed) {
-      this.sidebarService.closeSidebar();
-      console.log('Auto-ocultando menú en móvil al seleccionar nav-item - ancho:', window.innerWidth);
-    }
-    
-    // Navegar a la ruta
-    this.router.navigate([route]);
-  }
-
-  /**
    * Navegar a crear nueva categoría
    */
   createCategoria(): void {
@@ -216,12 +135,5 @@ export class CategoriasComponent implements OnInit {
    */
   editCategoria(id: number): void {
     this.router.navigate(['/logoadmin/categorias/editar', id]);
-  }
-
-  /**
-   * Cerrar sesión
-   */
-  logout(): void {
-    this.authService.logout();
   }
 }

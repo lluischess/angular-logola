@@ -1,0 +1,28 @@
+/* ===== LAYOUT PRINCIPAL - Estilos exactos del dashboard ===== */
+:host {
+  display: block;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.dashboard-container {
+  display: flex;
+  height: 100vh;
+  background-color: #f8fafc;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* ===== MAIN CONTENT ===== */
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+}
+
+/* Page Content */
+.page-content {
+  padding: 24px;
+  flex: 1;
+  overflow-y: auto;
+}

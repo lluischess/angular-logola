@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
-import { SidebarService } from '../../../services/sidebar.service';
+import { BackofficeLayoutComponent } from '../backoffice-layout/backoffice-layout.component';
 
 export interface Producto {
   id: number;
@@ -21,7 +21,7 @@ export interface Producto {
 @Component({
   selector: 'app-productos',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule, BackofficeLayoutComponent],
   templateUrl: './productos.component.html',
   styleUrl: './productos.component.css'
 })
@@ -44,56 +44,16 @@ export class ProductosComponent implements OnInit {
   // Arrow buttons for reordering
   reorderingProduct: Producto | null = null;
   showReorderFeedback: boolean = false;
-  
-  // Sidebar
-  sidebarCollapsed = false;
-  currentUser: any = null;
-  
-  // Opciones del menú lateral
-  menuItems = [
-    {
-      icon: '📊',
-      label: 'Dashboard',
-      route: '/logoadmin/dashboard',
-      active: false
-    },
-    {
-      icon: '📋',
-      label: 'Presupuestos',
-      route: '/logoadmin/presupuestos',
-      active: false
-    },
-    {
-      icon: '🍫',
-      label: 'Productos',
-      route: '/logoadmin/productos',
-      active: true
-    },
-    {
-      icon: '📂',
-      label: 'Categorías',
-      route: '/logoadmin/categorias',
-      active: false
-    },
-    {
-      icon: '⚙️',
-      label: 'Opciones Generales',
-      route: '/logoadmin/configuracion',
-      active: false
-    }
-  ];
 
   constructor(
     private router: Router,
-    private authService: AuthService,
-    public sidebarService: SidebarService
+    private authService: AuthService
   ) {}
 
   ngOnInit() {
     this.loadMockData();
     this.sortData();
     this.filteredProductos = [...this.productos];
-    this.loadUserData();
   }
 
   loadMockData() {
@@ -544,47 +504,4 @@ export class ProductosComponent implements OnInit {
     return classes;
   }
 
-  // Sidebar methods
-  private loadUserData(): void {
-    const userData = localStorage.getItem('backoffice_user');
-    if (userData) {
-      this.currentUser = JSON.parse(userData);
-    } else {
-      // Mock user data if not found
-      this.currentUser = {
-        username: 'Admin',
-        role: 'Administrador'
-      };
-    }
-  }
-  
-  toggleSidebar(): void {
-    this.sidebarCollapsed = !this.sidebarCollapsed;
-  }
-  
-  navigateTo(route: string): void {
-    // Actualizar estado activo del menú
-    this.menuItems.forEach(item => {
-      item.active = item.route === route;
-    });
-    
-    // Auto-ocultar menú en móvil al seleccionar nav-item
-    const isMobile = window.innerWidth <= 768;
-    if (isMobile && !this.sidebarService.isCollapsed) {
-      this.sidebarService.closeSidebar();
-      console.log('Auto-ocultando menú en móvil al seleccionar nav-item - ancho:', window.innerWidth);
-    }
-    
-    // Navegar a la ruta
-    this.router.navigate([route]);
-  }
-  
-  logout(): void {
-    // Limpiar localStorage
-    localStorage.removeItem('backoffice_token');
-    localStorage.removeItem('backoffice_user');
-    
-    // Redirigir al login
-    this.router.navigate(['/logoadmin']);
-  }
 }

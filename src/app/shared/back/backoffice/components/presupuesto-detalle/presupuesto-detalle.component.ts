@@ -3,13 +3,13 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
-import { SidebarService } from '../../../services/sidebar.service';
+import { BackofficeLayoutComponent } from '../backoffice-layout/backoffice-layout.component';
 import { Presupuesto, ProductoPresupuesto } from '../presupuestos/presupuestos.component';
 
 @Component({
   selector: 'app-presupuesto-detalle',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule],
+  imports: [CommonModule, RouterModule, FormsModule, BackofficeLayoutComponent],
   templateUrl: './presupuesto-detalle.component.html',
   styleUrls: ['./presupuesto-detalle.component.css']
 })
@@ -20,45 +20,12 @@ export class PresupuestoDetalleComponent implements OnInit {
   editingNotes = false;
   tempNotes = '';
 
-  // Opciones del menú lateral
-  menuItems = [
-    {
-      icon: '📊',
-      label: 'Dashboard',
-      route: '/logoadmin/dashboard',
-      active: false
-    },
-    {
-      icon: '📋',
-      label: 'Presupuestos',
-      route: '/logoadmin/presupuestos',
-      active: true
-    },
-    {
-      icon: '🍫',
-      label: 'Productos',
-      route: '/logoadmin/productos',
-      active: false
-    },
-    {
-      icon: '📂',
-      label: 'Categorías',
-      route: '/logoadmin/categorias',
-      active: false
-    },
-    {
-      icon: '⚙️',
-      label: 'Opciones Generales',
-      route: '/logoadmin/configuracion',
-      active: false
-    }
-  ];
+  // Propiedades del menú eliminadas - ahora usa el layout reutilizable
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private authService: AuthService,
-    public sidebarService: SidebarService
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
@@ -235,24 +202,7 @@ export class PresupuestoDetalleComponent implements OnInit {
     }
   }
 
-  toggleSidebar(): void {
-    this.sidebarService.toggleSidebar();
-  }
-
-  navigateTo(route: string): void {
-    this.menuItems.forEach(item => {
-      item.active = item.route === route;
-    });
-
-    // Auto-ocultar menú en móvil al seleccionar nav-item
-    const isMobile = window.innerWidth <= 768;
-    if (isMobile && !this.sidebarService.isCollapsed) {
-      this.sidebarService.closeSidebar();
-      console.log('Auto-ocultando menú en móvil al seleccionar nav-item - ancho:', window.innerWidth);
-    }
-
-    this.router.navigate([route]);
-  }
+  // Métodos de navegación ya no necesarios - el layout reutilizable maneja la navegación
 
   logout(): void {
     this.authService.logout();

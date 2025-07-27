@@ -1,0 +1,19 @@
+<!-- Layout principal del backoffice - Estructura exacta del dashboard -->
+<div class="dashboard-container">
+  <!-- Sidebar reutilizable -->
+  <app-backoffice-sidebar></app-backoffice-sidebar>
+  
+  <!-- Contenido principal -->
+  <main class="main-content">
+    <!-- Header reutilizable -->
+    <app-backoffice-header 
+      [pageTitle]="pageTitle"
+      [toggleSidebar]="toggleSidebar">
+    </app-backoffice-header>
+    
+    <!-- Contenido de la página -->
+    <div class="page-content">
+      <ng-content></ng-content>
+    </div>
+  </main>
+</div>
