@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute, RouterModule } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
-import { SidebarService } from '../../../services/sidebar.service';
+import { BackofficeLayoutComponent } from '../backoffice-layout/backoffice-layout.component';
 
 export interface ProductoCompleto {
   id?: number;
@@ -33,7 +33,7 @@ export interface ProductoCompleto {
 @Component({
   selector: 'app-producto-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, BackofficeLayoutComponent],
   templateUrl: './producto-form.component.html',
   styleUrl: './producto-form.component.css'
 })
@@ -42,10 +42,6 @@ export class ProductoFormComponent implements OnInit {
   activeTab: 'general' | 'seo' = 'general';
   isEditMode = false;
   productoId: number | null = null;
-  
-  // Sidebar
-  sidebarCollapsed = false;
-  currentUser: any = null;
   
   // Opciones disponibles
   tallasDisponibles = [
@@ -61,54 +57,17 @@ export class ProductoFormComponent implements OnInit {
     { value: 'navidad', label: 'Navidad' },
     { value: 'galletas', label: 'Galletas' }
   ];
-  
-  // Opciones del menú lateral
-  menuItems = [
-    {
-      icon: '📊',
-      label: 'Dashboard',
-      route: '/logoadmin/dashboard',
-      active: false
-    },
-    {
-      icon: '📋',
-      label: 'Presupuestos',
-      route: '/logoadmin/presupuestos',
-      active: false
-    },
-    {
-      icon: '🍫',
-      label: 'Productos',
-      route: '/logoadmin/productos',
-      active: true
-    },
-    {
-      icon: '📂',
-      label: 'Categorías',
-      route: '/logoadmin/categorias',
-      active: false
-    },
-    {
-      icon: '⚙️',
-      label: 'Opciones Generales',
-      route: '/logoadmin/configuracion',
-      active: false
-    }
-  ];
 
   constructor(
     private fb: FormBuilder,
     private router: Router,
     private route: ActivatedRoute,
-    private authService: AuthService,
-    public sidebarService: SidebarService
+    private authService: AuthService
   ) {
     this.initForm();
   }
 
   ngOnInit() {
-    this.loadUserData();
-    
     // Verificar si estamos en modo edición
     this.route.params.subscribe(params => {
       if (params['id']) {
@@ -276,39 +235,4 @@ export class ProductoFormComponent implements OnInit {
     return '';
   }
 
-  // Sidebar methods
-  private loadUserData(): void {
-    const userData = localStorage.getItem('backoffice_user');
-    if (userData) {
-      this.currentUser = JSON.parse(userData);
-    } else {
-      this.currentUser = {
-        username: 'Admin',
-        role: 'Administrador'
-      };
-    }
-  }
-  
-  toggleSidebar(): void {
-    this.sidebarCollapsed = !this.sidebarCollapsed;
-  }
-  
-  navigateTo(route: string): void {
-    this.menuItems.forEach(item => {
-      item.active = item.route === route;
-    });
-    
-    const isMobile = window.innerWidth <= 768;
-    if (isMobile && !this.sidebarService.isCollapsed) {
-      this.sidebarService.closeSidebar();
-    }
-    
-    this.router.navigate([route]);
-  }
-  
-  logout(): void {
-    localStorage.removeItem('backoffice_token');
-    localStorage.removeItem('backoffice_user');
-    this.router.navigate(['/logoadmin']);
-  }
 }

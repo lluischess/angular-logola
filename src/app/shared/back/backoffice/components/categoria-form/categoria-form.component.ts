@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, ActivatedRoute, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { BackofficeLayoutComponent } from '../backoffice-layout/backoffice-layout.component';
 
 interface CategoriaCompleta {
   id?: number;
@@ -18,7 +19,7 @@ interface CategoriaCompleta {
 @Component({
   selector: 'app-categoria-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, BackofficeLayoutComponent],
   templateUrl: './categoria-form.component.html',
   styleUrls: ['./categoria-form.component.css']
 })
@@ -27,7 +28,6 @@ export class CategoriaFormComponent implements OnInit {
   isEditMode = false;
   categoriaId: number | null = null;
   activeTab = 'general';
-  sidebarOpen = false;
 
   // Mock data para testing
   mockCategoria: CategoriaCompleta = {
@@ -106,10 +106,6 @@ export class CategoriaFormComponent implements OnInit {
     this.activeTab = tab;
   }
 
-  toggleSidebar(): void {
-    this.sidebarOpen = !this.sidebarOpen;
-  }
-
   onSubmit(): void {
     if (this.categoriaForm.valid) {
       const categoriaData = this.categoriaForm.value;
@@ -151,10 +147,5 @@ export class CategoriaFormComponent implements OnInit {
   getCharacterCount(fieldName: string): number {
     const value = this.categoriaForm.get(fieldName)?.value || '';
     return value.length;
-  }
-
-  logout(): void {
-    localStorage.removeItem('authToken');
-    this.router.navigate(['/logoadmin/login']);
   }
 }
