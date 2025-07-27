@@ -22,11 +22,14 @@ export class BackofficeHeaderComponent implements OnInit {
   }
 
   private loadUserData(): void {
-    const userData = localStorage.getItem('backoffice_user');
-    if (userData) {
-      this.currentUser = JSON.parse(userData);
+    const username = this.authService.getCurrentUsername();
+    if (username) {
+      this.currentUser = {
+        username: username,
+        role: 'Administrador'
+      };
     } else {
-      // Mock user data if not found
+      // Fallback si no hay usuario logueado
       this.currentUser = {
         username: 'Admin',
         role: 'Administrador'
