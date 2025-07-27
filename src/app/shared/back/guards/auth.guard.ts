@@ -1,28 +1,49 @@
 import { Injectable } from '@angular/core';
 import { CanActivate, Router, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
+import { Observable, of } from 'rxjs';
+import { map, catchError } from 'rxjs/operators';
+import { AuthService } from '../services/auth.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthGuard implements CanActivate {
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private authService: AuthService
+  ) {}
 
   canActivate(
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
-  ): boolean {
-    // Verificar si existe un token de autenticación en localStorage
-    const token = localStorage.getItem('authToken');
-    const isLoggedIn = localStorage.getItem('isLoggedIn');
+  ): Observable<boolean> | boolean {
     
-    // Si existe el token o está marcado como logueado, permitir acceso
-    if (token || isLoggedIn === 'true') {
-      return true;
+    // Verificar si hay una sesión válida localmente
+    if (!this.authService.isAuthenticated()) {
+      console.log('❌ No hay sesión válida, redirigiendo al login');
+      this.router.navigate(['/logoadmin/login']);
+      return false;
     }
-    
-    // Si no está autenticado, redirigir al login
-    this.router.navigate(['/logoadmin/login']);
-    return false;
+
+    // Verificar si el usuario es uno de los 4 administradores válidos
+    if (!this.authService.isValidAdmin()) {
+      console.log('❌ Usuario no autorizado para acceder al backoffice');
+      this.authService.logout();
+      return false;
+    }
+
+    // Verificar token con el backend para asegurar que sigue siendo válido
+    return this.authService.checkToken().pipe(
+      map((response) => {
+        console.log('✅ Token válido, acceso permitido');
+        return true;
+      }),
+      catchError((error) => {
+        console.log('❌ Token inválido, redirigiendo al login:', error.message);
+        this.router.navigate(['/logoadmin/login']);
+        return of(false);
+      })
+    );
   }
 }

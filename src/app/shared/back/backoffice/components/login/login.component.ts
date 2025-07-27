@@ -53,26 +53,28 @@ export class LoginComponent {
       
       const { username, password } = this.loginForm.value;
 
-      // Usar AuthService para autenticación
-      setTimeout(() => {
-        if (username === 'admin' && password === 'admin123') {
-          // Intentar login con AuthService
-          const loginSuccess = this.authService.login(username, password);
+      // Usar AuthService integrado con backend NestJS
+      this.authService.login(username, password).subscribe({
+        next: (response) => {
+          console.log('✅ Login exitoso con backend:', response.user.name);
           
-          if (loginSuccess) {
-            console.log('Login exitoso');
+          // Verificar que sea uno de los 4 usuarios administradores válidos
+          if (this.authService.isValidAdmin()) {
             // Redirigir al dashboard
             this.router.navigate(['/logoadmin/dashboard']);
           } else {
-            this.errorMessage = 'Error interno del sistema.';
+            this.errorMessage = 'Usuario no autorizado para acceder al backoffice.';
+            this.authService.logout();
           }
-        } else {
-          // Login fallido
-          this.errorMessage = 'Credenciales incorrectas. Verifique usuario y contraseña.';
+          
+          this.isLoading = false;
+        },
+        error: (error) => {
+          console.error('❌ Error en login:', error.message);
+          this.errorMessage = error.message || 'Error de autenticación. Verifique sus credenciales.';
+          this.isLoading = false;
         }
-        
-        this.isLoading = false;
-      }, 1500); // Simular delay de red
+      });
     }
   }
 
