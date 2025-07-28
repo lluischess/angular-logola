@@ -737,3 +737,208 @@ input:checked + .slider:before {
     display: none;
   }
 }
+
+/* ===== CAMPOS DE IMÁGENES CLICABLES ===== */
+.image-upload-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.image-preview {
+  position: relative;
+  width: 200px;
+  height: 120px;
+  border: 2px dashed #d1d5db;
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: #f9fafb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.image-preview:hover {
+  border-color: #3b82f6;
+  background: #eff6ff;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(59, 130, 246, 0.15);
+}
+
+.image-preview.favicon-preview {
+  width: 80px;
+  height: 80px;
+}
+
+.preview-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transition: all 0.3s ease;
+}
+
+.preview-image.favicon-image {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+}
+
+.upload-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: all 0.3s ease;
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.image-preview:hover .upload-overlay {
+  opacity: 1;
+}
+
+.upload-overlay i {
+  font-size: 24px;
+  margin-bottom: 8px;
+  color: #3b82f6;
+}
+
+.upload-overlay span {
+  text-align: center;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.image-url-input {
+  background-color: #f8fafc !important;
+  border: 1px solid #e2e8f0 !important;
+  color: #64748b !important;
+  font-size: 13px;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  cursor: not-allowed;
+}
+
+.image-url-input:focus {
+  outline: none;
+  border-color: #3b82f6 !important;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+}
+
+/* Estados de carga */
+.image-preview.loading {
+  border-color: #3b82f6;
+  background: linear-gradient(45deg, #eff6ff, #dbeafe);
+  animation: pulse 2s infinite;
+}
+
+.image-preview.loading::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 24px;
+  height: 24px;
+  margin: -12px 0 0 -12px;
+  border: 2px solid #3b82f6;
+  border-top: 2px solid transparent;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Responsive para móviles */
+@media (max-width: 768px) {
+  .image-preview {
+    width: 150px;
+    height: 90px;
+  }
+  
+  .image-preview.favicon-preview {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .preview-image.favicon-image {
+    width: 32px;
+    height: 32px;
+  }
+  
+  .upload-overlay {
+    font-size: 12px;
+  }
+  
+  .upload-overlay i {
+    font-size: 18px;
+    margin-bottom: 4px;
+  }
+  
+  .upload-overlay span {
+    font-size: 10px;
+  }
+}
+
+/* Mejoras visuales adicionales */
+.form-hint {
+  font-size: 12px;
+  color: #64748b;
+  margin-top: 4px;
+  line-height: 1.4;
+}
+
+.form-group label {
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 8px;
+  display: block;
+}
+
+/* Indicador de imagen válida */
+.image-preview.valid {
+  border-color: #10b981;
+  background: #f0fdf4;
+}
+
+.image-preview.valid:hover {
+  border-color: #059669;
+  background: #ecfdf5;
+}
+
+/* Indicador de error */
+.image-preview.error {
+  border-color: #ef4444;
+  background: #fef2f2;
+}
+
+.image-preview.error:hover {
+  border-color: #dc2626;
+  background: #fee2e2;
+}

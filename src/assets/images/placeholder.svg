@@ -1,0 +1,8 @@
+<svg width="300" height="200" xmlns="http://www.w3.org/2000/svg">
+  <rect width="100%" height="100%" fill="#f3f4f6"/>
+  <rect x="10" y="10" width="280" height="180" fill="none" stroke="#d1d5db" stroke-width="2" stroke-dasharray="5,5"/>
+  <text x="150" y="90" font-family="Arial, sans-serif" font-size="16" fill="#6b7280" text-anchor="middle">Sin imagen</text>
+  <text x="150" y="110" font-family="Arial, sans-serif" font-size="12" fill="#9ca3af" text-anchor="middle">Haz clic para subir</text>
+  <circle cx="150" cy="130" r="20" fill="#e5e7eb"/>
+  <path d="M140 125 L150 135 L160 125" stroke="#9ca3af" stroke-width="2" fill="none"/>
+</svg>

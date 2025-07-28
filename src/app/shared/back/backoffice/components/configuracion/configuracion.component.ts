@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } 
 import { Router } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
 import { BackofficeLayoutComponent } from '../backoffice-layout/backoffice-layout.component';
+import { ConfigurationService, ConfigurationData } from '../../services/configuration.service';
 
 interface ConfiguracionData {
   seo: {
@@ -34,6 +35,7 @@ interface ConfiguracionData {
       titulo: string;
       subtitulo: string;
       imagen: string;
+      imagenMobile: string;
       enlace: string;
       activo: boolean;
       orden: number;
@@ -41,20 +43,6 @@ interface ConfiguracionData {
       colorBoton: string;
       colorTitulos: string;
     }>;
-  };
-  imagenes: {
-    galeria: Array<{
-      id: number;
-      nombre: string;
-      archivo: string;
-      url: string;
-      tamano: number;
-      tipo: string;
-      fechaSubida: string;
-      categoria: string;
-      descripcion: string;
-    }>;
-    categorias: string[];
   };
 }
 
@@ -72,8 +60,7 @@ export class ConfiguracionComponent implements OnInit {
     { id: 'seo', label: 'SEO', icon: '🔍' },
     { id: 'footer', label: 'Footer', icon: '📄' },
     { id: 'general', label: 'General', icon: '⚙️' },
-    { id: 'banner', label: 'Banner', icon: '🎨' },
-    { id: 'imagenes', label: 'Imágenes', icon: '🖼️' }
+    { id: 'banner', label: 'Banner', icon: '🎨' }
   ];
 
   // Formularios para cada pestaña
@@ -87,6 +74,10 @@ export class ConfiguracionComponent implements OnInit {
   isSaving = false;
   sidebarOpen = false;
   recentUploads: Array<{name: string, uploadDate: Date}> = [];
+  
+  // Propiedades para el manejo de imágenes
+  private fileInput: HTMLInputElement | null = null;
+  private currentImageContext: { section: string; field: string; bannerIndex?: number } | null = null;
 
   // Datos de configuración
   configuracionData: ConfiguracionData = {
@@ -119,6 +110,7 @@ export class ConfiguracionComponent implements OnInit {
           titulo: 'Dulces Artesanales Premium',
           subtitulo: 'Descubre nuestra colección exclusiva',
           imagen: '/assets/images/banner-1.jpg',
+          imagenMobile: '/assets/images/banner-1-mobile.jpg',
           enlace: '/productos',
           activo: true,
           orden: 1,
@@ -131,6 +123,7 @@ export class ConfiguracionComponent implements OnInit {
           titulo: 'Chocolates de Temporada',
           subtitulo: 'Edición limitada disponible',
           imagen: '/assets/images/banner-2.jpg',
+          imagenMobile: '/assets/images/banner-2-mobile.jpg',
           enlace: '/productos/chocolates',
           activo: true,
           orden: 2,
@@ -139,40 +132,14 @@ export class ConfiguracionComponent implements OnInit {
           colorTitulos: '#FFFFFF'
         }
       ]
-    },
-    imagenes: {
-      galeria: [
-        {
-          id: 1,
-          nombre: 'Logo Principal',
-          archivo: 'logo-principal.png',
-          url: '/assets/images/logo-principal.png',
-          tamano: 45678,
-          tipo: 'image/png',
-          fechaSubida: '2024-01-15T10:30:00Z',
-          categoria: 'logos',
-          descripcion: 'Logo principal de la empresa'
-        },
-        {
-          id: 2,
-          nombre: 'Banner Inicio',
-          archivo: 'banner-inicio.jpg',
-          url: '/assets/images/banner-inicio.jpg',
-          tamano: 123456,
-          tipo: 'image/jpeg',
-          fechaSubida: '2024-01-20T14:15:00Z',
-          categoria: 'banners',
-          descripcion: 'Banner principal de la página de inicio'
-        }
-      ],
-      categorias: ['logos', 'banners', 'productos', 'iconos', 'fondos']
     }
   };
 
   constructor(
     private fb: FormBuilder,
     private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    private configurationService: ConfigurationService
   ) {
     this.initializeForms();
   }
@@ -225,20 +192,116 @@ export class ConfiguracionComponent implements OnInit {
   }
 
   /**
-   * Cargar configuración actual
+   * Cargar configuración actual desde el backend
    */
   private loadConfiguracion(): void {
+    this.isLoading = true;
+    
+    // Cargar configuración SEO
+    this.configurationService.getConfigurationSection('seo').subscribe({
+      next: (seoData) => {
+        if (seoData && seoData.datos) {
+          // Mapear campos del backend (español) al frontend (inglés)
+          const seoFormData = {
+            homeTitle: seoData.datos.tituloPaginaPrincipal || '',
+            homeDescription: seoData.datos.metaDescripcionPrincipal || '',
+            homeKeywords: seoData.datos.palabrasClave || '',
+            siteName: seoData.datos.nombreSitio || '',
+            defaultImage: seoData.datos.imagenPorDefecto || ''
+          };
+          this.seoForm.patchValue(seoFormData);
+          console.log('Configuración SEO cargada:', seoFormData);
+        }
+      },
+      error: (error) => {
+        console.warn('No se pudo cargar la configuración SEO, usando valores por defecto:', error);
+        // Usar valores por defecto si no hay configuración guardada
+        this.seoForm.patchValue(this.configuracionData.seo);
+      }
+    });
+    
+    // Cargar configuración Footer
+    this.configurationService.getConfigurationSection('footer').subscribe({
+      next: (footerData) => {
+        if (footerData && footerData.datos) {
+          // Mapear campos del backend (español) al frontend
+          const footerFormData = {
+            contactoTelefono: footerData.datos.telefono || '',
+            contactoEmail: footerData.datos.email || '',
+            contactoDireccion: footerData.datos.direccion || '',
+            horarioAtencion: footerData.datos.horarioAtencion || '',
+            queEsLogolate: footerData.datos.contenidoFooter || '',
+            instagram: footerData.datos.instagram || ''
+          };
+          this.footerForm.patchValue(footerFormData);
+          console.log('Configuración Footer cargada:', footerFormData);
+        }
+      },
+      error: (error) => {
+        console.warn('No se pudo cargar la configuración Footer, usando valores por defecto:', error);
+        this.footerForm.patchValue({
+          ...this.configuracionData.footer,
+          instagram: this.configuracionData.footer.redesSociales.instagram
+        });
+      }
+    });
+    
+    // Cargar configuración General
+    this.configurationService.getConfigurationSection('general').subscribe({
+      next: (generalData) => {
+        if (generalData && generalData.datos) {
+          this.generalForm.patchValue(generalData.datos);
+          console.log('Configuración General cargada:', generalData.datos);
+        }
+      },
+      error: (error) => {
+        console.warn('No se pudo cargar la configuración General, usando valores por defecto:', error);
+        this.generalForm.patchValue(this.configuracionData.general);
+      }
+    });
+    
+    // Cargar configuración Banners
+    this.configurationService.getConfigurationSection('banners').subscribe({
+      next: (bannersResponse) => {
+        console.log('Respuesta del backend para banners:', bannersResponse);
+        
+        if (bannersResponse && Array.isArray(bannersResponse) && bannersResponse.length > 0) {
+          // Mapear los banners del backend al formato del frontend
+          this.configuracionData.banner.banners = bannersResponse.map((bannerConfig, index) => {
+            console.log(`Procesando banner ${index + 1}:`, bannerConfig);
+            
+            return {
+              id: index + 1,
+              titulo: bannerConfig.datos?.titulo || '',
+              subtitulo: bannerConfig.datos?.subtitulo || '',
+              imagen: bannerConfig.datos?.imagen || '',
+              imagenMobile: bannerConfig.datos?.imagenMobile || '',
+              enlace: bannerConfig.datos?.enlace || '',
+              activo: bannerConfig.datos?.activo !== undefined ? bannerConfig.datos.activo : true,
+              orden: bannerConfig.datos?.ordenBanner || (index + 1),
+              nombreBoton: bannerConfig.datos?.nombreBoton || '',
+              colorBoton: bannerConfig.datos?.colorBoton || '',
+              colorTitulos: bannerConfig.datos?.colorTitulos || ''
+            };
+          });
+          
+          console.log('Banners mapeados para el frontend:', this.configuracionData.banner.banners);
+        } else {
+          console.log('No se encontraron banners guardados, usando valores por defecto');
+          // Mantener los banners por defecto si no hay datos guardados
+        }
+      },
+      error: (error) => {
+        console.error('Error al cargar la configuración Banners:', error);
+        console.warn('Usando valores por defecto para banners');
+        // Mantener los banners por defecto si hay error
+      }
+    });
+    
+    // Finalizar carga después de un breve delay para permitir que se completen las peticiones
     setTimeout(() => {
-      // Cargar datos en los formularios
-      this.seoForm.patchValue(this.configuracionData.seo);
-      this.footerForm.patchValue({
-        ...this.configuracionData.footer,
-        instagram: this.configuracionData.footer.redesSociales.instagram
-      });
-      this.generalForm.patchValue(this.configuracionData.general);
-      
       this.isLoading = false;
-    }, 800);
+    }, 1000);
   }
 
   /**
@@ -252,47 +315,142 @@ export class ConfiguracionComponent implements OnInit {
    * Guardar configuración de la pestaña actual
    */
   saveCurrentTab(): void {
-    let formToSave: FormGroup;
-    let dataSection: string;
+    let dataToSave: any;
+    let sectionName: string;
 
+    // Preparar datos según la pestaña activa
     switch (this.activeTab) {
       case 'seo':
-        formToSave = this.seoForm;
-        dataSection = 'SEO';
+        if (!this.seoForm.valid) {
+          alert('Por favor, complete todos los campos requeridos en la sección SEO');
+          return;
+        }
+        // Mapear campos del frontend (inglés) al backend (español)
+        const seoFormValue = this.seoForm.value;
+        dataToSave = {
+          tituloPaginaPrincipal: seoFormValue.homeTitle,
+          metaDescripcionPrincipal: seoFormValue.homeDescription,
+          palabrasClave: seoFormValue.homeKeywords,
+          nombreSitio: seoFormValue.siteName,
+          imagenPorDefecto: seoFormValue.defaultImage
+        };
+        sectionName = 'seo';
         break;
+        
       case 'footer':
-        formToSave = this.footerForm;
-        dataSection = 'Footer';
+        if (!this.footerForm.valid) {
+          alert('Por favor, complete todos los campos requeridos en la sección Footer');
+          return;
+        }
+        // Mapear campos del frontend al backend
+        const footerFormValue = this.footerForm.value;
+        dataToSave = {
+          telefono: footerFormValue.contactoTelefono,
+          email: footerFormValue.contactoEmail,
+          direccion: footerFormValue.contactoDireccion,
+          horarioAtencion: footerFormValue.horarioAtencion,
+          contenidoFooter: footerFormValue.queEsLogolate,
+          instagram: footerFormValue.instagram
+        };
+        sectionName = 'footer';
         break;
+        
       case 'general':
-        formToSave = this.generalForm;
-        dataSection = 'General';
+        if (!this.generalForm.valid) {
+          alert('Por favor, complete todos los campos requeridos en la sección General');
+          return;
+        }
+        dataToSave = this.generalForm.value;
+        sectionName = 'general';
         break;
+        
       case 'banner':
-        formToSave = this.bannerForm;
-        dataSection = 'Banner';
+        // Para banners, guardamos los datos directamente del objeto configuracionData
+        dataToSave = {
+          banners: this.configuracionData.banner.banners.map(banner => ({
+            id: banner.id,
+            titulo: banner.titulo || '',
+            subtitulo: banner.subtitulo || '',
+            imagen: banner.imagen || '',
+            imagenMobile: banner.imagenMobile || '',
+            enlace: banner.enlace || '',
+            activo: banner.activo,
+            orden: banner.orden,
+            nombreBoton: banner.nombreBoton || 'Ver Más',
+            colorBoton: banner.colorBoton || '#3B82F6',
+            colorTitulos: banner.colorTitulos || '#FFFFFF'
+          }))
+        };
+        sectionName = 'banners';
         break;
-      case 'imagenes':
-        // Para imágenes no usamos formulario tradicional, solo guardamos
-        this.saveImagenes();
-        return;
+        
       default:
+        console.warn(`Sección ${this.activeTab} no reconocida`);
         return;
     }
 
-    if (formToSave.valid) {
-      this.isSaving = true;
-      
-      // Simular guardado
-      setTimeout(() => {
-        console.log(`Guardando configuración de ${dataSection}:`, formToSave.value);
-        this.isSaving = false;
-        
-        // Mostrar mensaje de éxito (aquí podrías usar un toast)
-        alert(`Configuración de ${dataSection} guardada exitosamente`);
-      }, 1000);
-    } else {
-      alert('Por favor, complete todos los campos requeridos');
+    // Validar que tenemos datos para guardar
+    if (!dataToSave) {
+      alert('No hay datos para guardar');
+      return;
+    }
+
+    // Mostrar estado de carga
+    this.isSaving = true;
+    console.log(`Guardando configuración de ${sectionName}:`, dataToSave);
+
+    // Llamar al servicio del backend
+    this.configurationService.updateConfigurationSection(sectionName, dataToSave)
+      .subscribe({
+        next: (response) => {
+          this.isSaving = false;
+          console.log(`Configuración de ${sectionName} guardada exitosamente:`, response);
+          alert(`Configuración de ${sectionName.toUpperCase()} guardada exitosamente`);
+          
+          // Actualizar los datos locales con la respuesta del servidor si es necesario
+          if (response && response.data) {
+            this.updateLocalData(sectionName, response.data);
+          }
+        },
+        error: (error) => {
+          this.isSaving = false;
+          console.error(`Error al guardar configuración de ${sectionName}:`, error);
+          
+          let errorMessage = `Error al guardar la configuración de ${sectionName.toUpperCase()}`;
+          if (error.error && error.error.message) {
+            errorMessage += `: ${error.error.message}`;
+          } else if (error.status === 0) {
+            errorMessage += '. Verifique la conexión con el servidor.';
+          } else {
+            errorMessage += '. Inténtelo de nuevo.';
+          }
+          
+          alert(errorMessage);
+        }
+      });
+  }
+
+  /**
+   * Actualizar datos locales tras guardado exitoso
+   */
+  private updateLocalData(sectionName: string, data: any): void {
+    switch (sectionName) {
+      case 'seo':
+        this.configuracionData.seo = { ...this.configuracionData.seo, ...data };
+        break;
+      case 'footer':
+        this.configuracionData.footer = { ...this.configuracionData.footer, ...data };
+        break;
+      case 'general':
+        this.configuracionData.general = { ...this.configuracionData.general, ...data };
+        break;
+      case 'banner':
+        if (data.banners) {
+          this.configuracionData.banner.banners = data.banners;
+        }
+        break;
+      default:
+        console.warn(`Sección ${sectionName} no reconocida para actualización local`);
     }
   }
 
@@ -305,6 +463,7 @@ export class ConfiguracionComponent implements OnInit {
       titulo: '',
       subtitulo: '',
       imagen: '',
+      imagenMobile: '',
       enlace: '',
       activo: true,
       orden: this.configuracionData.banner.banners.length + 1,
@@ -334,54 +493,12 @@ export class ConfiguracionComponent implements OnInit {
     
     // Simular guardado
     setTimeout(() => {
-      console.log('Guardando configuración de Imágenes:', this.configuracionData.imagenes);
+      console.log('Guardando configuración...');
       this.isSaving = false;
       
       // Mostrar mensaje de éxito
-      alert('Configuración de Imágenes guardada exitosamente');
+      alert('Configuración guardada exitosamente');
     }, 1000);
-  }
-
-  /**
-   * Subir nueva imagen (versión compleja - mantenida para compatibilidad)
-   */
-  uploadImage(event: any): void {
-    const file = event.target.files[0];
-    if (file) {
-      // Validar tipo de archivo
-      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
-      if (!allowedTypes.includes(file.type)) {
-        alert('Tipo de archivo no permitido. Solo se permiten imágenes (JPEG, PNG, GIF, WebP)');
-        return;
-      }
-
-      // Validar tamano (máximo 5MB)
-      const maxSize = 5 * 1024 * 1024; // 5MB
-      if (file.size > maxSize) {
-        alert('El archivo es demasiado grande. El tamano máximo permitido es 5MB.');
-        return;
-      }
-
-      // Crear nueva imagen
-      const newImage = {
-        id: this.configuracionData.imagenes.galeria.length + 1,
-        nombre: file.name.split('.')[0],
-        archivo: file.name,
-        url: URL.createObjectURL(file), // En producción sería la URL del servidor
-        tamano: file.size,
-        tipo: file.type,
-        fechaSubida: new Date().toISOString(),
-        categoria: 'sin-categoria',
-        descripcion: ''
-      };
-
-      this.configuracionData.imagenes.galeria.push(newImage);
-      
-      // Limpiar input
-      event.target.value = '';
-      
-      console.log('Imagen subida:', newImage);
-    }
   }
 
   /**
@@ -436,35 +553,7 @@ export class ConfiguracionComponent implements OnInit {
     }
   }
 
-  /**
-   * Eliminar imagen
-   */
-  removeImage(imageId: number): void {
-    if (confirm('¿Está seguro de que desea eliminar esta imagen?')) {
-      this.configuracionData.imagenes.galeria = this.configuracionData.imagenes.galeria
-        .filter(image => image.id !== imageId);
-    }
-  }
 
-  /**
-   * Actualizar categoría de imagen
-   */
-  updateImageCategory(imageId: number, categoria: string): void {
-    const image = this.configuracionData.imagenes.galeria.find(img => img.id === imageId);
-    if (image) {
-      image.categoria = categoria;
-    }
-  }
-
-  /**
-   * Actualizar descripción de imagen
-   */
-  updateImageDescription(imageId: number, descripcion: string): void {
-    const image = this.configuracionData.imagenes.galeria.find(img => img.id === imageId);
-    if (image) {
-      image.descripcion = descripcion;
-    }
-  }
 
   /**
    * Formatear tamano de archivo
@@ -490,20 +579,177 @@ export class ConfiguracionComponent implements OnInit {
   }
 
   /**
-   * Manejar cambio de categoría de imagen
+   * Abrir selector de imagen para campos clicables
    */
-  onImageCategoryChange(imageId: number, event: Event): void {
-    const target = event.target as HTMLSelectElement;
-    this.updateImageCategory(imageId, target.value);
+  openImageSelector(section: string, field: string, bannerIndex?: number): void {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.multiple = false;
+    
+    input.onchange = (event: any) => {
+      const file = event.target.files[0];
+      if (file) {
+        this.uploadImageToServer(file, section, field, bannerIndex);
+      }
+    };
+    
+    input.click();
   }
 
   /**
-   * Manejar cambio de descripción de imagen
+   * Subir imagen al servidor y actualizar formulario
    */
-  onImageDescriptionChange(imageId: number, event: Event): void {
-    const target = event.target as HTMLTextAreaElement;
-    this.updateImageDescription(imageId, target.value);
+  uploadImageToServer(file: File, section: string, field: string, bannerIndex?: number): void {
+    // Validar tipo de archivo
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp', 'image/ico'];
+    if (!allowedTypes.includes(file.type)) {
+      alert(`Tipo de archivo no permitido. Solo se permiten imágenes (JPEG, PNG, GIF, WebP, ICO)`);
+      return;
+    }
+
+    // Validar tamaño (máximo 5MB)
+    const maxSize = 5 * 1024 * 1024; // 5MB
+    if (file.size > maxSize) {
+      alert(`El archivo es demasiado grande. Tamaño máximo: 5MB`);
+      return;
+    }
+
+    console.log(`Subiendo imagen ${file.name} para ${section}.${field}`);
+    
+    // Determinar categoría para el backend
+    let category = section;
+    if (section === 'banner') {
+      category = field === 'imagenMobile' ? 'banner-mobile' : 'banner-desktop';
+    }
+    
+    // Subir imagen al servidor usando el servicio
+    this.configurationService.uploadImage(file, category)
+      .subscribe({
+        next: (response) => {
+          console.log(`Imagen ${file.name} subida exitosamente:`, response);
+          
+          if (response.success && response.url) {
+            // Actualizar formulario correspondiente con la URL real del servidor
+            this.updateImageField(section, field, response.url, bannerIndex);
+            
+            // Añadir a la lista de subidas recientes
+            this.recentUploads.unshift({
+              name: response.filename || file.name,
+              uploadDate: new Date()
+            });
+            
+            // Mantener solo las últimas 10 subidas
+            if (this.recentUploads.length > 10) {
+              this.recentUploads = this.recentUploads.slice(0, 10);
+            }
+            
+            alert(`Imagen ${response.filename || file.name} subida exitosamente`);
+          } else {
+            throw new Error(response.message || 'Error desconocido al subir la imagen');
+          }
+        },
+        error: (error) => {
+          console.error(`Error al subir imagen ${file.name}:`, error);
+          
+          let errorMessage = `Error al subir la imagen ${file.name}`;
+          if (error.error && error.error.message) {
+            errorMessage += `: ${error.error.message}`;
+          } else if (error.status === 0) {
+            errorMessage += '. Verifique la conexión con el servidor.';
+          } else if (error.status === 413) {
+            errorMessage += '. El archivo es demasiado grande.';
+          } else if (error.status === 415) {
+            errorMessage += '. Tipo de archivo no soportado.';
+          } else {
+            errorMessage += '. Inténtelo de nuevo.';
+          }
+          
+          alert(errorMessage);
+        }
+      });
   }
 
+  /**
+   * Actualizar campo de imagen en el formulario
+   */
+  updateImageField(section: string, field: string, imageUrl: string, bannerIndex?: number): void {
+    switch (section) {
+      case 'general':
+        this.generalForm.patchValue({ [field]: imageUrl });
+        break;
+      case 'seo':
+        this.seoForm.patchValue({ [field]: imageUrl });
+        break;
+      case 'banner':
+        if (bannerIndex !== undefined) {
+          const banner = this.configuracionData.banner.banners[bannerIndex];
+          if (field === 'imagen') {
+            banner.imagen = imageUrl;
+          } else if (field === 'imagenMobile') {
+            banner.imagenMobile = imageUrl;
+          }
+        }
+        break;
+      default:
+        console.warn(`Sección ${section} no reconocida`);
+    }
+  }
+
+  /**
+   * Obtener preview de imagen
+   */
+  getImagePreview(section: string, field: string, bannerIndex?: number): string {
+    let imageUrl = '';
+    
+    switch (section) {
+      case 'general':
+        imageUrl = this.generalForm.get(field)?.value || '';
+        break;
+      case 'seo':
+        imageUrl = this.seoForm.get(field)?.value || '';
+        break;
+      case 'banner':
+        if (bannerIndex !== undefined) {
+          const banner = this.configuracionData.banner.banners[bannerIndex];
+          if (field === 'imagen') {
+            imageUrl = banner.imagen || '';
+          } else if (field === 'imagenMobile') {
+            imageUrl = banner.imagenMobile || '';
+          }
+        }
+        break;
+      default:
+        imageUrl = '';
+    }
+    
+    // Si no hay imagen, usar SVG placeholder inline para evitar 404
+    return imageUrl || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjEyMCIgdmlld0JveD0iMCAwIDIwMCAxMjAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMTIwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik04NSA0NUg5NVY1NUg4NVY0NVoiIGZpbGw9IiM5Q0E0QUYiLz4KPHA+CjxyZWN0IHg9IjcwIiB5PSI2NSIgd2lkdGg9IjYwIiBoZWlnaHQ9IjQiIGZpbGw9IiM5Q0E0QUYiLz4KPHA+CjxyZWN0IHg9IjgwIiB5PSI3NSIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQiIGZpbGw9IiM5Q0E0QUYiLz4KPHA+Cjx0ZXh0IHg9IjEwMCIgeT0iOTAiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxMiIgZmlsbD0iIzlDQTRBRiIgdGV4dC1hbmNob3I9Im1pZGRsZSI+SW1hZ2VuPC90ZXh0Pgo8L3N2Zz4=';
+  }
+
+  /**
+   * Obtener preview específico para banners
+   */
+  getBannerImagePreview(imageUrl: string): string {
+    // Si no hay imagen, usar SVG placeholder inline para evitar 404
+    return imageUrl || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjEyMCIgdmlld0JveD0iMCAwIDIwMCAxMjAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMTIwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik04NSA0NUg5NVY1NUg4NVY0NVoiIGZpbGw9IiM5Q0E0QUYiLz4KPHA+CjxyZWN0IHg9IjcwIiB5PSI2NSIgd2lkdGg9IjYwIiBoZWlnaHQ9IjQiIGZpbGw9IiM5Q0E0QUYiLz4KPHA+CjxyZWN0IHg9IjgwIiB5PSI3NSIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQiIGZpbGw9IiM5Q0E0QUYiLz4KPHA+Cjx0ZXh0IHg9IjEwMCIgeT0iOTAiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxMiIgZmlsbD0iIzlDQTRBRiIgdGV4dC1hbmNob3I9Im1pZGRsZSI+SW1hZ2VuPC90ZXh0Pgo8L3N2Zz4=';
+  }
+
+  /**
+   * Manejar error de carga de imagen
+   */
+  onImageError(event: any): void {
+    const target = event.target as HTMLImageElement;
+    
+    // Evitar bucle infinito si el placeholder también falla
+    if (target.src.includes('placeholder.jpg') || target.src.includes('data:image')) {
+      // Si ya es el placeholder o una imagen data, usar un SVG inline como fallback
+      target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjEyMCIgdmlld0JveD0iMCAwIDIwMCAxMjAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMTIwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik04NSA0NUg5NVY1NUg4NVY0NVoiIGZpbGw9IiM5Q0E0QUYiLz4KPHA+CjxyZWN0IHg9IjcwIiB5PSI2NSIgd2lkdGg9IjYwIiBoZWlnaHQ9IjQiIGZpbGw9IiM5Q0E0QUYiLz4KPHA+CjxyZWN0IHg9IjgwIiB5PSI3NSIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQiIGZpbGw9IiM5Q0E0QUYiLz4KPHA+Cjx0ZXh0IHg9IjEwMCIgeT0iOTAiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxMiIgZmlsbD0iIzlDQTRBRiIgdGV4dC1hbmNob3I9Im1pZGRsZSI+SW1hZ2VuPC90ZXh0Pgo8L3N2Zz4=';
+      return;
+    }
+    
+    // Intentar cargar placeholder solo si no es ya el placeholder
+    target.src = '/assets/images/placeholder.jpg';
+  }
 
 }

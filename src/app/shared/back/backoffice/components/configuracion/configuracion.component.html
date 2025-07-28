@@ -91,13 +91,27 @@
                   </div>
                   <div class="form-group col-half">
                     <label for="defaultImage">Imagen por defecto</label>
-                    <input 
-                      type="text" 
-                      id="defaultImage"
-                      formControlName="defaultImage"
-                      class="form-control"
-                      placeholder="/assets/images/logo-social.jpg">
-                    <small class="form-hint">URL de la imagen para redes sociales.</small>
+                    <div class="image-upload-container">
+                      <div class="image-preview" (click)="openImageSelector('seo', 'defaultImage')">
+                        <img 
+                          [src]="getImagePreview('seo', 'defaultImage')" 
+                          alt="Imagen por defecto Preview"
+                          class="preview-image"
+                          (error)="onImageError($event)">
+                        <div class="upload-overlay">
+                          <i class="fas fa-camera"></i>
+                          <span>Cambiar imagen</span>
+                        </div>
+                      </div>
+                      <input 
+                        type="text" 
+                        id="defaultImage"
+                        formControlName="defaultImage"
+                        class="form-control image-url-input"
+                        placeholder="/assets/images/logo-social.jpg"
+                        readonly>
+                    </div>
+                    <small class="form-hint">Haz clic en la imagen para cambiarla. URL de la imagen para redes sociales.</small>
                   </div>
                 </div>
               </form>
@@ -210,39 +224,81 @@
                   <div class="form-row">
                     <div class="form-group">
                       <label for="logoHeader">Logo del header</label>
-                      <input 
-                        type="text" 
-                        id="logoHeader"
-                        formControlName="logoHeader"
-                        class="form-control"
-                        placeholder="/assets/images/logo-header.png">
-                      <small class="form-hint">Recomendado: 200x60px, formato PNG con fondo transparente.</small>
+                      <div class="image-upload-container">
+                        <div class="image-preview" (click)="openImageSelector('general', 'logoHeader')">
+                          <img 
+                            [src]="getImagePreview('general', 'logoHeader')" 
+                            alt="Logo Header Preview"
+                            class="preview-image"
+                            (error)="onImageError($event)">
+                          <div class="upload-overlay">
+                            <i class="fas fa-camera"></i>
+                            <span>Cambiar imagen</span>
+                          </div>
+                        </div>
+                        <input 
+                          type="text" 
+                          id="logoHeader"
+                          formControlName="logoHeader"
+                          class="form-control image-url-input"
+                          placeholder="/assets/images/logo-header.png"
+                          readonly>
+                      </div>
+                      <small class="form-hint">Haz clic en la imagen para cambiarla. Recomendado: 200x60px, formato PNG con fondo transparente.</small>
                     </div>
                   </div>
 
                   <div class="form-row">
                     <div class="form-group">
                       <label for="logoFooter">Logo del footer</label>
-                      <input 
-                        type="text" 
-                        id="logoFooter"
-                        formControlName="logoFooter"
-                        class="form-control"
-                        placeholder="/assets/images/logo-footer.png">
-                      <small class="form-hint">Recomendado: 150x45px, formato PNG.</small>
+                      <div class="image-upload-container">
+                        <div class="image-preview" (click)="openImageSelector('general', 'logoFooter')">
+                          <img 
+                            [src]="getImagePreview('general', 'logoFooter')" 
+                            alt="Logo Footer Preview"
+                            class="preview-image"
+                            (error)="onImageError($event)">
+                          <div class="upload-overlay">
+                            <i class="fas fa-camera"></i>
+                            <span>Cambiar imagen</span>
+                          </div>
+                        </div>
+                        <input 
+                          type="text" 
+                          id="logoFooter"
+                          formControlName="logoFooter"
+                          class="form-control image-url-input"
+                          placeholder="/assets/images/logo-footer.png"
+                          readonly>
+                      </div>
+                      <small class="form-hint">Haz clic en la imagen para cambiarla. Recomendado: 150x45px, formato PNG.</small>
                     </div>
                   </div>
 
                   <div class="form-row">
                     <div class="form-group">
                       <label for="favicon">Favicon</label>
-                      <input 
-                        type="text" 
-                        id="favicon"
-                        formControlName="favicon"
-                        class="form-control"
-                        placeholder="/assets/images/favicon.ico">
-                      <small class="form-hint">Recomendado: 32x32px, formato ICO o PNG.</small>
+                      <div class="image-upload-container">
+                        <div class="image-preview favicon-preview" (click)="openImageSelector('general', 'favicon')">
+                          <img 
+                            [src]="getImagePreview('general', 'favicon')" 
+                            alt="Favicon Preview"
+                            class="preview-image favicon-image"
+                            (error)="onImageError($event)">
+                          <div class="upload-overlay">
+                            <i class="fas fa-camera"></i>
+                            <span>Cambiar favicon</span>
+                          </div>
+                        </div>
+                        <input 
+                          type="text" 
+                          id="favicon"
+                          formControlName="favicon"
+                          class="form-control image-url-input"
+                          placeholder="/assets/images/favicon.ico"
+                          readonly>
+                      </div>
+                      <small class="form-hint">Haz clic en la imagen para cambiarla. Recomendado: 32x32px, formato ICO o PNG.</small>
                     </div>
                   </div>
                 </div>
@@ -297,13 +353,51 @@
                     </div>
 
                     <div class="form-row">
-                      <div class="form-group">
-                        <label>Imagen</label>
-                        <input 
-                          type="text" 
-                          [(ngModel)]="banner.imagen"
-                          class="form-control"
-                          placeholder="/assets/images/banner.jpg">
+                      <div class="form-group col-half">
+                        <label>Imagen Desktop</label>
+                        <div class="image-upload-container">
+                          <div class="image-preview banner-preview" (click)="openImageSelector('banner', 'imagen', i)">
+                            <img 
+                              [src]="getBannerImagePreview(banner.imagen)" 
+                              alt="Banner Desktop Preview"
+                              class="preview-image banner-image"
+                              (error)="onImageError($event)">
+                            <div class="upload-overlay">
+                              <i class="fas fa-camera"></i>
+                              <span>Cambiar imagen</span>
+                            </div>
+                          </div>
+                          <input 
+                            type="text" 
+                            [(ngModel)]="banner.imagen"
+                            class="form-control image-url-input"
+                            placeholder="/assets/images/banner.jpg"
+                            readonly>
+                        </div>
+                        <small class="form-hint">Haz clic en la imagen para cambiarla. Recomendado: 1920x600px.</small>
+                      </div>
+                      <div class="form-group col-half">
+                        <label>Imagen Mobile</label>
+                        <div class="image-upload-container">
+                          <div class="image-preview banner-preview" (click)="openImageSelector('banner', 'imagenMobile', i)">
+                            <img 
+                              [src]="getBannerImagePreview(banner.imagenMobile)" 
+                              alt="Banner Mobile Preview"
+                              class="preview-image banner-image"
+                              (error)="onImageError($event)">
+                            <div class="upload-overlay">
+                              <i class="fas fa-mobile-alt"></i>
+                              <span>Cambiar imagen</span>
+                            </div>
+                          </div>
+                          <input 
+                            type="text" 
+                            [(ngModel)]="banner.imagenMobile"
+                            class="form-control image-url-input"
+                            placeholder="/assets/images/banner-mobile.jpg"
+                            readonly>
+                        </div>
+                        <small class="form-hint">Imagen optimizada para móviles. Recomendado: 768x400px.</small>
                       </div>
                     </div>
 
