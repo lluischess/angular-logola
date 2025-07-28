@@ -15,6 +15,7 @@ interface Producto {
   categoria: string;
   cantidadMinima: number;
   imagen?: string;
+  imagenes?: string[]; // Array de imágenes del producto
   fechaCreacion?: Date;
   publicado: boolean;
   orden: number;
@@ -527,7 +528,7 @@ export class ProductosComponent implements OnInit {
   }
 
   createProduct() {
-    this.router.navigate(['/logoadmin/productos/crear']);
+    this.router.navigate(['/logoadmin/productos/nuevo']);
   }
 
   logout() {
@@ -570,5 +571,41 @@ export class ProductosComponent implements OnInit {
 
   trackByFn(index: number, item: Producto): any {
     return item._id || item.id || index;
+  }
+
+  /**
+   * Verificar si un producto tiene imagen
+   */
+  hasProductImage(producto: Producto): boolean {
+    return !!(producto.imagenes && producto.imagenes.length > 0 && producto.imagenes[0]);
+  }
+
+  /**
+   * Obtener la URL de la primera imagen del producto
+   */
+  getProductImageUrl(producto: Producto): string {
+    if (!producto.imagenes || producto.imagenes.length === 0) {
+      return '';
+    }
+    
+    const imagePath = producto.imagenes[0];
+    if (!imagePath) return '';
+    
+    // Si ya es una URL completa, devolverla tal como está
+    if (imagePath.startsWith('http')) {
+      return imagePath;
+    }
+    
+    // Construir URL completa para imágenes del servidor
+    return `http://localhost:3000${imagePath}`;
+  }
+
+  /**
+   * Manejar errores de carga de imagen
+   */
+  onImageError(event: any): void {
+    console.warn('Error cargando imagen:', event.target.src);
+    // Opcional: reemplazar con imagen por defecto
+    // event.target.src = '/assets/images/no-image.png';
   }
 }

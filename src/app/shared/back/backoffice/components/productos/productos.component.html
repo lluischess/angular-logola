@@ -150,7 +150,18 @@
             </td>
             <td class="foto-cell">
               <div class="producto-imagen">
-                <img [src]="producto.imagen" [alt]="producto.nombre" class="producto-img">
+                <img 
+                  *ngIf="hasProductImage(producto); else noImagePlaceholder"
+                  [src]="getProductImageUrl(producto)" 
+                  [alt]="producto.nombre" 
+                  class="producto-img"
+                  (error)="onImageError($event)">
+                <ng-template #noImagePlaceholder>
+                  <div class="no-image-placeholder">
+                    <span class="no-image-icon">📷</span>
+                    <span class="no-image-text">Sin imagen</span>
+                  </div>
+                </ng-template>
               </div>
             </td>
             <td class="fecha-cell">

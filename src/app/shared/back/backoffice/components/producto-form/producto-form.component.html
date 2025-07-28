@@ -166,28 +166,46 @@
           <!-- Imágenes Section -->
           <div class="form-section">
             <h3>Imágenes (Máximo 3)</h3>
+            <p class="section-description">Sube hasta 3 imágenes del producto. Formatos permitidos: JPG, PNG, WEBP (máximo 5MB cada una)</p>
             <div class="images-grid">
               <div class="image-upload-slot" *ngFor="let image of [0,1,2]; let i = index">
-                <div class="image-preview" *ngIf="getImagenes()[i]; else uploadSlot">
-                  <img [src]="getImagenes()[i]" [alt]="'Imagen ' + (i+1)">
-                  <button type="button" class="remove-image" (click)="removeImage(i)">×</button>
+                <!-- Vista previa de imagen existente -->
+                <div class="image-preview" *ngIf="hasImage(i); else uploadSlot">
+                  <img [src]="getImageUrl(getImagenes()[i])" [alt]="'Imagen ' + (i+1)" class="preview-image">
+                  <div class="image-overlay">
+                    <button type="button" class="btn-remove-image" (click)="removeImage(i)" title="Eliminar imagen">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                    <div class="image-info">
+                      <span class="image-number">{{ i + 1 }}</span>
+                    </div>
+                  </div>
                 </div>
+                
+                <!-- Slot para subir nueva imagen -->
                 <ng-template #uploadSlot>
                   <div class="upload-placeholder">
                     <input 
                       type="file" 
                       [id]="'image-' + i" 
-                      accept="image/*"
+                      accept="image/jpeg,image/jpg,image/png,image/webp"
                       (change)="onImageUpload($event, i)"
                       style="display: none;">
                     <label [for]="'image-' + i" class="upload-label">
-                      <span class="upload-icon">📷</span>
-                      <span>Subir imagen {{ i + 1 }}</span>
+                      <div class="upload-content">
+                        <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                        <span class="upload-text">Subir imagen {{ i + 1 }}</span>
+                        <small class="upload-hint">JPG, PNG, WEBP (máx. 5MB)</small>
+                      </div>
                     </label>
                   </div>
                 </ng-template>
               </div>
             </div>
+            <small class="form-help-text">
+              <i class="fas fa-info-circle"></i>
+              Las imágenes se redimensionarán automáticamente para optimizar el rendimiento web.
+            </small>
           </div>
 
           <!-- Detalles Section -->
@@ -251,6 +269,24 @@
                 </div>
               </div>
 
+              <div class="form-group">
+                <label for="precio">Precio (€)</label>
+                <input 
+                  type="number" 
+                  id="precio" 
+                  formControlName="precio"
+                  class="form-control"
+                  [class.is-invalid]="isFieldInvalid('precio')"
+                  min="0"
+                  step="0.01"
+                  placeholder="12.50">
+                <div class="invalid-feedback" *ngIf="isFieldInvalid('precio')">
+                  {{ getFieldError('precio') }}
+                </div>
+              </div>
+            </div>
+
+            <div class="form-row">
               <div class="form-group">
                 <label for="ordenCategoria">Orden en Categoría</label>
                 <input 

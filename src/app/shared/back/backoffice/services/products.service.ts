@@ -111,7 +111,7 @@ export class ProductsService {
    * Actualizar un producto
    */
   updateProduct(id: string, product: Partial<Product>): Observable<Product> {
-    return this.http.put<Product>(`${this.apiUrl}/${id}`, product);
+    return this.http.patch<Product>(`${this.apiUrl}/${id}`, product);
   }
 
   /**
@@ -133,6 +133,31 @@ export class ProductsService {
    */
   updateProductOrder(id: string, newOrder: number): Observable<Product> {
     return this.http.patch<Product>(`${this.apiUrl}/${id}/order`, { orden: newOrder });
+  }
+
+  /**
+   * Obtener el siguiente orden disponible para una categoría
+   */
+  getNextOrderForCategory(categoria: string): Observable<{nextOrder: number}> {
+    return this.http.get<{nextOrder: number}>(`${this.apiUrl}/next-order/${categoria}`);
+  }
+
+  /**
+   * Subir imagen de producto
+   */
+  uploadProductImage(file: File): Observable<{imagePath: string}> {
+    const formData = new FormData();
+    formData.append('image', file);
+    return this.http.post<{imagePath: string}>(`${this.apiUrl}/upload-image`, formData);
+  }
+
+  /**
+   * Eliminar imagen de producto
+   */
+  deleteProductImage(imagePath: string): Observable<{success: boolean}> {
+    return this.http.delete<{success: boolean}>(`${this.apiUrl}/delete-image`, {
+      body: { imagePath }
+    });
   }
 
   /**
