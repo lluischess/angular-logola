@@ -18,7 +18,6 @@ interface Producto {
   fechaCreacion?: Date;
   publicado: boolean;
   orden: number;
-  ordenCategoria?: number; // Campo del backend
   medidas?: string;
   descripcion?: string;
   precio?: number;
@@ -104,7 +103,6 @@ export class ProductosComponent implements OnInit {
         this.productos = productos.map(product => ({
           _id: product._id,
           id: product._id, // Para compatibilidad temporal
-          numeroProducto: product.numeroProducto, // Campo autonumérico
           referencia: product.referencia || '',
           nombre: product.nombre || '',
           categoria: product.categoria || '',
@@ -112,12 +110,11 @@ export class ProductosComponent implements OnInit {
           imagen: product.imagen,
           fechaCreacion: product.fechaCreacion ? new Date(product.fechaCreacion) : undefined,
           publicado: product.publicado || false,
-          orden: product.ordenCategoria || product.orden || 1, // Usar ordenCategoria del backend
-          ordenCategoria: product.ordenCategoria || product.orden || 1, // Campo específico del backend
+          orden: product.orden || 1,
           medidas: product.medidas,
           descripcion: product.descripcion,
           precio: product.precio
-        } as any));
+        }));
         
         console.log('📈 Cantidad de productos cargados:', this.productos.length);
         console.log('🎯 Productos asignados al componente:', this.productos);
@@ -230,10 +227,6 @@ export class ProductosComponent implements OnInit {
           aValue = a.id;
           bValue = b.id;
           break;
-        case 'numeroProducto':
-          aValue = a.numeroProducto || 0;
-          bValue = b.numeroProducto || 0;
-          break;
         case 'referencia':
           aValue = a.referencia.toLowerCase();
           bValue = b.referencia.toLowerCase();
@@ -281,10 +274,6 @@ export class ProductosComponent implements OnInit {
         case 'id':
           aValue = a.id;
           bValue = b.id;
-          break;
-        case 'numeroProducto':
-          aValue = a.numeroProducto || 0;
-          bValue = b.numeroProducto || 0;
           break;
         case 'referencia':
           aValue = a.referencia.toLowerCase();
@@ -377,153 +366,39 @@ export class ProductosComponent implements OnInit {
 
   moveUp(producto: Producto) {
     const productId = producto._id || producto.id?.toString();
-    if (!productId) {
-      alert('Error: No se pudo identificar el producto.');
-      return;
-    }
-
-    // Usar ordenCategoria que es el campo correcto en la base de datos
-    const currentOrder = (producto as any).ordenCategoria || producto.orden || 1;
-    const newOrder = currentOrder - 1;
-    
-    // Validar si el movimiento es posible
-    if (newOrder < 1) {
-      alert('No se puede mover el producto más arriba. Ya está en la primera posición (orden 1).');
-      return;
-    }
-    
-    // Aplicar efecto visual
-    this.applyReorderEffect(producto);
-    
-    console.log(`🔄 Moviendo producto hacia arriba: ${currentOrder} -> ${newOrder}`);
-    
-    this.productsService.updateProductOrder(productId, newOrder).subscribe({
-      next: () => {
-        console.log('✅ Producto movido hacia arriba');
-        this.loadProducts(); // Recargar para ver el nuevo orden
-      },
-      error: (error) => {
-        console.error('❌ Error reordenando producto:', error);
-        this.stopReordering(); // Quitar efecto visual en caso de error
-        let errorMessage = 'Error al reordenar el producto.';
-        
-        if (error.status === 400) {
-          errorMessage = 'Error: El orden especificado no es válido. El orden debe ser un número positivo mayor a 0.';
-        } else if (error.status === 404) {
-          errorMessage = 'Error: No se encontró el producto especificado.';
-        } else if (error.status === 409) {
-          errorMessage = 'Error: Ya existe otro producto con ese orden en la misma categoría.';
-        } else if (error.error?.message) {
-          errorMessage = `Error: ${error.error.message}`;
+    if (productId) {
+      this.productsService.reorderProduct(productId, 'up').subscribe({
+        next: () => {
+          console.log('✅ Producto movido hacia arriba');
+          this.loadProducts(); // Recargar para ver el nuevo orden
+        },
+        error: (error) => {
+          console.error('❌ Error reordenando producto:', error);
+          alert('Error al reordenar. Por favor, intenta de nuevo.');
         }
-        
-        alert(errorMessage);
-      }
-    });
+      });
+    }
   }
 
   moveDown(producto: Producto) {
     const productId = producto._id || producto.id?.toString();
-    if (!productId) {
-      alert('Error: No se pudo identificar el producto.');
-      return;
-    }
-
-    // Usar ordenCategoria que es el campo correcto en la base de datos
-    const currentOrder = (producto as any).ordenCategoria || producto.orden || 1;
-    const newOrder = currentOrder + 1;
-    
-    // Obtener el máximo orden en la misma categoría para validar límites
-    const productosEnCategoria = this.filteredProductos.filter((p: any) => 
-      (p.categoria || p.categoria) === ((producto as any).categoria || producto.categoria)
-    );
-    const maxOrder = Math.max(...productosEnCategoria.map((p: any) => p.ordenCategoria || p.orden || 1));
-    
-    // Validar si el movimiento es posible
-    if (newOrder > maxOrder + 1) {
-      alert('No se puede mover el producto más abajo. Ya está en la última posición de su categoría.');
-      return;
-    }
-    
-    // Aplicar efecto visual
-    this.applyReorderEffect(producto);
-    
-    console.log(`🔄 Moviendo producto hacia abajo: ${currentOrder} -> ${newOrder}`);
-    
-    this.productsService.updateProductOrder(productId, newOrder).subscribe({
-      next: () => {
-        console.log('✅ Producto movido hacia abajo');
-        this.loadProducts(); // Recargar para ver el nuevo orden
-      },
-      error: (error) => {
-        console.error('❌ Error reordenando producto:', error);
-        this.stopReordering(); // Quitar efecto visual en caso de error
-        let errorMessage = 'Error al reordenar el producto.';
-        
-        if (error.status === 400) {
-          errorMessage = 'Error: El orden especificado no es válido. El orden debe ser un número positivo.';
-        } else if (error.status === 404) {
-          errorMessage = 'Error: No se encontró el producto especificado.';
-        } else if (error.status === 409) {
-          errorMessage = 'Error: Ya existe otro producto con ese orden en la misma categoría.';
-        } else if (error.error?.message) {
-          errorMessage = `Error: ${error.error.message}`;
+    if (productId) {
+      this.productsService.reorderProduct(productId, 'down').subscribe({
+        next: () => {
+          console.log('✅ Producto movido hacia abajo');
+          this.loadProducts(); // Recargar para ver el nuevo orden
+        },
+        error: (error) => {
+          console.error('❌ Error reordenando producto:', error);
+          alert('Error al reordenar. Por favor, intenta de nuevo.');
         }
-        
-        alert(errorMessage);
-      }
-    });
+      });
+    }
   }
 
   stopReordering() {
     this.reorderingProduct = null;
     this.showReorderFeedback = false;
-  }
-
-  /**
-   * Determinar si se puede mostrar la flecha hacia arriba
-   */
-  canMoveUp(producto: Producto): boolean {
-    const currentOrder = (producto as any).ordenCategoria || producto.orden || 1;
-    return currentOrder > 1;
-  }
-
-  /**
-   * Determinar si se puede mostrar la flecha hacia abajo
-   */
-  canMoveDown(producto: Producto): boolean {
-    // Obtener productos de la misma categoría
-    const productosEnCategoria = this.filteredProductos.filter((p: any) => 
-      (p.categoria || p.categoria) === ((producto as any).categoria || producto.categoria)
-    );
-    
-    if (productosEnCategoria.length === 0) return false;
-    
-    // Obtener el máximo orden en la categoría
-    const maxOrder = Math.max(...productosEnCategoria.map((p: any) => p.ordenCategoria || p.orden || 1));
-    const currentOrder = (producto as any).ordenCategoria || producto.orden || 1;
-    
-    return currentOrder < maxOrder;
-  }
-
-  /**
-   * Aplicar efecto visual al producto que se está reordenando
-   */
-  applyReorderEffect(producto: Producto): void {
-    this.reorderingProduct = producto;
-    this.showReorderFeedback = true;
-    
-    // Quitar el efecto después de 2 segundos
-    setTimeout(() => {
-      this.stopReordering();
-    }, 2000);
-  }
-
-  /**
-   * Verificar si un producto está siendo reordenado (para aplicar clase CSS)
-   */
-  isBeingReordered(producto: Producto): boolean {
-    return this.reorderingProduct?._id === producto._id || this.reorderingProduct?.id === producto.id;
   }
 
   createProduct() {
@@ -533,42 +408,5 @@ export class ProductosComponent implements OnInit {
   logout() {
     this.authService.logout();
     this.router.navigate(['/logoadmin/login']);
-  }
-
-  getSortIcon(column: string): string {
-    if (this.sortColumn !== column) {
-      return '↕️'; // Flecha bidireccional para columnas no ordenadas
-    }
-    return this.sortDirection === 'asc' ? '↑' : '↓'; // Flechas simples para dirección de ordenamiento
-  }
-
-  getPublicadoClass(publicado: boolean): string {
-    return publicado ? 'badge bg-success' : 'badge bg-secondary';
-  }
-
-  getCategoriaClass(categoria: string): string {
-    const colors = {
-      'chocolates': 'badge bg-primary',
-      'caramelos': 'badge bg-warning',
-      'galletas': 'badge bg-info',
-      'navidad': 'badge bg-danger',
-      'otros': 'badge bg-secondary'
-    };
-    return colors[categoria as keyof typeof colors] || 'badge bg-secondary';
-  }
-
-  getArrowColorClass(categoria: string): string {
-    const colors = {
-      'chocolates': 'arrow-primary',
-      'caramelos': 'arrow-warning',
-      'galletas': 'arrow-info',
-      'navidad': 'arrow-danger',
-      'otros': 'arrow-secondary'
-    };
-    return colors[categoria as keyof typeof colors] || 'arrow-secondary';
-  }
-
-  trackByFn(index: number, item: Producto): any {
-    return item._id || item.id || index;
   }
 }

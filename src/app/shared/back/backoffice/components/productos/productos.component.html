@@ -11,7 +11,7 @@
       <button class="btn-clear" (click)="clearFilters()" title="Limpiar filtros">
         🗑️ Limpiar filtros
       </button>
-      <button class="btn-primary" (click)="createProducto()" title="Crear nuevo producto">
+      <button class="btn btn-primary" (click)="createProduct()" title="Crear nuevo producto">
         ➕ Nuevo Producto
       </button>
       <span class="results-count">{{ filteredProductos.length }} resultados</span>
@@ -21,16 +21,6 @@
   <!-- Filtros -->
   <div class="filters-section">
     <div class="filters-grid">
-      <div class="filter-group">
-        <label>ID</label>
-        <input 
-          type="text" 
-          [(ngModel)]="filtroId" 
-          (input)="applyFilters()"
-          placeholder="Buscar por ID..."
-          class="filter-input">
-      </div>
-      
       <div class="filter-group">
         <label>Referencia</label>
         <input 
@@ -99,7 +89,7 @@
       <span class="reorder-icon">✨</span>
       <span class="reorder-text">
         Reordenando "{{ reorderingProduct.nombre }}" en {{ reorderingProduct.categoria | titlecase }}
-        - Nueva posición: {{ reorderingProduct.ordenCategoria }}
+        - Nueva posición: {{ reorderingProduct.orden }}
       </span>
     </div>
   </div>
@@ -110,37 +100,36 @@
       <table class="productos-table">
         <thead>
           <tr>
-            <th class="sortable-header" (click)="sortBy('id')">
-              ID <span class="sort-icon">{{ getSortIcon('id') }}</span>
+            <th class="sortable-header" (click)="sort('numeroProducto')">
+              Nº Producto <span class="sort-icon">{{ getSortIcon('numeroProducto') }}</span>
             </th>
-            <th class="sortable-header" (click)="sortBy('referencia')">
+            <th class="sortable-header" (click)="sort('referencia')">
               Referencia <span class="sort-icon">{{ getSortIcon('referencia') }}</span>
             </th>
-            <th class="sortable-header" (click)="sortBy('categoria')">
+            <th class="sortable-header" (click)="sort('categoria')">
               Categoría <span class="sort-icon">{{ getSortIcon('categoria') }}</span>
             </th>
-            <th class="sortable-header" (click)="sortBy('cantidadMinima')">
+            <th class="sortable-header" (click)="sort('cantidadMinima')">
               Cantidad Mínima <span class="sort-icon">{{ getSortIcon('cantidadMinima') }}</span>
             </th>
             <th>Foto</th>
-            <th class="sortable-header" (click)="sortBy('fechaCreacion')">
+            <th class="sortable-header" (click)="sort('fechaCreacion')">
               Fecha Creación <span class="sort-icon">{{ getSortIcon('fechaCreacion') }}</span>
             </th>
-            <th class="sortable-header" (click)="sortBy('publicado')">
+            <th class="sortable-header" (click)="sort('publicado')">
               Publicado <span class="sort-icon">{{ getSortIcon('publicado') }}</span>
             </th>
-            <th class="sortable-header" (click)="sortBy('ordenCategoria')">
-              Orden <span class="sort-icon">{{ getSortIcon('ordenCategoria') }}</span>
+            <th class="sortable-header" (click)="sort('orden')">
+              Orden <span class="sort-icon">{{ getSortIcon('orden') }}</span>
             </th>
             <th>Acciones</th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let producto of filteredProductos; let i = index; trackBy: trackByFn" 
-              [class]="getRowClass(producto)"
               [attr.data-category]="producto.categoria">
             <td class="id-cell">
-              <span class="id-badge">#{{ producto.id }}</span>
+              <span class="id-badge">#{{ producto.numeroProducto || 'N/A' }}</span>
             </td>
             <td class="referencia-cell">
               <div class="referencia-info">
@@ -172,46 +161,48 @@
                 {{ producto.publicado ? 'Sí' : 'No' }}
               </span>
             </td>
-            <td class="orden-cell">
+            <td class="orden-cell" [ngClass]="{ 'reordering': isBeingReordered(producto) }">
               <div class="orden-container">
                 <div class="arrow-buttons">
                   <button 
+                    *ngIf="canMoveUp(producto)"
                     class="arrow-btn arrow-up"
-                    [class.disabled]="!canMoveUp(producto)"
-                    [disabled]="!canMoveUp(producto)"
-                    (click)="moveProductUp(producto)"
+                    [ngClass]="getArrowColorClass(producto.categoria)"
+                    (click)="moveUp(producto)"
                     title="Subir posición">
                     ↑
                   </button>
                   <button 
+                    *ngIf="canMoveDown(producto)"
                     class="arrow-btn arrow-down"
-                    [class.disabled]="!canMoveDown(producto)"
-                    [disabled]="!canMoveDown(producto)"
-                    (click)="moveProductDown(producto)"
+                    [ngClass]="getArrowColorClass(producto.categoria)"
+                    (click)="moveDown(producto)"
                     title="Bajar posición">
                     ↓
                   </button>
                 </div>
-                <span class="orden-number">{{ producto.ordenCategoria }}</span>
+                <span class="orden-number" [ngClass]="{ 'updating': isBeingReordered(producto) }">
+                  {{ producto.ordenCategoria || producto.orden || 'N/A' }}
+                </span>
               </div>
             </td>
             <td class="acciones-cell">
               <div class="acciones-group">
                 <button 
                   class="btn-action btn-view" 
-                  (click)="viewProducto(producto.id)"
+                  (click)="editProduct(producto)"
                   title="Ver producto">
                   👁️
                 </button>
                 <button 
                   class="btn-action btn-edit" 
-                  (click)="editProducto(producto.id)"
+                  (click)="editProduct(producto)"
                   title="Editar producto">
                   ✏️
                 </button>
                 <button 
                   class="btn-action btn-delete" 
-                  (click)="deleteProducto(producto.id)"
+                  (click)="deleteProduct(producto)"
                   title="Eliminar producto">
                   🗑️
                 </button>

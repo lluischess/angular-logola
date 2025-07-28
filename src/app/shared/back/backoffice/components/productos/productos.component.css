@@ -253,8 +253,8 @@
 }
 
 .productos-container {
-  padding: 2rem;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  padding: 20px;
+  background-color: #f8fafc;
   min-height: 100vh;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
@@ -859,45 +859,45 @@
   }
 }
 
-/* Category-based button colors */
-.table-row[data-category="chocolates"] .arrow-btn:not(.disabled) {
-  background: linear-gradient(135deg, #8b4513 0%, #654321 100%);
+/* Category-based arrow button colors */
+.arrow-primary {
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%) !important;
 }
 
-.table-row[data-category="chocolates"] .arrow-btn:hover:not(.disabled) {
-  background: linear-gradient(135deg, #654321 0%, #4a2c17 100%);
+.arrow-primary:hover {
+  background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%) !important;
 }
 
-.table-row[data-category="caramelos"] .arrow-btn:not(.disabled) {
-  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+.arrow-warning {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%) !important;
 }
 
-.table-row[data-category="caramelos"] .arrow-btn:hover:not(.disabled) {
-  background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+.arrow-warning:hover {
+  background: linear-gradient(135deg, #d97706 0%, #b45309 100%) !important;
 }
 
-.table-row[data-category="novedades"] .arrow-btn:not(.disabled) {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+.arrow-info {
+  background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%) !important;
 }
 
-.table-row[data-category="novedades"] .arrow-btn:hover:not(.disabled) {
-  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+.arrow-info:hover {
+  background: linear-gradient(135deg, #0891b2 0%, #0e7490 100%) !important;
 }
 
-.table-row[data-category="navidad"] .arrow-btn:not(.disabled) {
-  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+.arrow-danger {
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%) !important;
 }
 
-.table-row[data-category="navidad"] .arrow-btn:hover:not(.disabled) {
-  background: linear-gradient(135deg, #b91c1c 0%, #991b1b 100%);
+.arrow-danger:hover {
+  background: linear-gradient(135deg, #b91c1c 0%, #991b1b 100%) !important;
 }
 
-.table-row[data-category="galletas"] .arrow-btn:not(.disabled) {
-  background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+.arrow-secondary {
+  background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%) !important;
 }
 
-.table-row[data-category="galletas"] .arrow-btn:hover:not(.disabled) {
-  background: linear-gradient(135deg, #6d28d9 0%, #5b21b6 100%);
+.arrow-secondary:hover {
+  background: linear-gradient(135deg, #4b5563 0%, #374151 100%) !important;
 }
 
 /* Responsive adjustments */
