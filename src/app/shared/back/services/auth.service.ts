@@ -119,17 +119,17 @@ export class AuthService {
   }
 
   /**
+   * Obtener el token JWT actual
+   */
+  getToken(): string | null {
+    return localStorage.getItem('authToken');
+  }
+
+  /**
    * Obtener el nombre de usuario actual
    */
   getCurrentUsername(): string | null {
     return localStorage.getItem('username');
-  }
-
-  /**
-   * Obtener el token actual
-   */
-  getToken(): string | null {
-    return localStorage.getItem('authToken');
   }
 
   /**

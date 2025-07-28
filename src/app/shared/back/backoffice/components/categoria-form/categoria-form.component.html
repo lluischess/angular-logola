@@ -16,6 +16,18 @@
       <div class="form-container">
       <form [formGroup]="categoriaForm" (ngSubmit)="onSubmit()" class="categoria-form">
         
+        <!-- Error State -->
+        <div *ngIf="error" class="alert alert-danger mb-4">
+          <i class="fas fa-exclamation-triangle"></i>
+          {{ error }}
+        </div>
+
+        <!-- Loading State -->
+        <div *ngIf="isLoading" class="loading-container mb-4">
+          <div class="spinner"></div>
+          <p>{{ isEditMode ? 'Cargando categoría...' : 'Guardando categoría...' }}</p>
+        </div>
+
         <!-- Estado de Publicación (destacado en la parte superior) -->
         <div class="publication-status">
           <div class="status-card">
@@ -25,11 +37,11 @@
             </div>
             <div class="status-toggle">
               <label class="toggle-switch">
-                <input type="checkbox" formControlName="publicada">
+                <input type="checkbox" formControlName="publicado">
                 <span class="toggle-slider"></span>
               </label>
               <span class="toggle-label">
-                {{ categoriaForm.get('publicada')?.value ? 'Publicada' : 'No Publicada' }}
+                {{ categoriaForm.get('publicado')?.value ? 'Publicada' : 'No Publicada' }}
               </span>
             </div>
           </div>
@@ -85,15 +97,48 @@
 
                 <div class="form-row">
                   <div class="form-group">
+                    <label for="descripcion" class="form-label">
+                      Descripción
+                    </label>
+                    <textarea 
+                      id="descripcion"
+                      class="form-control"
+                      formControlName="descripcion"
+                      rows="3"
+                      placeholder="Descripción de la categoría (opcional)"
+                      maxlength="500"></textarea>
+                    <small class="form-text">{{ getCharacterCount('descripcion') }}/500 caracteres</small>
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="orden" class="form-label">
+                      Orden *
+                    </label>
+                    <input 
+                      type="number" 
+                      id="orden"
+                      class="form-control"
+                      formControlName="orden"
+                      min="1"
+                      placeholder="1"
+                      style="max-width: 200px;">
+                    <small class="form-text">Orden de aparición en el sitio web</small>
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <div class="form-group">
                     <label class="form-label">Configuración Especial</label>
                     <div class="checkbox-group">
                       <label class="checkbox-item">
-                        <input type="checkbox" formControlName="esNovedades">
+                        <input type="checkbox" formControlName="configuracionEspecial">
                         <span class="checkbox-custom"></span>
                         <div class="checkbox-content">
-                          <span class="checkbox-title">Marcar como "Novedades"</span>
+                          <span class="checkbox-title">Configuración Especial</span>
                           <span class="checkbox-description">
-                            Esta categoría aparecerá como "Novedades" en la página principal (primeros 6 productos)
+                            Marcar si esta categoría tiene configuración especial (ej: Novedades)
                           </span>
                         </div>
                       </label>

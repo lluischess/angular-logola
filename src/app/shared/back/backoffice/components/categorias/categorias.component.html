@@ -2,6 +2,17 @@
 <app-backoffice-layout pageTitle="Gestión de Categorías">
   <div class="categorias-content">
 
+  <!-- Error State -->
+  <div *ngIf="error" class="error-container">
+    <div class="alert alert-danger">
+      <i class="fas fa-exclamation-triangle"></i>
+      {{ error }}
+      <button class="btn btn-sm btn-outline-danger ms-2" (click)="loadCategorias()">
+        Reintentar
+      </button>
+    </div>
+  </div>
+
   <!-- Loading State -->
   <div *ngIf="isLoading" class="loading-container">
     <div class="spinner"></div>
@@ -13,7 +24,7 @@
     <div class="table-header">
       <div class="header-left">
         <h3>Lista de Categorías</h3>
-        <span class="category-count">{{ categorias.length }} categorías</span>
+        <span class="category-count">{{ categorias?.length || 0 }} categorías</span>
       </div>
       <div class="header-actions">
         <button class="btn btn-add-category" (click)="createCategoria()">
@@ -36,37 +47,43 @@
         </thead>
         <tbody>
           <tr *ngFor="let categoria of categorias" class="table-row">
-            <td class="id-column">{{ categoria.id }}</td>
+            <td class="id-column">{{ categoria._id ? categoria._id.substring(categoria._id.length - 6) : 'N/A' }}</td>
             <td class="nombre-column">
               <strong>{{ categoria.nombre }}</strong>
             </td>
             <td class="productos-column">
-              <span class="productos-count">{{ categoria.numeroProductos }}</span>
+              <span class="productos-count">{{ categoria.productCount || 0 }}</span>
               <small class="productos-label">productos</small>
             </td>
             <td class="estado-column">
               <span 
                 class="badge" 
-                [ngClass]="getEstadoClass(categoria.publicada)">
-                {{ getEstadoTexto(categoria.publicada) }}
+                [ngClass]="getEstadoClass(categoria.publicado || false)">
+                {{ getEstadoTexto(categoria.publicado || false) }}
               </span>
             </td>
             <td class="acciones-column">
               <div class="action-buttons">
                 <button 
                   class="btn btn-edit"
-                  (click)="editCategoria(categoria.id)"
+                  (click)="editCategoria(categoria._id!)"
                   title="Editar categoría">
                   ✏️ Editar
                 </button>
                 <button 
                   class="btn btn-toggle"
-                  [class.btn-success]="!categoria.publicada"
-                  [class.btn-warning]="categoria.publicada"
+                  [class.btn-success]="!categoria.publicado"
+                  [class.btn-warning]="categoria.publicado"
                   (click)="togglePublicacion(categoria)"
-                  [title]="categoria.publicada ? 'Despublicar' : 'Publicar'">
-                  <i class="fas" [ngClass]="categoria.publicada ? 'fa-eye-slash' : 'fa-eye'"></i>
-                  {{ categoria.publicada ? 'Despublicar' : 'Publicar' }}
+                  [title]="categoria.publicado ? 'Despublicar' : 'Publicar'">
+                  <i class="fas" [ngClass]="categoria.publicado ? 'fa-eye-slash' : 'fa-eye'"></i>
+                  {{ categoria.publicado ? 'Despublicar' : 'Publicar' }}
+                </button>
+                <button 
+                  class="btn btn-delete"
+                  (click)="deleteCategoria(categoria)"
+                  title="Eliminar categoría">
+                  🗑️ Eliminar
                 </button>
               </div>
             </td>
