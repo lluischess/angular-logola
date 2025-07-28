@@ -110,8 +110,8 @@ export class ProductosComponent implements OnInit {
           nombre: product.nombre || '',
           categoria: product.categoria || '',
           cantidadMinima: product.cantidadMinima || 0,
-          imagen: product.imagen,
-          fechaCreacion: product.fechaCreacion ? new Date(product.fechaCreacion) : undefined,
+          imagenes: product.imagenes || [], // Array de imágenes del backend
+          fechaCreacion: product.createdAt || product.fechaCreacion ? new Date(product.createdAt || product.fechaCreacion) : new Date(),
           publicado: product.publicado || false,
           orden: product.ordenCategoria || product.orden || 1, // Usar ordenCategoria del backend
           ordenCategoria: product.ordenCategoria || product.orden || 1, // Campo específico del backend

@@ -1,0 +1,64 @@
+/* ===== PRECIO COLUMN STYLES ===== */
+.precio-cell {
+  text-align: center;
+  vertical-align: middle;
+}
+
+.precio-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+}
+
+.precio-amount {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #2e7d32;
+  background: linear-gradient(135deg, #c8e6c9, #a5d6a7);
+  padding: 6px 12px;
+  border-radius: 12px;
+  border: 2px solid #4caf50;
+  box-shadow: 0 2px 8px rgba(76, 175, 80, 0.2);
+  transition: all 0.3s ease;
+  min-width: 70px;
+  text-align: center;
+}
+
+.precio-amount:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+}
+
+.precio-no-definido {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #757575;
+  background: linear-gradient(135deg, #f5f5f5, #eeeeee);
+  padding: 4px 8px;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+  font-style: italic;
+  min-width: 70px;
+  text-align: center;
+}
+
+/* Responsive adjustments for price column */
+@media (max-width: 768px) {
+  .precio-cell {
+    min-width: 80px;
+  }
+  
+  .precio-amount {
+    font-size: 0.9rem;
+    padding: 4px 8px;
+    min-width: 60px;
+  }
+  
+  .precio-no-definido {
+    font-size: 0.8rem;
+    padding: 3px 6px;
+    min-width: 60px;
+  }
+}

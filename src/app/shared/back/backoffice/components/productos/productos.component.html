@@ -112,6 +112,9 @@
             <th class="sortable-header" (click)="sort('cantidadMinima')">
               Cantidad Mínima <span class="sort-icon">{{ getSortIcon('cantidadMinima') }}</span>
             </th>
+            <th class="sortable-header" (click)="sort('precio')">
+              Precio Unitario <span class="sort-icon">{{ getSortIcon('precio') }}</span>
+            </th>
             <th>Foto</th>
             <th class="sortable-header" (click)="sort('fechaCreacion')">
               Fecha Creación <span class="sort-icon">{{ getSortIcon('fechaCreacion') }}</span>
@@ -146,6 +149,16 @@
               <div class="cantidad-info">
                 <span class="cantidad-number">{{ producto.cantidadMinima }}</span>
                 <span class="cantidad-label">unidades</span>
+              </div>
+            </td>
+            <td class="precio-cell">
+              <div class="precio-info">
+                <span class="precio-amount" *ngIf="producto.precio !== null && producto.precio !== undefined && producto.precio > 0; else noPrecio">
+                  {{ producto.precio | currency:'EUR':'symbol':'1.2-2' }}
+                </span>
+                <ng-template #noPrecio>
+                  <span class="precio-no-definido">No definido</span>
+                </ng-template>
               </div>
             </td>
             <td class="foto-cell">

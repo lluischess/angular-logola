@@ -5,6 +5,7 @@ import { Router, ActivatedRoute, RouterModule } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
 import { BackofficeLayoutComponent } from '../backoffice-layout/backoffice-layout.component';
 import { ProductsService } from '../../services/products.service';
+import { CategoriesService } from '../../services/categories.service';
 
 export interface ProductoCompleto {
   id?: number;
@@ -51,25 +52,24 @@ export class ProductoFormComponent implements OnInit {
     { value: 'pequeño', label: 'Pequeño' }
   ];
   
-  categoriasDisponibles = [
-    { value: 'chocolates', label: 'Chocolates' },
-    { value: 'caramelos', label: 'Caramelos' },
-    { value: 'novedades', label: 'Novedades' },
-    { value: 'navidad', label: 'Navidad' },
-    { value: 'galletas', label: 'Galletas' }
-  ];
+  // Categorías cargadas dinámicamente desde el backend
+  categoriasDisponibles: { value: string, label: string }[] = [];
 
   constructor(
     private fb: FormBuilder,
     private router: Router,
     private route: ActivatedRoute,
     private authService: AuthService,
-    private productsService: ProductsService
+    private productsService: ProductsService,
+    private categoriesService: CategoriesService
   ) {
     this.initForm();
   }
 
   ngOnInit() {
+    // Cargar categorías disponibles desde el backend
+    this.loadCategorias();
+    
     // Verificar si estamos en modo edición
     this.route.params.subscribe(params => {
       if (params['id']) {
@@ -86,6 +86,69 @@ export class ProductoFormComponent implements OnInit {
         }
       }
     });
+  }
+
+  /**
+   * Cargar categorías disponibles desde el backend
+   */
+  private loadCategorias(): void {
+    console.log('🔄 Cargando categorías disponibles...');
+    
+    this.categoriesService.getCategories().subscribe({
+      next: (response) => {
+        console.log('✅ Respuesta del backend para categorías:', response);
+        
+        // Adaptar la respuesta del backend (puede venir como {categories: [...]} o directamente [...])
+        let categorias: any[] = [];
+        if (response && typeof response === 'object') {
+          if ('categories' in response && Array.isArray((response as any).categories)) {
+            categorias = (response as any).categories;
+          } else if ('data' in response && Array.isArray((response as any).data)) {
+            categorias = (response as any).data;
+          } else if (Array.isArray(response)) {
+            categorias = response as any[];
+          }
+        }
+        
+        // Convertir categorías del backend al formato del selector
+        // Asegurar que el value coincida exactamente con el enum del backend
+        this.categoriasDisponibles = categorias.map(categoria => {
+          const nombre = categoria.nombre || categoria.name || categoria.value;
+          return {
+            value: nombre.toLowerCase(), // Asegurar minúsculas para coincidir con el enum
+            label: this.capitalizeFirst(nombre) // Mostrar con primera letra mayúscula
+          };
+        });
+        
+        console.log('📋 Categorías disponibles cargadas:', this.categoriasDisponibles);
+      },
+      error: (error) => {
+        console.error('❌ Error cargando categorías:', error);
+        
+        // Fallback con categorías básicas si falla la carga
+        // Valores exactos del enum del backend: ['chocolates', 'caramelos', 'novedades', 'navidad', 'galletas', 'hoteles', 'bombones', 'minibar']
+        this.categoriasDisponibles = [
+          { value: 'chocolates', label: 'Chocolates' },
+          { value: 'caramelos', label: 'Caramelos' },
+          { value: 'galletas', label: 'Galletas' },
+          { value: 'novedades', label: 'Novedades' },
+          { value: 'navidad', label: 'Navidad' },
+          { value: 'hoteles', label: 'Hoteles' },
+          { value: 'bombones', label: 'Bombones' },
+          { value: 'minibar', label: 'Minibar' }
+        ];
+        
+        console.log('⚠️ Usando categorías de fallback:', this.categoriasDisponibles);
+      }
+    });
+  }
+
+  /**
+   * Capitalizar la primera letra de un string
+   */
+  private capitalizeFirst(str: string): string {
+    if (!str) return '';
+    return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
   }
 
   /**
