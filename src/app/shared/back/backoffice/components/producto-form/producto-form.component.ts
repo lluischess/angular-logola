@@ -44,14 +44,14 @@ export class ProductoFormComponent implements OnInit {
   activeTab: 'general' | 'seo' = 'general';
   isEditMode = false;
   productoId: string | null = null;
-  
+
   // Opciones disponibles
   tallasDisponibles = [
     { value: 'grande', label: 'Grande' },
     { value: 'mediano', label: 'Mediano' },
     { value: 'pequeño', label: 'Pequeño' }
   ];
-  
+
   // Categorías cargadas dinámicamente desde el backend
   categoriasDisponibles: { value: string, label: string }[] = [];
 
@@ -69,7 +69,7 @@ export class ProductoFormComponent implements OnInit {
   ngOnInit() {
     // Cargar categorías disponibles desde el backend
     this.loadCategorias();
-    
+
     // Verificar si estamos en modo edición
     this.route.params.subscribe(params => {
       if (params['id']) {
@@ -93,11 +93,11 @@ export class ProductoFormComponent implements OnInit {
    */
   private loadCategorias(): void {
     console.log('🔄 Cargando categorías disponibles...');
-    
+
     this.categoriesService.getCategories().subscribe({
       next: (response) => {
         console.log('✅ Respuesta del backend para categorías:', response);
-        
+
         // Adaptar la respuesta del backend (puede venir como {categories: [...]} o directamente [...])
         let categorias: any[] = [];
         if (response && typeof response === 'object') {
@@ -109,7 +109,7 @@ export class ProductoFormComponent implements OnInit {
             categorias = response as any[];
           }
         }
-        
+
         // Convertir categorías del backend al formato del selector
         // Asegurar que el value coincida exactamente con el enum del backend
         this.categoriasDisponibles = categorias.map(categoria => {
@@ -119,12 +119,12 @@ export class ProductoFormComponent implements OnInit {
             label: this.capitalizeFirst(nombre) // Mostrar con primera letra mayúscula
           };
         });
-        
+
         console.log('📋 Categorías disponibles cargadas:', this.categoriasDisponibles);
       },
       error: (error) => {
         console.error('❌ Error cargando categorías:', error);
-        
+
         // Fallback con categorías básicas si falla la carga
         // Valores exactos del enum del backend: ['chocolates', 'caramelos', 'novedades', 'navidad', 'galletas', 'hoteles', 'bombones', 'minibar']
         this.categoriasDisponibles = [
@@ -137,7 +137,7 @@ export class ProductoFormComponent implements OnInit {
           { value: 'bombones', label: 'Bombones' },
           { value: 'minibar', label: 'Minibar' }
         ];
-        
+
         console.log('⚠️ Usando categorías de fallback:', this.categoriasDisponibles);
       }
     });
@@ -214,7 +214,7 @@ export class ProductoFormComponent implements OnInit {
       consumePreferente: ['', [Validators.maxLength(50)]],
       publicado: [false],
       ordenCategoria: [{value: 1, disabled: true}],
-      
+
       // Campos SEO
       metaTitle: ['', [Validators.maxLength(60)]],
       metaDescription: ['', [Validators.maxLength(160)]],
@@ -269,9 +269,9 @@ export class ProductoFormComponent implements OnInit {
   onSubmit() {
     if (this.productoForm.valid) {
       const rawFormData = this.productoForm.value;
-      
+
       // Mapear datos del formulario al formato esperado por el backend
-      
+
       // Construir formData solo con campos que tienen valores válidos
       const formData: any = {
         nombre: rawFormData.nombre,
@@ -293,12 +293,12 @@ export class ProductoFormComponent implements OnInit {
         palabrasClave: rawFormData.metaKeywords,
         urlSlug: rawFormData.urlSlug
       };
-      
+
       // Solo añadir ordenCategoria si tiene un valor válido (permitir cálculo automático si es undefined)
       if (rawFormData.ordenCategoria || rawFormData.orden) {
         formData.ordenCategoria = rawFormData.ordenCategoria || rawFormData.orden;
       }
-      
+
       if (this.isEditMode) {
         // Validar que tenemos un ID válido antes de actualizar
         if (!this.productoId || !this.isValidObjectId(this.productoId)) {
@@ -306,13 +306,13 @@ export class ProductoFormComponent implements OnInit {
           alert('Error: ID de producto inválido. No se puede actualizar.');
           return;
         }
-        
+
         // Actualizar producto existente
         console.log('Actualizando producto con ID:', this.productoId, 'Datos:', formData);
         this.productsService.updateProduct(this.productoId.toString(), formData).subscribe({
           next: (response) => {
-            console.log('✅ Producto actualizado exitosamente:', response);
-            alert('Producto actualizado exitosamente');
+            console.log('✅ Producto actualizado correctamente:', response);
+            alert('Producto actualizado correctamente');
             this.router.navigate(['/logoadmin/productos']);
           },
           error: (error) => {
@@ -325,8 +325,8 @@ export class ProductoFormComponent implements OnInit {
         console.log('Creando nuevo producto:', formData);
         this.productsService.createProduct(formData).subscribe({
           next: (response) => {
-            console.log('✅ Producto creado exitosamente:', response);
-            alert('Producto creado exitosamente');
+            console.log('✅ Producto creado correctamente:', response);
+            alert('Producto creado correctamente');
             this.router.navigate(['/logoadmin/productos']);
           },
           error: (error) => {
@@ -375,17 +375,17 @@ export class ProductoFormComponent implements OnInit {
    */
   private calculateOrderForCategory(categoria: string): void {
     console.log(`📊 Calculando orden para categoría: ${categoria}`);
-    
+
     this.productsService.getNextOrderForCategory(categoria).subscribe({
       next: (response) => {
         const nextOrder = response.nextOrder;
         console.log(`✅ Orden calculado: ${nextOrder}`);
-        
+
         // Actualizar el campo orden en el formulario
-        this.productoForm.patchValue({ 
-          ordenCategoria: nextOrder 
+        this.productoForm.patchValue({
+          ordenCategoria: nextOrder
         });
-        
+
         // Habilitar temporalmente el campo para mostrar el valor
         const ordenControl = this.productoForm.get('ordenCategoria');
         if (ordenControl) {
@@ -429,8 +429,8 @@ export class ProductoFormComponent implements OnInit {
     // Subir imagen al servidor
     this.productsService.uploadProductImage(file).subscribe({
       next: (response) => {
-        console.log('✅ Imagen subida exitosamente:', response.imagePath);
-        
+        console.log('✅ Imagen subida correctamente:', response.imagePath);
+
         // Actualizar el array de imágenes en el formulario
         const imagenes = this.getImagenes();
         imagenes[index] = response.imagePath;

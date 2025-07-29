@@ -87,7 +87,7 @@ export class ConfigurationService {
     const formData = new FormData();
     formData.append('file', file);
     formData.append('category', category);
-    
+
     return this.http.post<any>(`${this.apiUrl}/images/upload`, formData).pipe(
       map(response => {
         // Transformar la respuesta del backend para que coincida with lo esperado por el frontend
@@ -96,7 +96,7 @@ export class ConfigurationService {
             success: true,
             url: response.datos.ruta,
             filename: response.datos.nombreOriginal || response.datos.nombre,
-            message: 'Imagen subida exitosamente'
+            message: 'Imagen subida correctamente'
           };
         }
         return {

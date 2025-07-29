@@ -4,25 +4,30 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
 import { BackofficeLayoutComponent } from '../backoffice-layout/backoffice-layout.component';
+import { BudgetsService, Budget, BudgetStatus, BudgetStats } from '../../../services/budgets.service';
 
+// Interfaces para compatibilidad con el template existente
 export interface Presupuesto {
-  id: number;
+  id: string;
+  numeroPresupuesto: number;
+  numeroPedido: string;
   nombreEmpresa: string;
   nombreContacto: string;
   email: string;
   telefono: string;
   direccion: string;
   fecha: Date;
-  estado: 'pendiente' | 'aprobado' | 'rechazado' | 'enviado';
+  estado: string;
   productos: ProductoPresupuesto[];
-  logoEmpresa: string; // URL de la imagen del logotipo
+  logoEmpresa: string;
   aceptaCorreosPublicitarios: boolean;
-  cantidadTotal: number; // Para compatibilidad con código existente
-  apuntes?: string; // Campo de notas/apuntes adicionales
+  cantidadTotal: number;
+  precioTotal?: number;
+  apuntes?: string;
 }
 
 export interface ProductoPresupuesto {
-  id: number;
+  id: string;
   nombre: string;
   categoria: string;
   cantidad: number;
@@ -41,157 +46,210 @@ export interface ProductoPresupuesto {
 export class PresupuestosComponent implements OnInit {
   presupuestos: Presupuesto[] = [];
   filteredPresupuestos: Presupuesto[] = [];
+  stats: BudgetStats | null = null;
+  
+  // Estados de carga y error
+  loading = false;
+  error: string | null = null;
   
   // Filtros
-  filtroId: string = '';
   filtroEmpresa: string = '';
   filtroCantidad: string = '';
   filtroTelefono: string = '';
   filtroEmail: string = '';
+  filtroEstado: string = '';
   
   // Ordenamiento
-  sortColumn: string = 'id';
+  sortColumn: string = 'numeroPresupuesto';
   sortDirection: 'asc' | 'desc' = 'desc';
   
-  // Propiedades del sidebar y menú eliminadas - ahora usa el layout reutilizable
+  // Paginación
+  currentPage = 1;
+  itemsPerPage = 10;
+  totalItems = 0;
+  totalPages = 0;
 
   constructor(
     private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    private budgetsService: BudgetsService
   ) {}
 
   ngOnInit() {
-    this.loadMockData();
-    this.sortData();
-    this.filteredPresupuestos = [...this.presupuestos];
+    this.testConnectivity();
+    this.loadBudgets();
+    this.loadStats();
+  }
+  
+  // Método de prueba para diagnosticar conectividad
+  testConnectivity() {
+    console.log('🧪 CONNECTIVITY TEST: Starting diagnostic test');
+    console.log('🧪 CONNECTIVITY TEST: Token in localStorage:', localStorage.getItem('authToken'));
+    console.log('🧪 CONNECTIVITY TEST: API URL:', `http://localhost:3000/budgets`);
+    
+    // Test directo con fetch para ver qué pasa
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+      console.error('❌ CONNECTIVITY TEST: No token found! User needs to login first.');
+      this.error = 'No hay token de autenticación. Por favor, inicia sesión.';
+      return;
+    }
+    
+    fetch('http://localhost:3000/budgets', {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    })
+    .then(response => {
+      console.log('🧪 CONNECTIVITY TEST: Response status:', response.status);
+      console.log('🧪 CONNECTIVITY TEST: Response headers:', response.headers);
+      return response.json();
+    })
+    .then(data => {
+      console.log('🧪 CONNECTIVITY TEST: Response data:', data);
+    })
+    .catch(error => {
+      console.error('🧪 CONNECTIVITY TEST: Fetch error:', error);
+    });
   }
 
-  loadMockData() {
-    this.presupuestos = [
-      {
-        id: 1001,
-        nombreEmpresa: 'Dulces Barcelona S.L.',
-        nombreContacto: 'María García López',
-        email: 'pedidos@dulcesbarcelona.com',
-        telefono: '+34 932 123 456',
-        direccion: 'Carrer de Balmes, 123, 08008 Barcelona',
-        fecha: new Date('2024-01-15'),
-        estado: 'pendiente',
-        productos: [
-          { id: 1, nombre: 'Chocolates Premium', categoria: 'Chocolates', cantidad: 100, precioUnitario: 12.50, precioTotal: 1250, imagen: '/assets/images/chocolate-premium.jpg' },
-          { id: 2, nombre: 'Caramelos Artesanales', categoria: 'Caramelos', cantidad: 150, precioUnitario: 8.00, precioTotal: 1200, imagen: '/assets/images/caramelos-artesanales.jpg' }
-        ],
-        logoEmpresa: '/assets/images/logos/dulces-barcelona.jpg',
-        aceptaCorreosPublicitarios: true,
-        cantidadTotal: 250
+  loadBudgets() {
+    this.loading = true;
+    this.error = null;
+    
+    console.log('🔍 DEBUG: Starting loadBudgets method');
+    console.log('🔍 DEBUG: Current user token:', localStorage.getItem('authToken'));
+    
+    const queryParams = {
+      page: this.currentPage,
+      limit: this.itemsPerPage,
+      sortBy: this.sortColumn,
+      sortOrder: this.sortDirection
+    };
+    
+    console.log('🔍 DEBUG: Query params:', queryParams);
+    console.log('🔍 DEBUG: API URL will be:', `http://localhost:3000/budgets`);
+    
+    this.budgetsService.getBudgets(queryParams).subscribe({
+      next: (response) => {
+        console.log('✅ DEBUG: Budgets loaded successfully!');
+        console.log('✅ DEBUG: Raw response from backend:', response);
+        console.log('✅ DEBUG: Response type:', typeof response);
+        console.log('✅ DEBUG: Response.budgets:', response.budgets);
+        console.log('✅ DEBUG: Response.budgets length:', response.budgets?.length);
+        
+        // Convertir los datos del backend al formato esperado por el template
+        if (response.budgets && Array.isArray(response.budgets)) {
+          this.presupuestos = response.budgets.map(budget => {
+            console.log('🔄 DEBUG: Converting budget:', budget);
+            const converted = this.convertBudgetToPresupuesto(budget);
+            console.log('🔄 DEBUG: Converted to presupuesto:', converted);
+            return converted;
+          });
+          console.log('✅ DEBUG: Final presupuestos array:', this.presupuestos);
+        } else {
+          console.warn('⚠️ DEBUG: No budgets array in response or not an array');
+          this.presupuestos = [];
+        }
+        
+        this.totalItems = response.total || 0;
+        this.totalPages = response.totalPages || 1;
+        this.currentPage = response.page || 1;
+        
+        console.log('🔍 DEBUG: Before applyFilters - presupuestos length:', this.presupuestos.length);
+        this.applyFilters();
+        console.log('🔍 DEBUG: After applyFilters - filteredPresupuestos length:', this.filteredPresupuestos.length);
+        
+        this.loading = false;
       },
-      {
-        id: 1002,
-        nombreEmpresa: 'Chocolates Madrid',
-        nombreContacto: 'Carlos Rodríguez Sánchez',
-        email: 'info@chocolatesmadrid.es',
-        telefono: '+34 915 987 654',
-        direccion: 'Calle Gran Vía, 45, 28013 Madrid',
-        fecha: new Date('2024-01-16'),
-        estado: 'aprobado',
-        productos: [
-          { id: 3, nombre: 'Bombones Gourmet', categoria: 'Chocolates', cantidad: 80, precioUnitario: 15.00, precioTotal: 1200, imagen: '/assets/images/bombones-gourmet.jpg' },
-          { id: 4, nombre: 'Trufas de Chocolate', categoria: 'Chocolates', cantidad: 100, precioUnitario: 10.00, precioTotal: 1000, imagen: '/assets/images/trufas-chocolate.jpg' }
-        ],
-        logoEmpresa: '/assets/images/logos/chocolates-madrid.jpg',
-        aceptaCorreosPublicitarios: false,
-        cantidadTotal: 180
-      },
-      {
-        id: 1003,
-        nombreEmpresa: 'Caramelos Valencia',
-        nombreContacto: 'Ana Martínez Pérez',
-        email: 'compras@caramelosvalencia.com',
-        telefono: '+34 963 456 789',
-        direccion: 'Avenida del Puerto, 78, 46023 Valencia',
-        fecha: new Date('2024-01-17'),
-        estado: 'pendiente',
-        productos: [
-          { id: 5, nombre: 'Caramelos de Frutas', categoria: 'Caramelos', cantidad: 200, precioUnitario: 6.50, precioTotal: 1300, imagen: '/assets/images/caramelos-frutas.jpg' },
-          { id: 6, nombre: 'Gominolas Artesanales', categoria: 'Gominolas', cantidad: 120, precioUnitario: 9.00, precioTotal: 1080, imagen: '/assets/images/gominolas-artesanales.jpg' }
-        ],
-        logoEmpresa: '/assets/images/logos/caramelos-valencia.jpg',
-        aceptaCorreosPublicitarios: true,
-        cantidadTotal: 320
-      },
-      {
-        id: 1004,
-        nombreEmpresa: 'Golosinas Sevilla',
-        nombreContacto: 'Francisco Jiménez Ruiz',
-        email: 'contacto@golosinassevilla.es',
-        telefono: '+34 954 321 987',
-        direccion: 'Calle Sierpes, 12, 41004 Sevilla',
-        fecha: new Date('2024-01-18'),
-        estado: 'rechazado',
-        productos: [
-          { id: 7, nombre: 'Chicles Artesanales', categoria: 'Chicles', cantidad: 50, precioUnitario: 4.50, precioTotal: 225, imagen: '/assets/images/chicles-artesanales.jpg' },
-          { id: 8, nombre: 'Piruletas Gourmet', categoria: 'Piruletas', cantidad: 45, precioUnitario: 7.00, precioTotal: 315, imagen: '/assets/images/piruletas-gourmet.jpg' }
-        ],
-        logoEmpresa: '/assets/images/logos/golosinas-sevilla.jpg',
-        aceptaCorreosPublicitarios: false,
-        cantidadTotal: 95
-      },
-      {
-        id: 1005,
-        nombreEmpresa: 'Confitería Bilbao',
-        nombreContacto: 'Elena Vázquez González',
-        email: 'ventas@confiteriabilbao.com',
-        telefono: '+34 944 567 123',
-        direccion: 'Gran Vía Don Diego López de Haro, 56, 48011 Bilbao',
-        fecha: new Date('2024-01-19'),
-        estado: 'aprobado',
-        productos: [
-          { id: 9, nombre: 'Turrón Artesanal', categoria: 'Turrón', cantidad: 200, precioUnitario: 18.00, precioTotal: 3600, imagen: '/assets/images/turron-artesanal.jpg' },
-          { id: 10, nombre: 'Mazapán Premium', categoria: 'Mazapán', cantidad: 220, precioUnitario: 14.00, precioTotal: 3080, imagen: '/assets/images/mazapan-premium.jpg' }
-        ],
-        logoEmpresa: '/assets/images/logos/confiteria-bilbao.jpg',
-        aceptaCorreosPublicitarios: true,
-        cantidadTotal: 420
-      },
-      {
-        id: 1006,
-        nombreEmpresa: 'Dulces Artesanos',
-        nombreContacto: 'Roberto Fernández Castro',
-        email: 'info@dulcesartesanos.es',
-        telefono: '+34 987 654 321',
-        direccion: 'Plaza Mayor, 8, 37002 Salamanca',
-        fecha: new Date('2024-01-20'),
-        estado: 'pendiente',
-        productos: [
-          { id: 11, nombre: 'Galletas Artesanales', categoria: 'Galletas', cantidad: 100, precioUnitario: 8.50, precioTotal: 850, imagen: '/assets/images/galletas-artesanales.jpg' },
-          { id: 12, nombre: 'Mermeladas Gourmet', categoria: 'Mermeladas', cantidad: 50, precioUnitario: 12.00, precioTotal: 600, imagen: '/assets/images/mermeladas-gourmet.jpg' }
-        ],
-        logoEmpresa: '/assets/images/logos/dulces-artesanos.jpg',
-        aceptaCorreosPublicitarios: true,
-        cantidadTotal: 150
+      error: (error) => {
+        console.error('❌ DEBUG: Error loading budgets!');
+        console.error('❌ DEBUG: Error object:', error);
+        console.error('❌ DEBUG: Error status:', error.status);
+        console.error('❌ DEBUG: Error message:', error.message);
+        console.error('❌ DEBUG: Error body:', error.error);
+        
+        this.error = error.message || 'Error al cargar los presupuestos';
+        this.loading = false;
+        this.presupuestos = [];
+        this.filteredPresupuestos = [];
       }
-    ];
+    });
+  }
+  
+  loadStats() {
+    this.budgetsService.getStats().subscribe({
+      next: (stats) => {
+        console.log('Budget stats loaded:', stats);
+        this.stats = stats;
+      },
+      error: (error) => {
+        console.error('Error loading budget stats:', error);
+        // No mostrar error para stats, es información secundaria
+      }
+    });
+  }
+  
+  convertBudgetToPresupuesto(budget: Budget): Presupuesto {
+    return {
+      id: (budget as any)._id || '',
+      numeroPresupuesto: (budget as any).numeroPresupuesto || 0,
+      numeroPedido: budget.numeroPedido,
+      nombreEmpresa: budget.cliente.empresa || 'Sin empresa',
+      nombreContacto: budget.cliente.nombre,
+      email: budget.cliente.email,
+      telefono: budget.cliente.telefono || 'Sin teléfono',
+      direccion: budget.cliente.direccion || 'Sin dirección',
+      fecha: budget.createdAt ? new Date(budget.createdAt) : new Date(),
+      estado: this.mapBudgetStatus(budget.estado),
+      productos: budget.productos.map(p => ({
+        id: p.productId,
+        nombre: p.nombre,
+        categoria: 'Sin categoría', // El backend no devuelve categoría en productos
+        cantidad: p.cantidad,
+        precioUnitario: p.precioUnitario || 0,
+        precioTotal: p.subtotal || (p.precioUnitario || 0) * p.cantidad,
+        imagen: '/assets/images/producto-default.jpg'
+      })),
+      logoEmpresa: budget.logotipoEmpresa || '/assets/images/logo-default.jpg',
+      aceptaCorreosPublicitarios: budget.aceptaCorreosPublicitarios,
+      cantidadTotal: budget.productos.reduce((total, p) => total + p.cantidad, 0),
+      precioTotal: budget.precioTotal,
+      apuntes: budget.notas
+    };
+  }
+  
+  mapBudgetStatus(status: BudgetStatus): string {
+    const statusMap: { [key in BudgetStatus]: string } = {
+      [BudgetStatus.PENDIENTE]: 'pendiente',
+      [BudgetStatus.EN_PROCESO]: 'en_proceso',
+      [BudgetStatus.ENVIADO]: 'enviado',
+      [BudgetStatus.ACEPTADO]: 'aprobado',
+      [BudgetStatus.RECHAZADO]: 'rechazado',
+      [BudgetStatus.VENCIDO]: 'vencido'
+    };
+    return statusMap[status] || 'pendiente';
   }
 
   applyFilters() {
     this.filteredPresupuestos = this.presupuestos.filter(presupuesto => {
-      return (
-        (this.filtroId === '' || presupuesto.id.toString().includes(this.filtroId)) &&
-        (this.filtroEmpresa === '' || presupuesto.nombreEmpresa.toLowerCase().includes(this.filtroEmpresa.toLowerCase())) &&
-        (this.filtroCantidad === '' || presupuesto.cantidadTotal.toString().includes(this.filtroCantidad)) &&
-        (this.filtroTelefono === '' || presupuesto.telefono.toLowerCase().includes(this.filtroTelefono.toLowerCase())) &&
-        (this.filtroEmail === '' || presupuesto.email.toLowerCase().includes(this.filtroEmail.toLowerCase()))
-      );
+      return (!this.filtroEmpresa || presupuesto.nombreEmpresa.toLowerCase().includes(this.filtroEmpresa.toLowerCase())) &&
+             (!this.filtroCantidad || presupuesto.cantidadTotal.toString().includes(this.filtroCantidad)) &&
+             (!this.filtroTelefono || presupuesto.telefono.toLowerCase().includes(this.filtroTelefono.toLowerCase())) &&
+             (!this.filtroEmail || presupuesto.email.toLowerCase().includes(this.filtroEmail.toLowerCase())) &&
+             (!this.filtroEstado || presupuesto.estado === this.filtroEstado);
     });
     this.sortFilteredData();
   }
 
   clearFilters() {
-    this.filtroId = '';
     this.filtroEmpresa = '';
     this.filtroCantidad = '';
     this.filtroTelefono = '';
     this.filtroEmail = '';
+    this.filtroEstado = '';
     this.applyFilters();
   }
 
@@ -202,8 +260,8 @@ export class PresupuestosComponent implements OnInit {
       this.sortColumn = column;
       this.sortDirection = 'asc';
     }
-    this.sortData();
-    this.applyFilters();
+    // Recargar datos con nuevo ordenamiento desde el backend
+    this.loadBudgets();
   }
 
   private sortData() {
@@ -212,9 +270,14 @@ export class PresupuestosComponent implements OnInit {
       let bValue: any;
 
       switch (this.sortColumn) {
+        case 'numeroPresupuesto':
+          aValue = a.numeroPresupuesto;
+          bValue = b.numeroPresupuesto;
+          break;
         case 'id':
-          aValue = a.id;
-          bValue = b.id;
+        case 'numeroPedido':
+          aValue = a.numeroPedido.toLowerCase();
+          bValue = b.numeroPedido.toLowerCase();
           break;
         case 'nombreEmpresa':
           aValue = a.nombreEmpresa.toLowerCase();
@@ -260,9 +323,14 @@ export class PresupuestosComponent implements OnInit {
       let bValue: any;
 
       switch (this.sortColumn) {
+        case 'numeroPresupuesto':
+          aValue = a.numeroPresupuesto;
+          bValue = b.numeroPresupuesto;
+          break;
         case 'id':
-          aValue = a.id;
-          bValue = b.id;
+        case 'numeroPedido':
+          aValue = a.numeroPedido.toLowerCase();
+          bValue = b.numeroPedido.toLowerCase();
           break;
         case 'nombreEmpresa':
           aValue = a.nombreEmpresa.toLowerCase();
@@ -318,19 +386,48 @@ export class PresupuestosComponent implements OnInit {
     }
   }
 
-  viewPresupuesto(id: number) {
+  viewPresupuesto(id: string) {
     console.log('Ver presupuesto:', id);
     // Navegar a la ficha de detalle del presupuesto
     this.router.navigate(['/logoadmin/presupuestos', id]);
   }
 
-  editPresupuesto(id: number) {
+  editPresupuesto(id: string) {
     console.log('Editar presupuesto:', id);
     // Aquí implementarías la lógica para editar el presupuesto
   }
 
-  trackByFn(index: number, item: Presupuesto): number {
+  trackByFn(index: number, item: Presupuesto): string {
     return item.id;
+  }
+  
+  // Métodos auxiliares para el template
+  getEstadoLabel(estado: string): string {
+    const labels: { [key: string]: string } = {
+      'pendiente': 'Pendiente',
+      'en_proceso': 'En Proceso',
+      'enviado': 'Enviado',
+      'aprobado': 'Aprobado',
+      'rechazado': 'Rechazado',
+      'vencido': 'Vencido'
+    };
+    return labels[estado] || estado;
+  }
+  
+  formatCurrency(amount: number | undefined): string {
+    if (!amount) return '0,00 €';
+    return new Intl.NumberFormat('es-ES', {
+      style: 'currency',
+      currency: 'EUR'
+    }).format(amount);
+  }
+  
+  formatDate(date: Date): string {
+    return new Intl.DateTimeFormat('es-ES', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    }).format(date);
   }
   
   // Método loadUserData eliminado - el layout reutilizable maneja la información del usuario

@@ -38,7 +38,7 @@ export class PresupuestoDetalleComponent implements OnInit {
     if (id) {
       // Simular carga de datos (en producción vendría de un servicio)
       setTimeout(() => {
-        this.presupuesto = this.getMockPresupuesto(parseInt(id));
+        this.presupuesto = this.getMockPresupuesto(id);
         this.isLoading = false;
       }, 500);
     } else {
@@ -46,11 +46,13 @@ export class PresupuestoDetalleComponent implements OnInit {
     }
   }
 
-  private getMockPresupuesto(id: number): Presupuesto | null {
+  private getMockPresupuesto(id: string): Presupuesto | null {
     // Datos mock completos (en producción vendría de un servicio)
     const presupuestos: Presupuesto[] = [
       {
-        id: 1001,
+        id: '1001',
+        numeroPresupuesto: 1,
+        numeroPedido: 'LOG-240115-001',
         nombreEmpresa: 'Dulces Barcelona S.L.',
         nombreContacto: 'María García López',
         email: 'pedidos@dulcesbarcelona.com',
@@ -59,8 +61,8 @@ export class PresupuestoDetalleComponent implements OnInit {
         fecha: new Date('2024-01-15'),
         estado: 'pendiente',
         productos: [
-          { id: 1, nombre: 'Chocolates Premium', categoria: 'Chocolates', cantidad: 100, precioUnitario: 12.50, precioTotal: 1250, imagen: '/assets/images/chocolate-premium.jpg' },
-          { id: 2, nombre: 'Caramelos Artesanales', categoria: 'Caramelos', cantidad: 150, precioUnitario: 8.00, precioTotal: 1200, imagen: '/assets/images/caramelos-artesanales.jpg' }
+          { id: '1', nombre: 'Chocolates Premium', categoria: 'Chocolates', cantidad: 100, precioUnitario: 12.50, precioTotal: 1250, imagen: '/assets/images/chocolate-premium.jpg' },
+          { id: '2', nombre: 'Caramelos Artesanales', categoria: 'Caramelos', cantidad: 150, precioUnitario: 8.00, precioTotal: 1200, imagen: '/assets/images/caramelos-artesanales.jpg' }
         ],
         logoEmpresa: '/assets/images/logos/dulces-barcelona.jpg',
         aceptaCorreosPublicitarios: true,
@@ -68,7 +70,9 @@ export class PresupuestoDetalleComponent implements OnInit {
         apuntes: 'Cliente recurrente. Prefiere entregas los martes. Solicita facturación a final de mes.'
       },
       {
-        id: 1002,
+        id: '1002',
+        numeroPresupuesto: 2,
+        numeroPedido: 'LOG-240116-001',
         nombreEmpresa: 'Chocolates Madrid',
         nombreContacto: 'Carlos Rodríguez Sánchez',
         email: 'info@chocolatesmadrid.es',
@@ -77,8 +81,8 @@ export class PresupuestoDetalleComponent implements OnInit {
         fecha: new Date('2024-01-16'),
         estado: 'aprobado',
         productos: [
-          { id: 3, nombre: 'Bombones Gourmet', categoria: 'Chocolates', cantidad: 80, precioUnitario: 15.00, precioTotal: 1200, imagen: '/assets/images/bombones-gourmet.jpg' },
-          { id: 4, nombre: 'Trufas de Chocolate', categoria: 'Chocolates', cantidad: 100, precioUnitario: 10.00, precioTotal: 1000, imagen: '/assets/images/trufas-chocolate.jpg' }
+          { id: '3', nombre: 'Bombones Gourmet', categoria: 'Chocolates', cantidad: 80, precioUnitario: 15.00, precioTotal: 1200, imagen: '/assets/images/bombones-gourmet.jpg' },
+          { id: '4', nombre: 'Trufas de Chocolate', categoria: 'Chocolates', cantidad: 100, precioUnitario: 10.00, precioTotal: 1000, imagen: '/assets/images/trufas-chocolate.jpg' }
         ],
         logoEmpresa: '/assets/images/logos/chocolates-madrid.jpg',
         aceptaCorreosPublicitarios: false,
@@ -86,7 +90,9 @@ export class PresupuestoDetalleComponent implements OnInit {
         apuntes: 'Empresa premium. Requiere embalaje especial y certificado de calidad.'
       },
       {
-        id: 1003,
+        id: '1003',
+        numeroPresupuesto: 3,
+        numeroPedido: 'LOG-240117-001',
         nombreEmpresa: 'Caramelos Valencia',
         nombreContacto: 'Ana Martínez Pérez',
         email: 'compras@caramelosvalencia.com',
@@ -95,8 +101,8 @@ export class PresupuestoDetalleComponent implements OnInit {
         fecha: new Date('2024-01-17'),
         estado: 'pendiente',
         productos: [
-          { id: 5, nombre: 'Caramelos de Frutas', categoria: 'Caramelos', cantidad: 200, precioUnitario: 6.50, precioTotal: 1300, imagen: '/assets/images/caramelos-frutas.jpg' },
-          { id: 6, nombre: 'Gominolas Artesanales', categoria: 'Gominolas', cantidad: 120, precioUnitario: 9.00, precioTotal: 1080, imagen: '/assets/images/gominolas-artesanales.jpg' }
+          { id: '5', nombre: 'Caramelos de Frutas', categoria: 'Caramelos', cantidad: 200, precioUnitario: 6.50, precioTotal: 1300, imagen: '/assets/images/caramelos-frutas.jpg' },
+          { id: '6', nombre: 'Gominolas Artesanales', categoria: 'Gominolas', cantidad: 120, precioUnitario: 9.00, precioTotal: 1080, imagen: '/assets/images/gominolas-artesanales.jpg' }
         ],
         logoEmpresa: '/assets/images/logos/caramelos-valencia.jpg',
         aceptaCorreosPublicitarios: true,
@@ -105,7 +111,9 @@ export class PresupuestoDetalleComponent implements OnInit {
       }
     ];
 
-    return presupuestos.find(p => p.id === id) || null;
+    // Buscar por numeroPresupuesto en lugar de ID
+    const numeroPresupuesto = parseInt(id);
+    return presupuestos.find(p => p.numeroPresupuesto === numeroPresupuesto) || null;
   }
 
   // Métodos de utilidad

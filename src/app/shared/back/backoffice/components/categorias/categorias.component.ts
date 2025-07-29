@@ -36,18 +36,18 @@ export class CategoriasComponent implements OnInit {
     console.log('🔄 Iniciando carga de categorías...');
     this.isLoading = true;
     this.error = null;
-    
+
     this.categoriesService.getCategories({
       sortBy: 'orden',
       sortOrder: 'asc'
     }).subscribe({
       next: (response) => {
         console.log('✅ Respuesta del backend para categorías:', response);
-        
+
         // El backend devuelve {categories: [...]} pero esperamos {data: [...]}
         // Vamos a adaptar la respuesta
         let categorias: Category[] = [];
-        
+
         if (response && typeof response === 'object') {
           // Si la respuesta tiene la propiedad 'categories' (formato actual del backend)
           if ('categories' in response && Array.isArray((response as any).categories)) {
@@ -65,14 +65,14 @@ export class CategoriasComponent implements OnInit {
             console.log('📊 Datos de categorías como array directo:', categorias);
           }
         }
-        
+
         console.log('📈 Cantidad de categorías procesadas:', categorias.length);
-        
+
         this.categorias = categorias;
         this.isLoading = false;
-        
+
         console.log('🎯 Categorías asignadas al componente:', this.categorias);
-        
+
         // Cargar estadísticas después de tener las categorías
         this.loadStats();
       },
@@ -84,7 +84,7 @@ export class CategoriasComponent implements OnInit {
           message: error.message,
           url: error.url
         });
-        
+
         this.error = 'Error al cargar las categorías. Por favor, intenta de nuevo.';
         this.categorias = [];
         this.isLoading = false;
@@ -97,16 +97,16 @@ export class CategoriasComponent implements OnInit {
    */
   private loadStats(): void {
     console.log('📊 Iniciando carga de estadísticas de categorías...');
-    
+
     this.categoriesService.getStats().subscribe({
       next: (stats) => {
         console.log('✅ Respuesta del backend para estadísticas:', stats);
         console.log('🔍 Tipo de respuesta:', typeof stats);
         console.log('🔍 Propiedades de la respuesta:', Object.keys(stats || {}));
-        
+
         // Adaptar la respuesta del backend si es necesario
         let processedStats: CategoryStats | null = null;
-        
+
         if (stats && typeof stats === 'object') {
           // Si la respuesta tiene las propiedades esperadas directamente
           if ('total' in stats && 'publicadas' in stats) {
@@ -126,7 +126,7 @@ export class CategoriasComponent implements OnInit {
               const publicadas = this.categorias.filter(cat => cat.publicado).length;
               const noPublicadas = total - publicadas;
               const configuracionEspecial = this.categorias.filter(cat => cat.configuracionEspecial).length;
-              
+
               processedStats = {
                 total,
                 publicadas,
@@ -137,7 +137,7 @@ export class CategoriasComponent implements OnInit {
             }
           }
         }
-        
+
         this.stats = processedStats;
         console.log('🎯 Estadísticas asignadas al componente:', this.stats);
       },
@@ -149,14 +149,14 @@ export class CategoriasComponent implements OnInit {
           message: error.message,
           url: error.url
         });
-        
+
         // Si hay error, calcular estadísticas desde las categorías cargadas
         if (this.categorias && this.categorias.length > 0) {
           const total = this.categorias.length;
           const publicadas = this.categorias.filter(cat => cat.publicado).length;
           const noPublicadas = total - publicadas;
           const configuracionEspecial = this.categorias.filter(cat => cat.configuracionEspecial).length;
-          
+
           this.stats = {
             total,
             publicadas,
@@ -174,9 +174,9 @@ export class CategoriasComponent implements OnInit {
    */
   togglePublicacion(categoria: Category): void {
     if (!categoria._id) return;
-    
+
     const newStatus = !categoria.publicado;
-    
+
     this.categoriesService.updateCategory(categoria._id, { publicado: newStatus }).subscribe({
       next: (updatedCategory) => {
         categoria.publicado = updatedCategory.publicado;
@@ -240,11 +240,11 @@ export class CategoriasComponent implements OnInit {
    */
   deleteCategoria(categoria: Category): void {
     if (!categoria._id) return;
-    
+
     if (confirm(`¿Estás seguro de que quieres eliminar la categoría "${categoria.nombre}"?`)) {
       this.categoriesService.deleteCategory(categoria._id).subscribe({
         next: () => {
-          console.log(`Categoría "${categoria.nombre}" eliminada exitosamente`);
+          console.log(`Categoría "${categoria.nombre}" eliminada correctamente`);
           this.loadCategorias(); // Recargar la lista
         },
         error: (error) => {

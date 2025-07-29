@@ -74,7 +74,7 @@ export class ConfiguracionComponent implements OnInit {
   isSaving = false;
   sidebarOpen = false;
   recentUploads: Array<{name: string, uploadDate: Date}> = [];
-  
+
   // Propiedades para el manejo de imágenes
   private fileInput: HTMLInputElement | null = null;
   private currentImageContext: { section: string; field: string; bannerIndex?: number } | null = null;
@@ -196,7 +196,7 @@ export class ConfiguracionComponent implements OnInit {
    */
   private loadConfiguracion(): void {
     this.isLoading = true;
-    
+
     // Cargar configuración SEO
     this.configurationService.getConfigurationSection('seo').subscribe({
       next: (seoData) => {
@@ -219,7 +219,7 @@ export class ConfiguracionComponent implements OnInit {
         this.seoForm.patchValue(this.configuracionData.seo);
       }
     });
-    
+
     // Cargar configuración Footer
     this.configurationService.getConfigurationSection('footer').subscribe({
       next: (footerData) => {
@@ -245,7 +245,7 @@ export class ConfiguracionComponent implements OnInit {
         });
       }
     });
-    
+
     // Cargar configuración General
     this.configurationService.getConfigurationSection('general').subscribe({
       next: (generalData) => {
@@ -259,17 +259,17 @@ export class ConfiguracionComponent implements OnInit {
         this.generalForm.patchValue(this.configuracionData.general);
       }
     });
-    
+
     // Cargar configuración Banners
     this.configurationService.getConfigurationSection('banners').subscribe({
       next: (bannersResponse) => {
         console.log('Respuesta del backend para banners:', bannersResponse);
-        
+
         if (bannersResponse && Array.isArray(bannersResponse) && bannersResponse.length > 0) {
           // Mapear los banners del backend al formato del frontend
           this.configuracionData.banner.banners = bannersResponse.map((bannerConfig, index) => {
             console.log(`Procesando banner ${index + 1}:`, bannerConfig);
-            
+
             return {
               id: index + 1,
               titulo: bannerConfig.datos?.titulo || '',
@@ -284,7 +284,7 @@ export class ConfiguracionComponent implements OnInit {
               colorTitulos: bannerConfig.datos?.colorTitulos || ''
             };
           });
-          
+
           console.log('Banners mapeados para el frontend:', this.configuracionData.banner.banners);
         } else {
           console.log('No se encontraron banners guardados, usando valores por defecto');
@@ -297,7 +297,7 @@ export class ConfiguracionComponent implements OnInit {
         // Mantener los banners por defecto si hay error
       }
     });
-    
+
     // Finalizar carga después de un breve delay para permitir que se completen las peticiones
     setTimeout(() => {
       this.isLoading = false;
@@ -336,7 +336,7 @@ export class ConfiguracionComponent implements OnInit {
         };
         sectionName = 'seo';
         break;
-        
+
       case 'footer':
         if (!this.footerForm.valid) {
           alert('Por favor, complete todos los campos requeridos en la sección Footer');
@@ -354,7 +354,7 @@ export class ConfiguracionComponent implements OnInit {
         };
         sectionName = 'footer';
         break;
-        
+
       case 'general':
         if (!this.generalForm.valid) {
           alert('Por favor, complete todos los campos requeridos en la sección General');
@@ -363,7 +363,7 @@ export class ConfiguracionComponent implements OnInit {
         dataToSave = this.generalForm.value;
         sectionName = 'general';
         break;
-        
+
       case 'banner':
         // Para banners, guardamos los datos directamente del objeto configuracionData
         dataToSave = {
@@ -383,7 +383,7 @@ export class ConfiguracionComponent implements OnInit {
         };
         sectionName = 'banners';
         break;
-        
+
       default:
         console.warn(`Sección ${this.activeTab} no reconocida`);
         return;
@@ -404,9 +404,9 @@ export class ConfiguracionComponent implements OnInit {
       .subscribe({
         next: (response) => {
           this.isSaving = false;
-          console.log(`Configuración de ${sectionName} guardada exitosamente:`, response);
-          alert(`Configuración de ${sectionName.toUpperCase()} guardada exitosamente`);
-          
+          console.log(`Configuración de ${sectionName} guardada correctamente:`, response);
+          alert(`Configuración de ${sectionName.toUpperCase()} guardada correctamente`);
+
           // Actualizar los datos locales con la respuesta del servidor si es necesario
           if (response && response.data) {
             this.updateLocalData(sectionName, response.data);
@@ -415,7 +415,7 @@ export class ConfiguracionComponent implements OnInit {
         error: (error) => {
           this.isSaving = false;
           console.error(`Error al guardar configuración de ${sectionName}:`, error);
-          
+
           let errorMessage = `Error al guardar la configuración de ${sectionName.toUpperCase()}`;
           if (error.error && error.error.message) {
             errorMessage += `: ${error.error.message}`;
@@ -424,7 +424,7 @@ export class ConfiguracionComponent implements OnInit {
           } else {
             errorMessage += '. Inténtelo de nuevo.';
           }
-          
+
           alert(errorMessage);
         }
       });
@@ -471,7 +471,7 @@ export class ConfiguracionComponent implements OnInit {
       colorBoton: '#3B82F6',
       colorTitulos: '#FFFFFF'
     };
-    
+
     this.configuracionData.banner.banners.push(newBanner);
   }
 
@@ -490,14 +490,14 @@ export class ConfiguracionComponent implements OnInit {
    */
   saveImagenes(): void {
     this.isSaving = true;
-    
+
     // Simular guardado
     setTimeout(() => {
       console.log('Guardando configuración...');
       this.isSaving = false;
-      
+
       // Mostrar mensaje de éxito
-      alert('Configuración guardada exitosamente');
+      alert('Configuración guardada correctamente');
     }, 1000);
   }
 
@@ -509,7 +509,7 @@ export class ConfiguracionComponent implements OnInit {
     if (files && files.length > 0) {
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
-        
+
         // Validar tipo de archivo
         const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
         if (!allowedTypes.includes(file.type)) {
@@ -529,26 +529,26 @@ export class ConfiguracionComponent implements OnInit {
           name: file.name,
           uploadDate: new Date()
         };
-        
+
         this.recentUploads.unshift(uploadInfo);
-        
+
         // Mantener solo las últimas 10 subidas
         if (this.recentUploads.length > 10) {
           this.recentUploads = this.recentUploads.slice(0, 10);
         }
-        
-        console.log(`Imagen ${file.name} subida exitosamente a /assets/images/`);
+
+        console.log(`Imagen ${file.name} subida correctamente a /assets/images/`);
       }
-      
+
       // Limpiar input
       event.target.value = '';
-      
+
       // Mostrar mensaje de éxito
       const fileCount = files.length;
-      const message = fileCount === 1 
-        ? 'Imagen subida exitosamente a /assets/images/' 
-        : `${fileCount} imágenes subidas exitosamente a /assets/images/`;
-      
+      const message = fileCount === 1
+        ? 'Imagen subida correctamente a /assets/images/'
+        : `${fileCount} imágenes subidas correctamente a /assets/images/`;
+
       alert(message);
     }
   }
@@ -586,14 +586,14 @@ export class ConfiguracionComponent implements OnInit {
     input.type = 'file';
     input.accept = 'image/*';
     input.multiple = false;
-    
+
     input.onchange = (event: any) => {
       const file = event.target.files[0];
       if (file) {
         this.uploadImageToServer(file, section, field, bannerIndex);
       }
     };
-    
+
     input.click();
   }
 
@@ -616,42 +616,42 @@ export class ConfiguracionComponent implements OnInit {
     }
 
     console.log(`Subiendo imagen ${file.name} para ${section}.${field}`);
-    
+
     // Determinar categoría para el backend
     let category = section;
     if (section === 'banner') {
       category = field === 'imagenMobile' ? 'banner-mobile' : 'banner-desktop';
     }
-    
+
     // Subir imagen al servidor usando el servicio
     this.configurationService.uploadImage(file, category)
       .subscribe({
         next: (response) => {
-          console.log(`Imagen ${file.name} subida exitosamente:`, response);
-          
+          console.log(`Imagen ${file.name} subida correctamente:`, response);
+
           if (response.success && response.url) {
             // Actualizar formulario correspondiente con la URL real del servidor
             this.updateImageField(section, field, response.url, bannerIndex);
-            
+
             // Añadir a la lista de subidas recientes
             this.recentUploads.unshift({
               name: response.filename || file.name,
               uploadDate: new Date()
             });
-            
+
             // Mantener solo las últimas 10 subidas
             if (this.recentUploads.length > 10) {
               this.recentUploads = this.recentUploads.slice(0, 10);
             }
-            
-            alert(`Imagen ${response.filename || file.name} subida exitosamente`);
+
+            alert(`Imagen ${response.filename || file.name} subida correctamente`);
           } else {
             throw new Error(response.message || 'Error desconocido al subir la imagen');
           }
         },
         error: (error) => {
           console.error(`Error al subir imagen ${file.name}:`, error);
-          
+
           let errorMessage = `Error al subir la imagen ${file.name}`;
           if (error.error && error.error.message) {
             errorMessage += `: ${error.error.message}`;
@@ -664,7 +664,7 @@ export class ConfiguracionComponent implements OnInit {
           } else {
             errorMessage += '. Inténtelo de nuevo.';
           }
-          
+
           alert(errorMessage);
         }
       });
@@ -701,7 +701,7 @@ export class ConfiguracionComponent implements OnInit {
    */
   getImagePreview(section: string, field: string, bannerIndex?: number): string {
     let imageUrl = '';
-    
+
     switch (section) {
       case 'general':
         imageUrl = this.generalForm.get(field)?.value || '';
@@ -722,7 +722,7 @@ export class ConfiguracionComponent implements OnInit {
       default:
         imageUrl = '';
     }
-    
+
     // Si no hay imagen, usar SVG placeholder inline para evitar 404
     return imageUrl || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjEyMCIgdmlld0JveD0iMCAwIDIwMCAxMjAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMTIwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik04NSA0NUg5NVY1NUg4NVY0NVoiIGZpbGw9IiM5Q0E0QUYiLz4KPHA+CjxyZWN0IHg9IjcwIiB5PSI2NSIgd2lkdGg9IjYwIiBoZWlnaHQ9IjQiIGZpbGw9IiM5Q0E0QUYiLz4KPHA+CjxyZWN0IHg9IjgwIiB5PSI3NSIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQiIGZpbGw9IiM5Q0E0QUYiLz4KPHA+Cjx0ZXh0IHg9IjEwMCIgeT0iOTAiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxMiIgZmlsbD0iIzlDQTRBRiIgdGV4dC1hbmNob3I9Im1pZGRsZSI+SW1hZ2VuPC90ZXh0Pgo8L3N2Zz4=';
   }
@@ -740,14 +740,14 @@ export class ConfiguracionComponent implements OnInit {
    */
   onImageError(event: any): void {
     const target = event.target as HTMLImageElement;
-    
+
     // Evitar bucle infinito si el placeholder también falla
     if (target.src.includes('placeholder.jpg') || target.src.includes('data:image')) {
       // Si ya es el placeholder o una imagen data, usar un SVG inline como fallback
       target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjEyMCIgdmlld0JveD0iMCAwIDIwMCAxMjAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMTIwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik04NSA0NUg5NVY1NUg4NVY0NVoiIGZpbGw9IiM5Q0E0QUYiLz4KPHA+CjxyZWN0IHg9IjcwIiB5PSI2NSIgd2lkdGg9IjYwIiBoZWlnaHQ9IjQiIGZpbGw9IiM5Q0E0QUYiLz4KPHA+CjxyZWN0IHg9IjgwIiB5PSI3NSIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQiIGZpbGw9IiM5Q0E0QUYiLz4KPHA+Cjx0ZXh0IHg9IjEwMCIgeT0iOTAiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxMiIgZmlsbD0iIzlDQTRBRiIgdGV4dC1hbmNob3I9Im1pZGRsZSI+SW1hZ2VuPC90ZXh0Pgo8L3N2Zz4=';
       return;
     }
-    
+
     // Intentar cargar placeholder solo si no es ya el placeholder
     target.src = '/assets/images/placeholder.jpg';
   }
