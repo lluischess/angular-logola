@@ -34,6 +34,11 @@ export interface ProductoPresupuesto {
   precioUnitario: number;
   precioTotal: number;
   imagen: string;
+  
+  // Campos adicionales para productos enriquecidos
+  referencia?: string;
+  precioOriginal?: number;  // Precio actual del catálogo
+  categoriaColor?: string;  // Color de la categoría
 }
 
 @Component({
@@ -193,6 +198,11 @@ export class PresupuestosComponent implements OnInit {
   }
   
   convertBudgetToPresupuesto(budget: Budget): Presupuesto {
+    // Debug del mapeo de estados
+    const originalEstado = budget.estado;
+    const mappedEstado = this.mapBudgetStatus(budget.estado);
+    console.log(`🔄 Estado mapping: '${originalEstado}' → '${mappedEstado}'`);
+    
     return {
       id: (budget as any)._id || '',
       numeroPresupuesto: (budget as any).numeroPresupuesto || 0,
@@ -203,15 +213,18 @@ export class PresupuestosComponent implements OnInit {
       telefono: budget.cliente.telefono || 'Sin teléfono',
       direccion: budget.cliente.direccion || 'Sin dirección',
       fecha: budget.createdAt ? new Date(budget.createdAt) : new Date(),
-      estado: this.mapBudgetStatus(budget.estado),
-      productos: budget.productos.map(p => ({
-        id: p.productId,
-        nombre: p.nombre,
-        categoria: 'Sin categoría', // El backend no devuelve categoría en productos
+      estado: mappedEstado,
+      productos: budget.productos.map((p, index) => ({
+        id: (index + 1).toString(),
+        nombre: p.producto?.nombre || 'Producto sin nombre',
+        categoria: p.producto?.categoria?.nombre || 'Sin categoría',
         cantidad: p.cantidad,
-        precioUnitario: p.precioUnitario || 0,
-        precioTotal: p.subtotal || (p.precioUnitario || 0) * p.cantidad,
-        imagen: '/assets/images/producto-default.jpg'
+        precioUnitario: p.precioUnitario,
+        precioTotal: p.subtotal || (p.precioUnitario * p.cantidad),
+        imagen: p.producto?.imagen || '/assets/images/producto-default.jpg',
+        referencia: p.producto?.referencia || '',
+        precioOriginal: p.producto?.precio || p.precioUnitario,
+        categoriaColor: p.producto?.categoria?.color || '#6c757d'
       })),
       logoEmpresa: budget.logotipoEmpresa || '/assets/images/logo-default.jpg',
       aceptaCorreosPublicitarios: budget.aceptaCorreosPublicitarios,
@@ -221,7 +234,28 @@ export class PresupuestosComponent implements OnInit {
     };
   }
   
-  mapBudgetStatus(status: BudgetStatus): string {
+  mapBudgetStatus(status: string | BudgetStatus): string {
+    // Si ya es un string válido de la BBDD, normalizarlo
+    if (typeof status === 'string') {
+      const normalizedStatus = status.toLowerCase();
+      
+      // Mapear estados de la BBDD a estados del frontend
+      const dbStatusMap: { [key: string]: string } = {
+        'pendiente': 'pendiente',
+        'en_proceso': 'en_proceso', 
+        'enviado': 'enviado',
+        'aprobado': 'aprobado',
+        'aceptado': 'aprobado',  // Alias para aprobado
+        'rechazado': 'rechazado',
+        'vencido': 'vencido',
+        'completado': 'completado',
+        'cancelado': 'cancelado'
+      };
+      
+      return dbStatusMap[normalizedStatus] || 'pendiente';
+    }
+    
+    // Si es un enum, usar el mapeo original
     const statusMap: { [key in BudgetStatus]: string } = {
       [BudgetStatus.PENDIENTE]: 'pendiente',
       [BudgetStatus.EN_PROCESO]: 'en_proceso',
@@ -378,11 +412,27 @@ export class PresupuestosComponent implements OnInit {
   }
 
   getEstadoClass(estado: string): string {
-    switch (estado) {
-      case 'aprobado': return 'estado-aprobado';
-      case 'rechazado': return 'estado-rechazado';
-      case 'pendiente': return 'estado-pendiente';
-      default: return '';
+    const normalizedEstado = estado.toLowerCase();
+    switch (normalizedEstado) {
+      case 'aprobado':
+      case 'aceptado':
+        return 'estado-aprobado';
+      case 'rechazado':
+        return 'estado-rechazado';
+      case 'pendiente':
+        return 'estado-pendiente';
+      case 'en_proceso':
+        return 'estado-proceso';
+      case 'enviado':
+        return 'estado-enviado';
+      case 'completado':
+        return 'estado-completado';
+      case 'cancelado':
+        return 'estado-cancelado';
+      case 'vencido':
+        return 'estado-vencido';
+      default: 
+        return 'estado-default';
     }
   }
 
@@ -392,10 +442,7 @@ export class PresupuestosComponent implements OnInit {
     this.router.navigate(['/logoadmin/presupuestos', id]);
   }
 
-  editPresupuesto(id: string) {
-    console.log('Editar presupuesto:', id);
-    // Aquí implementarías la lógica para editar el presupuesto
-  }
+
 
   trackByFn(index: number, item: Presupuesto): string {
     return item.id;
@@ -408,10 +455,13 @@ export class PresupuestosComponent implements OnInit {
       'en_proceso': 'En Proceso',
       'enviado': 'Enviado',
       'aprobado': 'Aprobado',
+      'aceptado': 'Aprobado',  // Alias para aprobado
       'rechazado': 'Rechazado',
-      'vencido': 'Vencido'
+      'vencido': 'Vencido',
+      'completado': 'Completado',
+      'cancelado': 'Cancelado'
     };
-    return labels[estado] || estado;
+    return labels[estado.toLowerCase()] || estado;
   }
   
   formatCurrency(amount: number | undefined): string {

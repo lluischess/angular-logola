@@ -5,11 +5,26 @@ import { catchError, map } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
 
 export interface BudgetProduct {
-  productId: string;
-  nombre: string;
-  referencia: string;
+  productoId: string;  // Referencia al producto real
   cantidad: number;
-  precioUnitario?: number;
+  precioUnitario: number;
+  
+  // Datos enriquecidos del producto (obtenidos por JOIN)
+  producto?: {
+    _id: string;
+    nombre: string;
+    referencia: string;
+    imagen?: string;
+    categoria: {
+      _id: string;
+      nombre: string;
+      color?: string;
+    };
+    precio: number;  // Precio actual del producto
+    publicado: boolean;
+  };
+  
+  // Campos calculados
   subtotal?: number;
 }
 
@@ -46,6 +61,7 @@ export interface EmailNotification {
 
 export interface Budget {
   _id?: string;
+  numeroPresupuesto?: number;  // Campo autonumérico
   numeroPedido: string;
   cliente: ClientData;
   productos: BudgetProduct[];
@@ -78,12 +94,11 @@ export interface BudgetQueryParams {
 
 export interface BudgetStats {
   total: number;
-  pendientes: number;
-  enProceso: number;
-  enviados: number;
-  aceptados: number;
-  rechazados: number;
+  byStatus: {
+    [key: string]: number;
+  };
   vencidos: number;
+  sinNotificarAdmin: number;
 }
 
 @Injectable({
@@ -214,9 +229,27 @@ export class BudgetsService {
     );
   }
 
+  // Obtener un presupuesto ENRIQUECIDO por ID (con datos reales de productos)
+  getBudgetEnriched(id: string): Observable<Budget> {
+    return this.http.get<Budget>(`${this.apiUrl}/${id}/enriched`, {
+      headers: this.getAuthHeaders()
+    }).pipe(
+      catchError(this.handleError)
+    );
+  }
+
   // Obtener presupuesto por número de pedido (endpoint público)
   getBudgetByOrderNumber(numeroPedido: string): Observable<Budget> {
     return this.http.get<Budget>(`${this.apiUrl}/order/${numeroPedido}`).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  // Obtener presupuesto ENRIQUECIDO por número de presupuesto
+  getBudgetByNumberEnriched(numeroPresupuesto: number): Observable<Budget> {
+    return this.http.get<Budget>(`${this.apiUrl}/numero/${numeroPresupuesto}/enriched`, {
+      headers: this.getAuthHeaders()
+    }).pipe(
       catchError(this.handleError)
     );
   }
@@ -285,7 +318,8 @@ export class BudgetsService {
 
   calculateBudgetTotal(productos: BudgetProduct[]): number {
     return productos.reduce((total, producto) => {
-      return total + (producto.subtotal || (producto.precioUnitario || 0) * producto.cantidad);
+      const subtotal = producto.subtotal || (producto.precioUnitario * producto.cantidad);
+      return total + subtotal;
     }, 0);
   }
 

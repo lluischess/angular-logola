@@ -141,7 +141,7 @@
             </td>
             <td class="estado-cell">
               <span class="estado-badge" [ngClass]="getEstadoClass(presupuesto.estado)">
-                {{ presupuesto.estado | titlecase }}
+                {{ getEstadoLabel(presupuesto.estado) }}
               </span>
             </td>
             <td class="acciones-cell">
@@ -151,12 +151,6 @@
                   (click)="viewPresupuesto(presupuesto.numeroPresupuesto.toString())"
                   title="Ver presupuesto">
                   👁️
-                </button>
-                <button 
-                  class="btn-action btn-edit" 
-                  (click)="editPresupuesto(presupuesto.numeroPresupuesto.toString())"
-                  title="Editar presupuesto">
-                  ✏️
                 </button>
               </div>
             </td>

@@ -1,11 +1,11 @@
 <!-- Layout reutilizable del backoffice -->
-<app-backoffice-layout 
+<app-backoffice-layout
   pageTitle="Ficha de Presupuesto"
   [breadcrumbs]="[
     {label: 'Presupuestos', route: '/logoadmin/presupuestos'},
     {label: 'Ficha de Presupuesto'}
   ]">
-  
+
   <!-- Contenido de la ficha -->
       <!-- Loading state -->
       <div *ngIf="isLoading" class="loading-container">
@@ -18,7 +18,7 @@
         <!-- Header de la ficha -->
         <div class="ficha-header">
           <div class="header-info">
-            <h1>Presupuesto #{{ presupuesto.id }}</h1>
+            <h1>Presupuesto #{{ presupuesto.numeroPresupuesto }}</h1>
             <div class="estado-badge" [ngClass]="getEstadoClass(presupuesto.estado)">
               {{ getEstadoIcon(presupuesto.estado) }} {{ presupuesto.estado | titlecase }}
             </div>
@@ -27,12 +27,27 @@
             <button class="btn btn-secondary" (click)="volverALista()">
               ← Volver a la lista
             </button>
-            <button class="btn btn-primary" (click)="editarPresupuesto()">
-              ✏️ Editar
-            </button>
-            <button class="btn btn-outline" (click)="exportarPDF()">
-              📄 PDF
-            </button>
+
+            <!-- Botones en modo normal -->
+            <ng-container *ngIf="!isEditMode">
+              <button class="btn btn-primary" (click)="editarPresupuesto()">
+                ✏️ Editar
+              </button>
+              <button class="btn btn-outline" (click)="descargarPDFNuevo()">
+                📄 PDF
+              </button>
+            </ng-container>
+
+            <!-- Botones en modo edición -->
+            <ng-container *ngIf="isEditMode">
+              <button class="btn btn-success" (click)="guardarPresupuesto()" [disabled]="isSaving">
+                <span *ngIf="isSaving">💾 Guardando...</span>
+                <span *ngIf="!isSaving">💾 Guardar</span>
+              </button>
+              <button class="btn btn-secondary" (click)="cancelarEdicion()" [disabled]="isSaving">
+                🚫 Cancelar
+              </button>
+            </ng-container>
           </div>
         </div>
 
@@ -41,38 +56,95 @@
           <h2>📋 Información de la Empresa</h2>
           <div class="info-grid">
             <div class="info-card">
-              <div class="info-row">
-                <span class="info-label">Empresa:</span>
-                <span class="info-value">{{ presupuesto.nombreEmpresa }}</span>
-              </div>
-              <div class="info-row">
-                <span class="info-label">Contacto:</span>
-                <span class="info-value">{{ presupuesto.nombreContacto }}</span>
-              </div>
-              <div class="info-row">
-                <span class="info-label">Email:</span>
-                <span class="info-value">
-                  <a href="mailto:{{ presupuesto.email }}">{{ presupuesto.email }}</a>
-                </span>
-              </div>
-              <div class="info-row">
-                <span class="info-label">Teléfono:</span>
-                <span class="info-value">
-                  <a href="tel:{{ presupuesto.telefono }}">{{ presupuesto.telefono }}</a>
-                </span>
-              </div>
-              <div class="info-row">
-                <span class="info-label">Dirección:</span>
-                <span class="info-value">{{ presupuesto.direccion }}</span>
-              </div>
+              <!-- Modo de solo lectura -->
+              <ng-container *ngIf="!isEditMode">
+                <div class="info-row">
+                  <span class="info-label">Empresa:</span>
+                  <span class="info-value">{{ presupuesto.nombreEmpresa }}</span>
+                </div>
+                <div class="info-row">
+                  <span class="info-label">Contacto:</span>
+                  <span class="info-value">{{ presupuesto.nombreContacto }}</span>
+                </div>
+                <div class="info-row">
+                  <span class="info-label">Email:</span>
+                  <span class="info-value">
+                    <a href="mailto:{{ presupuesto.email }}">{{ presupuesto.email }}</a>
+                  </span>
+                </div>
+                <div class="info-row">
+                  <span class="info-label">Teléfono:</span>
+                  <span class="info-value">
+                    <a href="tel:{{ presupuesto.telefono }}">{{ presupuesto.telefono }}</a>
+                  </span>
+                </div>
+                <div class="info-row">
+                  <span class="info-label">Dirección:</span>
+                  <span class="info-value">{{ presupuesto.direccion }}</span>
+                </div>
+              </ng-container>
+
+              <!-- Modo de edición -->
+              <ng-container *ngIf="isEditMode">
+                <div class="info-row">
+                  <span class="info-label">Empresa:</span>
+                  <div class="info-value">
+                    <input
+                      type="text"
+                      class="form-control"
+                      [(ngModel)]="presupuesto.nombreEmpresa"
+                      placeholder="Nombre de la empresa">
+                  </div>
+                </div>
+                <div class="info-row">
+                  <span class="info-label">Contacto:</span>
+                  <div class="info-value">
+                    <input
+                      type="text"
+                      class="form-control"
+                      [(ngModel)]="presupuesto.nombreContacto"
+                      placeholder="Nombre del contacto">
+                  </div>
+                </div>
+                <div class="info-row">
+                  <span class="info-label">Email:</span>
+                  <div class="info-value">
+                    <input
+                      type="email"
+                      class="form-control"
+                      [(ngModel)]="presupuesto.email"
+                      placeholder="email@empresa.com">
+                  </div>
+                </div>
+                <div class="info-row">
+                  <span class="info-label">Teléfono:</span>
+                  <div class="info-value">
+                    <input
+                      type="tel"
+                      class="form-control"
+                      [(ngModel)]="presupuesto.telefono"
+                      placeholder="+34 600 000 000">
+                  </div>
+                </div>
+                <div class="info-row">
+                  <span class="info-label">Dirección:</span>
+                  <div class="info-value">
+                    <textarea
+                      class="form-control"
+                      [(ngModel)]="presupuesto.direccion"
+                      placeholder="Dirección completa de la empresa"
+                      rows="2"></textarea>
+                  </div>
+                </div>
+              </ng-container>
             </div>
 
             <!-- Logo de la empresa -->
             <div class="logo-section">
               <h3>🏢 Logotipo de la Empresa</h3>
               <div class="logo-container">
-                <img 
-                  [src]="presupuesto.logoEmpresa" 
+                <img
+                  [src]="presupuesto.logoEmpresa"
                   [alt]="'Logo de ' + presupuesto.nombreEmpresa"
                   class="empresa-logo"
                   (error)="onImageError($event, 'logo')">
@@ -114,26 +186,26 @@
             <div class="estado-actions">
               <h3>⚡ Cambiar Estado</h3>
               <div class="estado-buttons">
-                <button 
-                  class="btn btn-warning" 
+                <button
+                  class="btn btn-warning"
                   (click)="cambiarEstado('pendiente')"
                   [disabled]="presupuesto.estado === 'pendiente'">
                   ⏳ Pendiente
                 </button>
-                <button 
-                  class="btn btn-success" 
+                <button
+                  class="btn btn-success"
                   (click)="cambiarEstado('aprobado')"
                   [disabled]="presupuesto.estado === 'aprobado'">
                   ✅ Aprobar
                 </button>
-                <button 
-                  class="btn btn-info" 
+                <button
+                  class="btn btn-info"
                   (click)="cambiarEstado('enviado')"
                   [disabled]="presupuesto.estado === 'enviado'">
                   📧 Enviado
                 </button>
-                <button 
-                  class="btn btn-danger" 
+                <button
+                  class="btn btn-danger"
                   (click)="cambiarEstado('rechazado')"
                   [disabled]="presupuesto.estado === 'rechazado'">
                   ❌ Rechazar
@@ -154,20 +226,72 @@
                   <th>Producto</th>
                   <th>Categoría</th>
                   <th>Cantidad</th>
+                  <th>Precio Unitario</th>
+                  <th>Total Línea</th>
+                  <th *ngIf="isEditMode">Acciones</th>
                 </tr>
               </thead>
               <tbody>
-                <tr *ngFor="let producto of presupuesto.productos">
-                  <td>
-                    <img 
-                      [src]="producto.imagen" 
+                <tr *ngFor="let producto of presupuesto.productos" [ngClass]="{'editing-row': isProductEditing(producto.id)}">
+                  <td class="producto-imagen-cell">
+                    <img
+                      [src]="producto.imagen"
                       [alt]="producto.nombre"
                       class="producto-imagen"
-                      (error)="onImageError($event, 'product')">
+                      (load)="onImageLoad($event, producto.nombre)"
+                      (error)="onImageError($event, 'product')"
+                      style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px; border: 1px solid #dee2e6;">
                   </td>
                   <td class="producto-nombre">{{ producto.nombre }}</td>
                   <td class="producto-categoria">{{ producto.categoria }}</td>
-                  <td class="producto-cantidad">{{ producto.cantidad }} uds.</td>
+
+                  <!-- Cantidad - Editable en modo edición -->
+                  <td class="producto-cantidad">
+                    <span *ngIf="!isEditMode || !isProductEditing(producto.id)">{{ producto.cantidad }} uds.</span>
+                    <input *ngIf="isEditMode && isProductEditing(producto.id)"
+                           type="number"
+                           [(ngModel)]="producto.cantidad"
+                           min="1"
+                           class="form-control form-control-sm"
+                           style="width: 80px;">
+                  </td>
+
+                  <!-- Precio Unitario - Editable en modo edición -->
+                  <td class="producto-precio-unitario">
+                    <span *ngIf="!isEditMode || !isProductEditing(producto.id)">{{ formatCurrency(producto.precioUnitario) }}</span>
+                    <input *ngIf="isEditMode && isProductEditing(producto.id)"
+                           type="number"
+                           [(ngModel)]="producto.precioUnitario"
+                           min="0"
+                           step="0.01"
+                           class="form-control form-control-sm"
+                           style="width: 100px;">
+                  </td>
+
+                  <td class="producto-precio-total"><strong>{{ formatCurrency(producto.precioTotal) }}</strong></td>
+
+                  <!-- Acciones en modo edición -->
+                  <td *ngIf="isEditMode" class="producto-acciones">
+                    <!-- Botones cuando NO está editando este producto -->
+                    <ng-container *ngIf="!isProductEditing(producto.id)">
+                      <button class="btn btn-sm btn-outline-primary me-1" (click)="editarProducto(producto.id)" title="Editar producto">
+                        ✏️
+                      </button>
+                      <button class="btn btn-sm btn-outline-danger" (click)="eliminarProducto(producto.id)" title="Eliminar producto">
+                        🗑️
+                      </button>
+                    </ng-container>
+
+                    <!-- Botones cuando SÍ está editando este producto -->
+                    <ng-container *ngIf="isProductEditing(producto.id)">
+                      <button class="btn btn-sm btn-success me-1" (click)="guardarProducto(producto.id)" title="Guardar cambios">
+                        ✅
+                      </button>
+                      <button class="btn btn-sm btn-secondary" (click)="cancelarEdicionProducto(producto.id)" title="Cancelar edición">
+                        ❌
+                      </button>
+                    </ng-container>
+                  </td>
                 </tr>
               </tbody>
 
@@ -177,17 +301,21 @@
 
 
 
-        <!-- Resumen de cantidades -->
+        <!-- Resumen de cantidades y precios -->
         <div class="info-section">
-          <h2>📎 Resumen de Cantidades</h2>
+          <h2>📎 Resumen del Presupuesto</h2>
           <div class="resumen-cantidades">
             <div class="resumen-item">
               <span class="resumen-label">Cantidad Total</span>
-              <span class="resumen-value">{{ presupuesto.cantidadTotal }}</span>
+              <span class="resumen-value">{{ presupuesto.cantidadTotal }} uds.</span>
             </div>
             <div class="resumen-item">
               <span class="resumen-label">Productos Diferentes</span>
               <span class="resumen-value">{{ presupuesto.productos.length }}</span>
+            </div>
+            <div class="resumen-item resumen-total">
+              <span class="resumen-label">💰 <strong>TOTAL PRESUPUESTO</strong></span>
+              <span class="resumen-value total-amount"><strong>{{ formatCurrency(presupuesto.precioTotal || 0) }}</strong></span>
             </div>
           </div>
         </div>
@@ -215,10 +343,10 @@
             <div *ngIf="editingNotes" class="apuntes-edit">
               <div class="apuntes-form">
                 <label for="apuntes-textarea" class="form-label">Apuntes y notas adicionales:</label>
-                <textarea 
+                <textarea
                   id="apuntes-textarea"
-                  class="form-textarea" 
-                  [(ngModel)]="tempNotes" 
+                  class="form-textarea"
+                  [(ngModel)]="tempNotes"
                   placeholder="Escribe aquí cualquier información adicional sobre este presupuesto..."
                   rows="5"
                   maxlength="1000">

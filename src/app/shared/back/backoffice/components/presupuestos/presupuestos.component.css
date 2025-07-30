@@ -515,6 +515,36 @@
   color: white;
 }
 
+.estado-proceso {
+  background: linear-gradient(135deg, #a29bfe, #6c5ce7);
+  color: white;
+}
+
+.estado-enviado {
+  background: linear-gradient(135deg, #74b9ff, #0984e3);
+  color: white;
+}
+
+.estado-completado {
+  background: linear-gradient(135deg, #00b894, #00a085);
+  color: white;
+}
+
+.estado-cancelado {
+  background: linear-gradient(135deg, #636e72, #2d3436);
+  color: white;
+}
+
+.estado-vencido {
+  background: linear-gradient(135deg, #e17055, #d63031);
+  color: white;
+}
+
+.estado-default {
+  background: linear-gradient(135deg, #ddd, #bbb);
+  color: #333;
+}
+
 /* Acciones */
 .acciones-group {
   display: flex;
