@@ -4,13 +4,54 @@
     <div class="row">
       <div class="col-md-12">
         <div class="section-header d-flex flex-wrap justify-content-between my-4">
-          <h2 class="section-title">{{ categoriaSeleccionada | titlecase }}</h2>
+          <h2 class="section-title">{{ categoryTitle }}</h2>
         </div>
       </div>
     </div>
 
-    <!-- Grid de productos -->
-    <div class="row">
+    <!-- Estado de carga de categoría -->
+    <div class="row" *ngIf="isLoadingCategory">
+      <div class="col-12">
+        <div class="text-center py-5">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Cargando...</span>
+          </div>
+          <p class="mt-3 text-muted">Verificando categoría...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Estado de carga de productos -->
+    <div class="row" *ngIf="!isLoadingCategory && categoriaValida && isLoadingProducts">
+      <div class="col-12">
+        <div class="text-center py-5">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Cargando...</span>
+          </div>
+          <p class="mt-3 text-muted">Cargando productos...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Error de categoría no válida -->
+    <div class="row" *ngIf="!isLoadingCategory && !categoriaValida">
+      <div class="col-12">
+        <div class="alert alert-warning text-center py-5" role="alert">
+          <div class="mb-3">
+            <i class="fas fa-exclamation-triangle fa-3x text-warning"></i>
+          </div>
+          <h4 class="alert-heading">Categoría no disponible</h4>
+          <p class="mb-3">{{ categoryError }}</p>
+          <p class="mb-0 text-muted">Redirigiendo a la página principal...</p>
+          <div class="mt-3">
+            <a routerLink="/" class="btn btn-primary">Volver al inicio</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Grid de productos (solo si la categoría es válida y no está cargando) -->
+    <div class="row" *ngIf="!isLoadingCategory && categoriaValida && !isLoadingProducts">
       <div class="col-md-12">
         <!-- Grid de productos adaptado para 4 columnas en escritorio y 1 en móvil -->
         <div class="product-grid row row-cols-1 row-cols-lg-4 g-4">
@@ -19,15 +60,18 @@
             <div class="product-item h-100 d-flex flex-column">
               <!-- Imagen del producto -->
               <figure>
-                <a [routerLink]="['/producto', producto.id]" title="{{ producto.nombre }}">
-                  <img [src]="producto.imagen" alt="{{ producto.nombre }}" class="tab-image img-fluid">
+                <a [routerLink]="['/producto', producto.urlSlug || producto._id]" title="{{ producto.nombre }}">
+                  <img [src]="getProductImageUrl(producto)" 
+                       alt="{{ producto.nombre }}" 
+                       class="tab-image img-fluid"
+                       (error)="onImageError($event)">
                 </a>
               </figure>
               <!-- Información del producto -->
               <div class="product-info text-center d-flex flex-column justify-content-between flex-grow-1">
                 <h3 class="fs-6 fw-normal">{{ producto.nombre | titlecase }}</h3>
                 <span class="text-muted">{{ producto.referencia | uppercase }}</span>
-                <div class="d-flex justify-content-center align-items-center gap-2">
+                <div class="d-flex justify-content-center align-items-center gap-2" *ngIf="producto.medidas">
                   <span class="text-dark fw-semibold">{{ producto.medidas }}</span>
                 </div>
                 <!-- Botón de añadir al presupuesto -->
@@ -40,6 +84,16 @@
             </div>
           </div>
           <!-- Fin del *ngFor -->
+        </div>
+        
+        <!-- Mensaje si no hay productos en la categoría -->
+        <div class="text-center py-5" *ngIf="productosFiltrados.length === 0">
+          <div class="mb-3">
+            <i class="fas fa-box-open fa-3x text-muted"></i>
+          </div>
+          <h4 class="text-muted">No hay productos disponibles</h4>
+          <p class="text-muted">No se encontraron productos en esta categoría.</p>
+          <a routerLink="/" class="btn btn-outline-primary">Ver todas las categorías</a>
         </div>
       </div>
     </div>

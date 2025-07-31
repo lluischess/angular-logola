@@ -50,15 +50,40 @@
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle pe-3" role="button" id="pages" data-bs-toggle="dropdown" aria-expanded="false">Catálogos</a>
           <ul class="dropdown-menu border-0 p-3 rounded-0 shadow" aria-labelledby="pages">
-            <li><a [routerLink]="['/productos/novedades']" class="dropdown-item">Catálogo de Novedades</a></li>
-            <li><a [routerLink]="['/productos/chocolates']" class="dropdown-item">Catálogo de Chocolates</a></li>
-            <li><a [routerLink]="['/productos/caramelos']" class="dropdown-item">Catálogo de Caramelos</a></li>
-            <li><a [routerLink]="['/productos/galletas']" class="dropdown-item">Catálogo de Galletas</a></li>
-            <li><a [routerLink]="['/productos/hoteles']" class="dropdown-item">Detalles para Hoteles</a></li>
-            <li><a [routerLink]="['/productos/bombones']" class="dropdown-item">Bombones San Valentín</a></li>
-            <li><a [routerLink]="['/productos/navidad']" class="dropdown-item">Regalos de Navidad</a></li>
-            <li><a [routerLink]="['/productos/minibar']" class="dropdown-item">Catálogo Mini-Bar</a></li>
-            <!-- Otros links -->
+            
+            <!-- Estado de carga -->
+            <li *ngIf="isLoadingCategories">
+              <div class="dropdown-item d-flex align-items-center gap-2 text-muted">
+                <span class="spinner-border spinner-border-sm" role="status"></span>
+                <span>Cargando catálogo...</span>
+              </div>
+            </li>
+
+            <!-- Estado de error -->
+            <li *ngIf="categoriesError && !isLoadingCategories">
+              <div class="dropdown-item d-flex align-items-center gap-2 text-warning">
+                <span>⚠️</span>
+                <span>Error cargando catálogo</span>
+              </div>
+            </li>
+
+            <!-- Categorías dinámicas del backend -->
+            <li *ngFor="let category of categories; trackBy: trackByCategory">
+              <a [routerLink]="['/productos', category.urlSlug || category.slug]" 
+                 class="dropdown-item"
+                 [title]="category.seo?.metaDescription || 'Ver productos de ' + category.nombre">
+                {{ getCategoryMenuTitle(category) }}
+              </a>
+            </li>
+
+            <!-- Mensaje si no hay categorías -->
+            <li *ngIf="!isLoadingCategories && !categoriesError && categories.length === 0">
+              <div class="dropdown-item d-flex align-items-center gap-2 text-muted">
+                <span>📂</span>
+                <span>No hay categorías disponibles</span>
+              </div>
+            </li>
+            
           </ul>
         </li>
 

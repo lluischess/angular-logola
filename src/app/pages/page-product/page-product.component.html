@@ -1,4 +1,62 @@
-<section *ngIf="producto">
+<!-- Estado de carga del producto -->
+<section *ngIf="isLoadingProduct" class="py-5">
+  <div class="container-lg">
+    <div class="text-center">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Cargando...</span>
+      </div>
+      <p class="mt-2 text-muted">Cargando producto...</p>
+    </div>
+  </div>
+</section>
+
+<!-- Estado de error -->
+<section *ngIf="hasError" class="py-5">
+  <div class="container-lg">
+    <div class="text-center">
+      <div class="alert alert-warning" role="alert">
+        <i class="bi bi-exclamation-triangle"></i>
+        {{ errorMessage }}
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Producto despublicado -->
+<section *ngIf="isProductUnpublished && producto" class="py-5">
+  <div class="container-lg">
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <div class="card border-warning">
+          <div class="card-body text-center py-5">
+            <div class="mb-4">
+              <i class="bi bi-eye-slash text-warning" style="font-size: 3rem;"></i>
+            </div>
+            <h2 class="card-title text-warning mb-3">Producto No Disponible</h2>
+            <p class="card-text text-muted mb-4">
+              El producto <strong>{{ producto.nombre }}</strong> actualmente no está disponible.
+            </p>
+            <p class="card-text text-muted mb-4">
+              Este producto ha sido temporalmente retirado de nuestro catálogo. 
+              Por favor, explora nuestros otros productos disponibles o contacta con nosotros para más información.
+            </p>
+            <div class="d-flex gap-3 justify-content-center flex-wrap">
+              <a routerLink="/" class="btn btn-primary">
+                <i class="bi bi-house"></i> Volver al Inicio
+              </a>
+              <a routerLink="/productos" class="btn btn-outline-primary">
+                <i class="bi bi-grid"></i> Ver Todos los Productos
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Producto cargado -->
+<section *ngIf="!isLoadingProduct && !hasError && producto && !isProductUnpublished">
   <div class="container-lg">
     <div class="row gy-4">
 
@@ -7,15 +65,31 @@
         <div class="product-images">
           <!-- Imagen principal -->
           <div class="main-image mb-3">
-            <img [src]="producto.imagen" alt="{{ producto.nombre }}" class="img-fluid rounded w-100" style="max-height: 400px; object-fit: cover; cursor: pointer;object-fit: contain;" (click)="openImageModal(producto.imagen, producto.nombre)">
+            <img 
+              [src]="getProductImageUrl(producto)" 
+              [alt]="producto.nombre" 
+              (error)="onImageError($event)"
+              class="img-fluid rounded w-100" 
+              style="max-height: 400px; object-fit: cover; cursor: pointer;object-fit: contain;" 
+              (click)="openImageModal(getProductImageUrl(producto), producto.nombre)">
           </div>
           <!-- Imágenes secundarias -->
           <div class="secondary-images d-flex gap-2">
             <div class="secondary-image flex-fill">
-              <img [src]="producto.imagen" alt="{{ producto.nombre }} - Vista 2" class="img-fluid rounded w-100 secondary-img" (click)="openImageModal(producto.imagen, producto.nombre + ' - Vista 2')">
+              <img 
+                [src]="getProductImageUrl(producto)" 
+                [alt]="producto.nombre + ' - Vista 2'" 
+                (error)="onImageError($event)"
+                class="img-fluid rounded w-100 secondary-img" 
+                (click)="openImageModal(getProductImageUrl(producto), producto.nombre + ' - Vista 2')">
             </div>
             <div class="secondary-image flex-fill">
-              <img [src]="producto.imagen" alt="{{ producto.nombre }} - Vista 3" class="img-fluid rounded w-100 secondary-img" (click)="openImageModal(producto.imagen, producto.nombre + ' - Vista 3')">
+              <img 
+                [src]="getProductImageUrl(producto)" 
+                [alt]="producto.nombre + ' - Vista 3'" 
+                (error)="onImageError($event)"
+                class="img-fluid rounded w-100 secondary-img" 
+                (click)="openImageModal(getProductImageUrl(producto), producto.nombre + ' - Vista 3')">
             </div>
           </div>
         </div>
@@ -29,7 +103,7 @@
           <span class="text-muted">{{ producto.referencia | uppercase }}</span>
           <!-- Descripción del producto -->
           <p class="product-description text-muted mb-4">
-            Bombón en forma de pirámide serigrafiados de chocolate negro: Trufa de cacao 67% de cacao de Carácas. De chocolate con leche: Praliné de avellanas 38% de cacao Java.
+            Producto de alta calidad de nuestra selección especial.
           </p>
           <!-- Botón de acción (Añadir al presupuesto o comprar) -->
           <div class="action-buttons mt-4 mb-3">
@@ -47,19 +121,23 @@
             <tbody>
               <tr>
                 <td><strong>Medidas</strong></td>
-                <td>{{ producto.medidas }}</td>
+                <td>{{ producto.medidas || 'No especificadas' }}</td>
               </tr>
-              <tr>
+              <tr *ngIf="producto.material">
                 <td><strong>Material</strong></td>
-                <td>Material del producto (Ej. Bolsa reciclada 100%)</td>
+                <td>{{ producto.material }}</td>
               </tr>
-              <tr>
+              <tr *ngIf="producto.ingredientes">
                 <td><strong>Ingredientes</strong></td>
-                <td>Lista de ingredientes (Ej. Cacao, Chocolate Blanco, Leche y Negro 77% de Origen)</td>
+                <td>{{ producto.ingredientes }}</td>
               </tr>
-              <tr>
-                <td><strong>Unidades</strong></td>
-                <td>Número de unidades por bolsa (Ej. 4 de cada sabor)</td>
+              <tr *ngIf="producto.detalles">
+                <td><strong>Detalles</strong></td>
+                <td>{{ producto.detalles }}</td>
+              </tr>
+              <tr *ngIf="producto.cantidadMinima">
+                <td><strong>Cantidad Mínima de Compra</strong></td>
+                <td>{{ producto.cantidadMinima }} unidades</td>
               </tr>
             </tbody>
           </table>
@@ -88,22 +166,38 @@
 
     <div class="row">
       <div class="col-md-12">
-        <swiper-container
-          #swiper
-          slides-per-view="1"
-          space-between="30"
-          init="false">
-          <swiper-slide *ngFor="let related of relatedProducts" class="product-item swiper-slide" role="group">
+        
+        <!-- Estado de carga de productos relacionados -->
+        <div *ngIf="isLoadingRelated" class="text-center py-5">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Cargando...</span>
+          </div>
+          <p class="mt-2 text-muted">Cargando productos relacionados...</p>
+        </div>
+        
+        <!-- Productos relacionados cargados -->
+        <div *ngIf="!isLoadingRelated && relatedProducts.length > 0">
+          <swiper-container
+            #swiper
+            slides-per-view="1"
+            space-between="30"
+            init="false">
+          <swiper-slide *ngFor="let related of relatedProducts; trackBy: trackByProductId" class="product-item swiper-slide" role="group">
             <figure>
-              <a [routerLink]="['/producto', related.id]" [title]="related.nombre">
-                <img [src]="related.imagen" [alt]="related.nombre" class="tab-image img-fluid" style="max-height: 225px;">
+              <a [routerLink]="['/producto', related.urlSlug || related._id]" [title]="related.nombre">
+                <img 
+                  [src]="getProductImageUrl(related)" 
+                  [alt]="related.nombre" 
+                  (error)="onImageError($event)"
+                  class="tab-image img-fluid" 
+                  style="max-height: 225px;">
               </a>
             </figure>
             <div class="text-center d-flex flex-column justify-content-between">
               <h3 class="fs-6 fw-normal">{{ related.nombre | titlecase }}</h3>
-              <span class="text-muted">{{related.referencia | uppercase}}</span>
+              <span class="text-muted">{{ related.referencia | uppercase }}</span>
               <div class="d-flex justify-content-center align-items-center gap-2">
-                <span class="text-dark fw-semibold">{{ related.medidas }}</span>
+                <span class="text-dark fw-semibold">{{ related.medidas || 'Medidas no especificadas' }}</span>
               </div>
               <div class="button-area p-3 pt-0">
                 <div class="row g-1 mt-2">
@@ -117,7 +211,17 @@
               </div>
             </div>
           </swiper-slide>
-        </swiper-container>
+          </swiper-container>
+        </div>
+        
+        <!-- Estado vacío de productos relacionados -->
+        <div *ngIf="!isLoadingRelated && relatedProducts.length === 0" class="text-center py-5">
+          <div class="alert alert-info" role="alert">
+            <i class="bi bi-info-circle"></i>
+            No hay productos relacionados disponibles.
+          </div>
+        </div>
+        
       </div>
     </div>
   </div>

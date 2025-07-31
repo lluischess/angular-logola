@@ -3,9 +3,9 @@
     <div class="row">
       <div class="col-md-12">
         <div class="section-header d-flex justify-content-between my-4">
-          <h2 class="section-title">Nuestros Caramelos</h2>
+          <h2 class="section-title">{{ categoryTitle }}</h2>
           <div class="d-flex align-items-center">
-            <a [routerLink]="['/productos/caramelos']" class="btn btn-primary me-2">Ver todo</a>
+            <a *ngIf="categorySlug" [routerLink]="['/productos', categorySlug]" class="btn btn-primary me-2">Ver todo</a>
             <div class="swiper-buttons">
               <button class="swiper-prev caramelos-carousel-prev btn btn-primary">❮</button>
               <button class="swiper-next caramelos-carousel-next btn btn-primary">❯</button>
@@ -16,36 +16,78 @@
     </div>
     <div class="row">
       <div class="col-md-12">
-        <swiper-container
-          #swiper
-          slides-per-view="1"
-          space-between="30"
-          init="false">
-          <swiper-slide *ngFor="let producto of productos" class="product-item swiper-slide" role="group">
-            <figure>
-              <a [routerLink]="['/producto', producto.id]" [title]="producto.nombre">
-                <img [src]="producto.imagen" [alt]="producto.nombre" class="tab-image img-fluid" style="max-height: 225px;">
-              </a>
-            </figure>
-            <div class="text-center d-flex flex-column justify-content-between">
-              <h3 class="fs-6 fw-normal">{{ producto.nombre | titlecase }}</h3>
-              <span class="text-muted">{{producto.referencia | uppercase}}</span>
-              <div class="d-flex justify-content-center align-items-center gap-2">
-                <span class="text-dark fw-semibold">{{ producto.medidas }}</span>
-              </div>
-              <div class="button-area p-3 pt-0">
-                <div class="row g-1 mt-2">
-                  <div class="col-12">
-                    <!-- Botón de añadir al presupuesto -->
-                  <a (click)="addToCart(producto)" data-bs-toggle="offcanvas" data-bs-target="#offcanvasCart" aria-controls="offcanvasCart" class="btn btn-primary rounded-1 p-2 fs-7 btn-cart w-100">
-                    <svg width="18" height="18"><use xlink:href="#cart"></use></svg> Añadir al presupuesto
-                  </a>
+        
+        <!-- Estado de carga de categoría -->
+        <div *ngIf="isLoadingCategory" class="text-center py-5">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Cargando...</span>
+          </div>
+          <p class="mt-2 text-muted">Verificando categoría de caramelos...</p>
+        </div>
+
+        <!-- Estado de carga de productos -->
+        <div *ngIf="!isLoadingCategory && isLoadingProducts" class="text-center py-5">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Cargando...</span>
+          </div>
+          <p class="mt-2 text-muted">Cargando productos de caramelos...</p>
+        </div>
+
+        <!-- Estado de error -->
+        <div *ngIf="hasError" class="text-center py-5">
+          <div class="alert alert-warning" role="alert">
+            <i class="bi bi-exclamation-triangle"></i>
+            {{ errorMessage }}
+          </div>
+        </div>
+
+        <!-- Productos cargados -->
+        <div *ngIf="!isLoadingCategory && !isLoadingProducts && !hasError && productos.length > 0">
+          <swiper-container
+            #swiper
+            slides-per-view="1"
+            space-between="30"
+            init="false">
+            <swiper-slide *ngFor="let producto of productos; trackBy: trackByProductId" class="product-item swiper-slide" role="group">
+              <figure>
+                <a [routerLink]="['/producto', producto.urlSlug || producto._id]" [title]="producto.nombre">
+                  <img 
+                    [src]="getProductImageUrl(producto)" 
+                    [alt]="producto.nombre" 
+                    (error)="onImageError($event)"
+                    class="tab-image img-fluid" 
+                    style="max-height: 225px;">
+                </a>
+              </figure>
+              <div class="text-center d-flex flex-column justify-content-between">
+                <h3 class="fs-6 fw-normal">{{ producto.nombre | titlecase }}</h3>
+                <span class="text-muted">{{ producto.referencia | uppercase }}</span>
+                <div class="d-flex justify-content-center align-items-center gap-2">
+                  <span class="text-dark fw-semibold">{{ producto.medidas || 'Medidas no especificadas' }}</span>
+                </div>
+                <div class="button-area p-3 pt-0">
+                  <div class="row g-1 mt-2">
+                    <div class="col-12">
+                      <!-- Botón de añadir al presupuesto -->
+                      <a (click)="addToCart(producto)" data-bs-toggle="offcanvas" data-bs-target="#offcanvasCart" aria-controls="offcanvasCart" class="btn btn-primary rounded-1 p-2 fs-7 btn-cart w-100">
+                        <svg width="18" height="18"><use xlink:href="#cart"></use></svg> Añadir al presupuesto
+                      </a>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          </swiper-slide>
-        </swiper-container>
+            </swiper-slide>
+          </swiper-container>
+        </div>
+
+        <!-- Estado vacío -->
+        <div *ngIf="!isLoadingCategory && !isLoadingProducts && !hasError && productos.length === 0" class="text-center py-5">
+          <div class="alert alert-info" role="alert">
+            <i class="bi bi-info-circle"></i>
+            No hay productos disponibles en la categoría de caramelos.
+          </div>
+        </div>
+        
       </div>
     </div>
   </div>

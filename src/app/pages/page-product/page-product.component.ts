@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit, ViewEncapsulation, CUSTOM_ELEMENTS_SCHEMA, ViewChild, AfterViewInit, ElementRef } from '@angular/core';
 import { CartServiceService } from '../../shared/services/cart-service.service';
 import { ActivatedRoute, RouterModule } from '@angular/router';
+import { ProductsService, FrontProduct } from '../../services/products.service';
 
 // Importar Swiper
 import { register } from 'swiper/element/bundle';
@@ -23,159 +24,151 @@ register();
 })
 export class PageProductComponent implements OnInit, AfterViewInit {
   @ViewChild('swiper') swiper!: ElementRef;
-  public producto: any;
-  public relatedProducts: any[] = [];
+  public producto: FrontProduct | null = null;
+  public relatedProducts: FrontProduct[] = [];
+  public isLoadingProduct: boolean = false;
+  public isLoadingRelated: boolean = false;
+  public hasError: boolean = false;
+  public errorMessage: string = '';
+  public isProductUnpublished: boolean = false;
   
   // Propiedades para el modal de imagen
   public modalImageSrc: string = '';
   public modalImageTitle: string = '';
 
-  productos = [
-    {
-      id: 1,
-      nombre: 'BOMBÓN NAVIDAD EN BOLSA UNITARIA PERSONALIZADA',
-      categoria: 'chocolates',
-      referencia: 'BE-015-156',
-      imagen: 'assets/images/BE-015-156.jpg',
-      medidas: 'Medidas 72 x 59 mm'
-    },
-    {
-      id: 2,
-      nombre: 'Bote personalizado con Bolas de Cereales con Chocolate',
-      categoria: 'chocolates',
-      referencia: 'EN-148',
-      imagen: 'assets/images/EN-148.jpg',
-      medidas: 'Medidas 72 x 59 mm'
-    },
-    {
-      id: 3,
-      nombre: 'Bote personalizado con Catanias',
-      categoria: 'chocolates',
-      referencia: 'EN-134',
-      imagen: 'assets/images/EN-134.jpg',
-      medidas: 'Medidas 72 x 59 mm'
-    },
-    {
-      id: 4,
-      nombre: 'Catánias 35g en estuche Medium Faja',
-      categoria: 'chocolates',
-      referencia: 'SS-201-003',
-      imagen: 'assets/images/SS-201-003.jpg',
-      medidas: 'Medidas 60 x 60 x 55 mm'
-    },
-    {
-      id: 5,
-      nombre: 'Bombon de Yogur y Fresa cubo medium',
-      categoria: 'chocolates',
-      referencia: 'SS-202',
-      imagen: 'assets/images/SS-202.jpg',
-      medidas: 'Medidas  60 x 40 x 55 mm'
-    },
-    {
-      id: 6,
-      nombre: 'Chocolates Levels Piramid',
-      categoria: 'chocolates',
-      referencia: 'CO-000',
-      imagen: 'assets/images/CO-000.jpg',
-      medidas: 'Medidas 13 x 13 x 9,5 cm'
-    },
-    {
-      id: 7,
-      nombre: 'Cub Gajos Jelly',
-      categoria: 'caramelos',
-      referencia: 'FC-056-01',
-      imagen: 'assets/images/FC-056-01.jpg',
-      medidas: 'Medidas 5 x 5 x 5 cm'
-    },
-    {
-      id: 8,
-      nombre: 'Caja Pastis con Moras de Colores',
-      categoria: 'caramelos',
-      referencia: 'FC-307-01',
-      imagen: 'assets/images/FC-307-01.jpg',
-      medidas: 'Medidas 5 x 5 x 5 cm'
-    },
-    {
-      id: 9,
-      nombre: 'Tetris de Gominola',
-      categoria: 'caramelos',
-      referencia: 'FC-036',
-      imagen: 'assets/images/FC-036.jpg',
-      medidas: 'Medidas 7 x 7 x 7 cm'
-    },
-    {
-      id: 10,
-      nombre: 'Cata 9 Bombones Artesanos',
-      categoria: 'novedades',
-      referencia: 'SS-012',
-      imagen: 'assets/images/SS-012.jpg',
-      medidas: 'Medidas 10 x 10 x 2,5 cm'
-    },
-    {
-      id: 11,
-      nombre: 'CALENDARIO ADVIENTO LUX',
-      categoria: 'navidad',
-      referencia: 'NA-040',
-      imagen: 'assets/images/NA-040.jpg',
-      medidas: 'Medidas  330 x 130 x 45 mm'
-    },
-    {
-      id: 12,
-      nombre: 'CALENDARIO ADVIENTO BOMBONES LINDOR LINDT',
-      categoria: 'navidad',
-      referencia: 'NA-032-000',
-      imagen: 'assets/images/NA-032-000.jpg',
-      medidas: 'Medidas 250 x 250 x 30mm'
-    },
-    {
-      id: 13,
-      nombre: 'Estuche con Benjamín y Bombones Lindor',
-      categoria: 'navidad',
-      referencia: 'LOTE 003-01',
-      imagen: 'assets/images/LOTE-003-01.jpg',
-      medidas: 'Medidas 120 x 63 x 200 mm'
-    },
-    {
-      id: 14,
-      nombre: 'Galleta Artesana',
-      categoria: 'galletas',
-      referencia: 'FL-023',
-      imagen: 'assets/images/FL-023.jpg',
-      medidas: 'Medidas  5,4 x 4,5 cm'
-    }
-  ];
+
 
   constructor(
     private cartService: CartServiceService,
     private route: ActivatedRoute,
-    private el: ElementRef
+    private el: ElementRef,
+    private productsService: ProductsService
   ) {}
 
   ngOnInit(): void {
     // Suscribirse a los cambios de parámetros de ruta
     this.route.paramMap.subscribe(params => {
-      const productId = params.get('id');
-      this.loadProduct(+productId!);
+      const productSlug = params.get('slug');
+      if (productSlug) {
+        this.loadProduct(productSlug);
+      } else {
+        this.showError('URL de producto no válida');
+      }
     });
   }
 
-  private loadProduct(productId: number): void {
-    this.producto = this.productos.find(p => p.id === productId);
-
-    if (!this.producto) {
-      console.error('Producto no encontrado');
-      return;
-    }
-
-    // Obtener productos relacionados (excluyendo el producto actual)
-    this.relatedProducts = this.productos
-      .filter(p => p.id !== this.producto.id)
-      .slice(0, 8); // Limitamos a 8 productos relacionados
+  /**
+   * Cargar producto desde el backend por URL Slug
+   */
+  private loadProduct(productSlug: string): void {
+    this.isLoadingProduct = true;
+    this.hasError = false;
+    this.isProductUnpublished = false;
+    this.producto = null;
+    
+    console.log(`🔍 [PAGE-PRODUCT] Cargando producto con Slug: ${productSlug}`);
+    
+    this.productsService.getProductBySlug(productSlug).subscribe({
+      next: (product: FrontProduct) => {
+        this.isLoadingProduct = false;
+        
+        if (product) {
+          this.producto = product;
+          console.log(`✅ [PAGE-PRODUCT] Producto cargado:`, product.nombre);
+          console.log(`✅ [PAGE-PRODUCT] URL Slug:`, product.urlSlug);
+          console.log(`✅ [PAGE-PRODUCT] Publicado:`, product.publicado);
+          
+          // Verificar si el producto está despublicado
+          if (!product.publicado) {
+            this.isProductUnpublished = true;
+            console.log(`⚠️ [PAGE-PRODUCT] Producto despublicado, mostrando mensaje informativo`);
+            // No cargar productos relacionados para productos despublicados
+            return;
+          }
+          
+          // Solo cargar productos relacionados si el producto está publicado
+          this.loadRelatedProducts(product.categoria);
+        } else {
+          this.showError('Producto no encontrado');
+        }
+      },
+      error: (error: any) => {
+        console.error('❌ [PAGE-PRODUCT] Error cargando producto:', error);
+        this.isLoadingProduct = false;
+        this.showError('Error al cargar el producto. Por favor, intenta de nuevo.');
+      }
+    });
+  }
+  
+  /**
+   * Cargar productos relacionados de la misma categoría
+   */
+  private loadRelatedProducts(categoria: string): void {
+    this.isLoadingRelated = true;
+    
+    console.log(`🔍 [PAGE-PRODUCT] Cargando productos relacionados de categoría: ${categoria}`);
+    
+    this.productsService.getProductsByCategory(categoria).subscribe({
+      next: (products: FrontProduct[]) => {
+        this.isLoadingRelated = false;
+        
+        if (products && products.length > 0) {
+          // Filtrar el producto actual y limitar a 8 productos relacionados
+          this.relatedProducts = products
+            .filter(p => p._id !== this.producto?._id)
+            .slice(0, 8);
+          
+          console.log(`✅ [PAGE-PRODUCT] ${this.relatedProducts.length} productos relacionados cargados`);
+          
+          // Reinicializar Swiper después de cargar productos relacionados
+          setTimeout(() => {
+            this.initializeSwiper();
+          }, 100);
+        } else {
+          this.relatedProducts = [];
+          console.log('⚠️ [PAGE-PRODUCT] No hay productos relacionados');
+        }
+      },
+      error: (error: any) => {
+        console.error('❌ [PAGE-PRODUCT] Error cargando productos relacionados:', error);
+        this.isLoadingRelated = false;
+        this.relatedProducts = [];
+      }
+    });
+  }
+  
+  /**
+   * Mostrar mensaje de error
+   */
+  private showError(message: string): void {
+    this.hasError = true;
+    this.errorMessage = message;
+    this.isLoadingProduct = false;
+    this.isLoadingRelated = false;
+    console.error(`❌ [PAGE-PRODUCT] ${message}`);
   }
 
   ngAfterViewInit() {
+    // Inicializar Swiper al montar el componente
+    this.initializeSwiper();
+  }
+  
+  /**
+   * Inicializar o reinicializar el Swiper
+   */
+  private initializeSwiper(): void {
+    if (!this.swiper) {
+      console.log('⚠️ [PAGE-PRODUCT] Swiper ViewChild no disponible aún');
+      return;
+    }
+    
     const swiperEl = this.swiper.nativeElement;
-
+    
+    // Si ya está inicializado, destruirlo primero
+    if (swiperEl.swiper) {
+      swiperEl.swiper.destroy(true, true);
+    }
+    
     // Configurar Swiper
     Object.assign(swiperEl, {
       slidesPerView: 1,
@@ -216,9 +209,41 @@ export class PageProductComponent implements OnInit, AfterViewInit {
         nextButton.setAttribute('aria-disabled', swiperEl.swiper.isEnd.toString());
       });
     }
+    
+    console.log('✅ [PAGE-PRODUCT] Swiper inicializado/reinicializado');
   }
 
-  addToCart(product: any) {
+  /**
+   * Obtener URL de imagen del producto
+   */
+  getProductImageUrl(producto: FrontProduct): string {
+    const firstImage = producto.imagenes && producto.imagenes.length > 0 ? producto.imagenes[0] : '';
+    return this.productsService.getAbsoluteImageUrl(firstImage);
+  }
+  
+  /**
+   * Manejar error de imagen
+   */
+  onImageError(event: any): void {
+    // Evitar bucle infinito: si ya es el placeholder, no hacer nada más
+    if (event.target.src.includes('placeholder-product.jpg')) {
+      console.log('⚠️ [PAGE-PRODUCT] Error cargando placeholder, ocultando imagen');
+      event.target.style.display = 'none';
+      return;
+    }
+    
+    console.log('⚠️ [PAGE-PRODUCT] Error cargando imagen, usando fallback');
+    event.target.src = 'assets/images/placeholder-product.jpg';
+  }
+  
+  /**
+   * TrackBy function para optimizar el rendering de productos relacionados
+   */
+  trackByProductId(index: number, producto: FrontProduct): string {
+    return producto._id;
+  }
+
+  addToCart(product: FrontProduct) {
     this.cartService.addToCart(product);
     console.log(`${product.nombre} añadido al carrito`);
     

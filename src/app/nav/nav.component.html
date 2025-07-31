@@ -18,54 +18,41 @@
           <span>Contacto</span>
           </a>
       </li>
-      <li class="nav-item border-dashed">
-        <a [routerLink]="['/productos/novedades']" data-bs-dismiss="offcanvas" class="nav-link d-flex align-items-center gap-3 text-dark p-2">
+      <!-- Mensaje de carga de categorías -->
+      <li class="nav-item border-dashed" *ngIf="isLoadingCategories">
+        <div class="nav-link d-flex align-items-center gap-3 text-muted p-2">
+          <span class="spinner-border spinner-border-sm" role="status"></span>
+          <span>Cargando catálogo...</span>
+        </div>
+      </li>
+
+      <!-- Mensaje de error -->
+      <li class="nav-item border-dashed" *ngIf="categoriesError && !isLoadingCategories">
+        <div class="nav-link d-flex align-items-center gap-3 text-warning p-2">
+          <span>⚠️</span>
+          <span>Error cargando catálogo</span>
+        </div>
+      </li>
+
+      <!-- Categorías dinámicas del backend -->
+      <li class="nav-item border-dashed" *ngFor="let category of categories; trackBy: trackByCategory">
+        <a [routerLink]="getCategoryUrl(category)" 
+           data-bs-dismiss="offcanvas" 
+           class="nav-link d-flex align-items-center gap-3 text-dark p-2"
+           [title]="category.seo?.metaDescription || 'Ver productos de ' + category.nombre">
           <span class="arrow">→</span>
-          <span>Catálogo de Novedades</span>
+          <span>{{ getCategoryMenuTitle(category) }}</span>
         </a>
       </li>
-      <li class="nav-item border-dashed">
-        <a [routerLink]="['/productos/chocolates']" data-bs-dismiss="offcanvas" class="nav-link d-flex align-items-center gap-3 text-dark p-2">
-          <span class="arrow">→</span>
-          <span>Catálogo de Chocolates</span>
-        </a>
+
+      <!-- Mensaje si no hay categorías -->
+      <li class="nav-item border-dashed" *ngIf="!isLoadingCategories && !categoriesError && categories.length === 0">
+        <div class="nav-link d-flex align-items-center gap-3 text-muted p-2">
+          <span>📂</span>
+          <span>No hay categorías disponibles</span>
+        </div>
       </li>
-      <li class="nav-item border-dashed">
-        <a [routerLink]="['/productos/caramelos']" data-bs-dismiss="offcanvas" class="nav-link d-flex align-items-center gap-3 text-dark p-2">
-          <span class="arrow">→</span>
-          <span>Catálogo de Caramelos</span>
-        </a>
-      </li>
-      <li class="nav-item border-dashed">
-        <a [routerLink]="['/productos/galletas']" data-bs-dismiss="offcanvas" class="nav-link d-flex align-items-center gap-3 text-dark p-2">
-          <span class="arrow">→</span>
-          <span>Catálogo de Galletas</span>
-        </a>
-      </li>
-      <li class="nav-item border-dashed">
-        <a [routerLink]="['/productos/hoteles']" data-bs-dismiss="offcanvas" class="nav-link d-flex align-items-center gap-3 text-dark p-2">
-          <span class="arrow">→</span>
-          <span>Detalles para Hoteles</span>
-        </a>
-      </li>
-      <li class="nav-item border-dashed">
-        <a [routerLink]="['/productos/bombones']" data-bs-dismiss="offcanvas" class="nav-link d-flex align-items-center gap-3 text-dark p-2">
-          <span class="arrow">→</span>
-          <span>Bombones San Valentín</span>
-        </a>
-      </li>
-      <li class="nav-item border-dashed">
-        <a [routerLink]="['/productos/navidad']" data-bs-dismiss="offcanvas" class="nav-link d-flex align-items-center gap-3 text-dark p-2">
-          <span class="arrow">→</span>
-          <span>Regalos de Navidad</span>
-        </a>
-      </li>
-      <li class="nav-item border-dashed">
-        <a [routerLink]="['/productos/minibar']" data-bs-dismiss="offcanvas" class="nav-link d-flex align-items-center gap-3 text-dark p-2">
-          <span class="arrow">→</span>
-          <span>Catálogo Mini-Bar</span>
-        </a>
-      </li>
+
     </ul>
 
   </div>

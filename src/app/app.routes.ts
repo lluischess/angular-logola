@@ -32,7 +32,7 @@ export const routes: Routes = [
     component: PageGridComponent
   },
   {
-    path: 'producto/:id',
+    path: 'producto/:slug',
     component: PageProductComponent
   },
   {

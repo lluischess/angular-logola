@@ -1,7 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CartServiceService } from '../../shared/services/cart-service.service';
+import { CategoriesService, FrontCategory } from '../../services/categories.service';
+import { ProductsService, FrontProduct } from '../../services/products.service';
 
 // Declarar Bootstrap para TypeScript
 declare var bootstrap: any;
@@ -13,143 +15,286 @@ declare var bootstrap: any;
   templateUrl: './page-grid.component.html',
   styleUrl: './page-grid.component.css'
 })
-export class PageGridComponent {
-  productos = [
-    {
-      id: 1,
-      nombre: 'BOMBÓN NAVIDAD EN BOLSA UNITARIA PERSONALIZADA',
-      categoria: 'chocolates',
-      referencia: 'BE-015-156',
-      imagen: 'assets/images/BE-015-156.jpg',
-      medidas: 'Medidas 72 x 59 mm'
-    },
-    {
-      id: 2,
-      nombre: 'Bote personalizado con Bolas de Cereales con Chocolate',
-      categoria: 'chocolates',
-      referencia: 'EN-148',
-      imagen: 'assets/images/EN-148.jpg',
-      medidas: 'Medidas 72 x 59 mm'
-    },
-    {
-      id: 3,
-      nombre: 'Bote personalizado con Catanias',
-      categoria: 'chocolates',
-      referencia: 'EN-134',
-      imagen: 'assets/images/EN-134.jpg',
-      medidas: 'Medidas 72 x 59 mm'
-    },
-    {
-      id: 4,
-      nombre: 'Catánias 35g en estuche Medium Faja',
-      categoria: 'chocolates',
-      referencia: 'SS-201-003',
-      imagen: 'assets/images/SS-201-003.jpg',
-      medidas: 'Medidas 60 x 60 x 55 mm'
-    },
-    {
-      id: 5,
-      nombre: 'Bombon de Yogur y Fresa cubo medium',
-      categoria: 'chocolates',
-      referencia: 'SS-202',
-      imagen: 'assets/images/SS-202.jpg',
-      medidas: 'Medidas  60 x 40 x 55 mm'
-    },
-    {
-      id: 6,
-      nombre: 'Chocolates Levels Piramid',
-      categoria: 'chocolates',
-      referencia: 'CO-000',
-      imagen: 'assets/images/CO-000.jpg',
-      medidas: 'Medidas 13 x 13 x 9,5 cm'
-    },
-    {
-      id: 7,
-      nombre: 'Cub Gajos Jelly',
-      categoria: 'caramelos',
-      referencia: 'FC-056-01',
-      imagen: 'assets/images/FC-056-01.jpg',
-      medidas: 'Medidas 5 x 5 x 5 cm'
-    },
-    {
-      id: 8,
-      nombre: 'Caja Pastis con Moras de Colores',
-      categoria: 'caramelos',
-      referencia: 'FC-307-01',
-      imagen: 'assets/images/FC-307-01.jpg',
-      medidas: 'Medidas 5 x 5 x 5 cm'
-    },
-    {
-      id: 9,
-      nombre: 'Tetris de Gominola',
-      categoria: 'caramelos',
-      referencia: 'FC-036',
-      imagen: 'assets/images/FC-036.jpg',
-      medidas: 'Medidas 7 x 7 x 7 cm'
-    },
-    {
-      id: 10,
-      nombre: 'Cata 9 Bombones Artesanos',
-      categoria: 'novedades',
-      referencia: 'SS-012',
-      imagen: 'assets/images/SS-012.jpg',
-      medidas: 'Medidas 10 x 10 x 2,5 cm'
-    },
-    {
-      id: 11,
-      nombre: 'CALENDARIO ADVIENTO LUX',
-      categoria: 'navidad',
-      referencia: 'NA-040',
-      imagen: 'assets/images/NA-040.jpg',
-      medidas: 'Medidas  330 x 130 x 45 mm'
-    },
-    {
-      id: 12,
-      nombre: 'CALENDARIO ADVIENTO BOMBONES LINDOR LINDT',
-      categoria: 'navidad',
-      referencia: 'NA-032-000',
-      imagen: 'assets/images/NA-032-000.jpg',
-      medidas: 'Medidas 250 x 250 x 30mm'
-    },
-    {
-      id: 13,
-      nombre: 'Estuche con Benjamín y Bombones Lindor',
-      categoria: 'navidad',
-      referencia: 'LOTE 003-01',
-      imagen: 'assets/images/LOTE-003-01.jpg',
-      medidas: 'Medidas 120 x 63 x 200 mm'
-    },
-    {
-      id: 14,
-      nombre: 'Galleta Artesana',
-      categoria: 'galletas',
-      referencia: 'FL-023',
-      imagen: 'assets/images/FL-023.jpg',
-      medidas: 'Medidas  5,4 x 4,5 cm'
-    }
-  ];
-
-  productosFiltrados: any[] = []; // Productos filtrados según la categoría y/o búsqueda
+export class PageGridComponent implements OnInit {
+  // Productos reales desde el backend
+  productos: FrontProduct[] = [];
+  productosFiltrados: FrontProduct[] = []; // Productos filtrados según la categoría y/o búsqueda
   categoriaSeleccionada: string = ''; // Categoría actual
   searchQuery: string = '';  // Término de búsqueda
+  
+  // Título dinámico de la categoría
+  categoryTitle: string = '';
+  isLoadingProducts: boolean = false;
+  
+  // Propiedades para validación de categorías
+  categoriaValida: boolean = true;
+  categoriaEncontrada: FrontCategory | null = null;
+  isLoadingCategory: boolean = false;
+  categoryError: string = '';
 
-  constructor(private route: ActivatedRoute, private cartService: CartServiceService) {}
+  constructor(
+    private route: ActivatedRoute, 
+    private cartService: CartServiceService,
+    private router: Router,
+    private categoriesService: CategoriesService,
+    private productsService: ProductsService
+  ) {}
 
   ngOnInit(): void {
     // Escuchar cambios en los parámetros de la URL (categoría y búsqueda)
     this.route.paramMap.subscribe(params => {
       this.categoriaSeleccionada = params.get('categoria') || ''; // Obtener la categoría
-      this.filtrarProductos(); // Filtrar productos cuando cambia la categoría
+      
+      if (this.categoriaSeleccionada) {
+        // Validar que la categoría esté publicada antes de mostrar productos
+        this.validateCategory(this.categoriaSeleccionada);
+      } else {
+        // Si no hay categoría seleccionada, mostrar todos los productos
+        this.categoriaValida = true;
+        this.categoryTitle = 'Todos los productos';
+        this.loadAllProducts();
+      }
     });
 
     // Escuchar cambios en los queryParams (búsqueda)
     this.route.queryParams.subscribe(queryParams => {
       this.searchQuery = queryParams['search'] || '';  // Obtener el término de búsqueda
-      this.filtrarProductos(); // Filtrar productos cuando cambia el término de búsqueda
+      
+      // Solo buscar si la categoría es válida
+      if (this.categoriaValida) {
+        if (this.searchQuery.trim()) {
+          this.searchProducts(this.searchQuery);
+        } else {
+          // Si no hay búsqueda, recargar productos de la categoría
+          if (this.categoriaSeleccionada) {
+            this.loadProductsByCategory(this.categoriaSeleccionada);
+          } else {
+            this.loadAllProducts();
+          }
+        }
+      }
     });
   }
 
-  // Función para filtrar productos por categoría y búsqueda
+  /**
+   * Valida que la categoría esté publicada antes de mostrar productos
+   */
+  private validateCategory(slug: string): void {
+    this.isLoadingCategory = true;
+    this.categoriaValida = false;
+    this.categoryError = '';
+    
+    console.log(`🔍 [PAGE-GRID] Validando categoría: ${slug}`);
+    
+    this.categoriesService.getCategoryBySlug(slug).subscribe({
+      next: (category) => {
+        this.isLoadingCategory = false;
+        
+        if (category && category.publicado) {
+          // Categoría encontrada y publicada
+          this.categoriaEncontrada = category;
+          this.categoriaValida = true;
+          
+          // Establecer título dinámico de la categoría
+          this.categoryTitle = category.seo?.metaTitle || category.nombre;
+          
+          // Cargar productos de esta categoría
+          this.loadProductsByCategory(slug);
+          
+          console.log(`✅ [PAGE-GRID] Categoría válida y publicada: ${category.nombre}`);
+        } else if (category && !category.publicado) {
+          // Categoría encontrada pero despublicada
+          this.categoriaValida = false;
+          this.categoryError = 'Esta categoría no está disponible actualmente.';
+          console.warn(`⚠️ [PAGE-GRID] Categoría despublicada: ${category.nombre}`);
+          this.showCategoryNotAvailable();
+        } else {
+          // Categoría no encontrada
+          this.categoriaValida = false;
+          this.categoryError = 'Categoría no encontrada.';
+          console.error(`❌ [PAGE-GRID] Categoría no encontrada: ${slug}`);
+          this.showCategoryNotFound();
+        }
+      },
+      error: (error) => {
+        this.isLoadingCategory = false;
+        this.categoriaValida = false;
+        this.categoryError = 'Error al verificar la categoría.';
+        console.error(`❌ [PAGE-GRID] Error validando categoría ${slug}:`, error);
+        this.showCategoryError();
+      }
+    });
+  }
+
+  /**
+   * Muestra mensaje cuando la categoría no está disponible (despublicada)
+   */
+  private showCategoryNotAvailable(): void {
+    // Redirigir inmediatamente a la página principal con mensaje
+    this.router.navigate(['/'], { 
+      queryParams: { 
+        message: 'La categoría solicitada no está disponible actualmente.' 
+      }
+    });
+  }
+
+  /**
+   * Muestra mensaje cuando la categoría no existe
+   */
+  private showCategoryNotFound(): void {
+    // Redirigir inmediatamente a la página principal con mensaje
+    this.router.navigate(['/'], { 
+      queryParams: { 
+        message: 'La categoría solicitada no existe.' 
+      }
+    });
+  }
+
+  /**
+   * Muestra mensaje cuando hay error al verificar la categoría
+   */
+  private showCategoryError(): void {
+    // Redirigir inmediatamente a la página principal con mensaje
+    this.router.navigate(['/'], { 
+      queryParams: { 
+        message: 'Error al cargar la categoría. Por favor, intenta de nuevo.' 
+      }
+    });
+  }
+
+  /**
+   * Cargar productos de una categoría específica
+   */
+  private loadProductsByCategory(categorySlug: string): void {
+    this.isLoadingProducts = true;
+    console.log(`📦 [PAGE-GRID] === INICIANDO CARGA DE PRODUCTOS ===`);
+    console.log(`📦 [PAGE-GRID] Categoría: ${categorySlug}`);
+    console.log(`📦 [PAGE-GRID] Estado antes de la carga:`, {
+      productos: this.productos.length,
+      productosFiltrados: this.productosFiltrados.length,
+      isLoadingProducts: this.isLoadingProducts
+    });
+    
+    this.productsService.getProductsByCategory(categorySlug).subscribe({
+      next: (products) => {
+        console.log(`✅ [PAGE-GRID] === PRODUCTOS RECIBIDOS ===`);
+        console.log(`✅ [PAGE-GRID] Cantidad de productos:`, products.length);
+        console.log(`✅ [PAGE-GRID] Productos completos:`, products);
+        
+        this.productos = products;
+        this.productosFiltrados = products;
+        this.isLoadingProducts = false;
+        
+        console.log(`✅ [PAGE-GRID] Estado después de la carga:`, {
+          productos: this.productos.length,
+          productosFiltrados: this.productosFiltrados.length,
+          isLoadingProducts: this.isLoadingProducts
+        });
+      },
+      error: (error) => {
+        console.error(`❌ [PAGE-GRID] === ERROR CARGANDO PRODUCTOS ===`);
+        console.error(`❌ [PAGE-GRID] Categoría: ${categorySlug}`);
+        console.error(`❌ [PAGE-GRID] Error completo:`, error);
+        console.error(`❌ [PAGE-GRID] Status:`, error.status);
+        console.error(`❌ [PAGE-GRID] Message:`, error.message);
+        
+        this.productos = [];
+        this.productosFiltrados = [];
+        this.isLoadingProducts = false;
+      }
+    });
+  }
+
+  /**
+   * Cargar todos los productos publicados
+   */
+  private loadAllProducts(): void {
+    this.isLoadingProducts = true;
+    console.log('📦 [PAGE-GRID] Cargando todos los productos');
+    
+    this.productsService.getAllPublishedProducts().subscribe({
+      next: (products) => {
+        this.productos = products;
+        this.productosFiltrados = products;
+        this.isLoadingProducts = false;
+        console.log('✅ [PAGE-GRID] Todos los productos cargados:', products);
+      },
+      error: (error) => {
+        console.error('❌ [PAGE-GRID] Error cargando todos los productos:', error);
+        this.productos = [];
+        this.productosFiltrados = [];
+        this.isLoadingProducts = false;
+      }
+    });
+  }
+
+  /**
+   * Buscar productos por término de búsqueda
+   */
+  private searchProducts(searchTerm: string): void {
+    this.isLoadingProducts = true;
+    console.log(`🔍 [PAGE-GRID] Buscando productos: ${searchTerm}`);
+    
+    this.productsService.searchProducts(searchTerm).subscribe({
+      next: (products) => {
+        this.productos = products;
+        this.productosFiltrados = products;
+        this.isLoadingProducts = false;
+        console.log('✅ [PAGE-GRID] Productos de búsqueda:', products);
+      },
+      error: (error) => {
+        console.error(`❌ [PAGE-GRID] Error en búsqueda de productos:`, error);
+        this.productos = [];
+        this.productosFiltrados = [];
+        this.isLoadingProducts = false;
+      }
+    });
+  }
+
+  /**
+   * Obtener URL absoluta para imagen de producto
+   */
+  getProductImageUrl(product: FrontProduct): string {
+    console.log(`🖼️ [PAGE-GRID] === PROCESANDO IMAGEN DE PRODUCTO ===`);
+    console.log(`🖼️ [PAGE-GRID] Producto:`, product.nombre);
+    console.log(`🖼️ [PAGE-GRID] Campo imagenes del producto:`, product.imagenes);
+    console.log(`🖼️ [PAGE-GRID] Tipo de imagenes:`, typeof product.imagenes);
+    console.log(`🖼️ [PAGE-GRID] Es array:`, Array.isArray(product.imagenes));
+    
+    // Usar la primera imagen del array de imágenes
+    if (product.imagenes && Array.isArray(product.imagenes) && product.imagenes.length > 0) {
+      const firstImage = product.imagenes[0];
+      console.log(`🖼️ [PAGE-GRID] Primera imagen encontrada:`, firstImage);
+      
+      const absoluteUrl = this.productsService.getAbsoluteImageUrl(firstImage);
+      console.log(`🖼️ [PAGE-GRID] URL absoluta generada:`, absoluteUrl);
+      return absoluteUrl;
+    } else {
+      const placeholderUrl = this.productsService.getPlaceholderImage();
+      console.log(`🖼️ [PAGE-GRID] Usando placeholder (no hay imágenes):`, placeholderUrl.substring(0, 50) + '...');
+      return placeholderUrl;
+    }
+  }
+
+  /**
+   * Manejar error de carga de imagen
+   */
+  onImageError(event: any): void {
+    if (event.target) {
+      // Evitar bucle infinito: si ya es el placeholder, no hacer nada más
+      if (event.target.src.includes('placeholder-product.jpg') || event.target.src.includes('placeholder.jpg')) {
+        console.log('⚠️ [PAGE-GRID] Error cargando placeholder, ocultando imagen');
+        event.target.style.display = 'none';
+        return;
+      }
+      
+      event.target.src = this.productsService.getPlaceholderImage();
+    }
+  }
+
+  /**
+   * Función para filtrar productos localmente (fallback)
+   */
   filtrarProductos(): void {
     const query = this.searchQuery.toLowerCase().trim();
 

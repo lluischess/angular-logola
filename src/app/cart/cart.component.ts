@@ -52,7 +52,7 @@ export class CartComponent implements AfterViewInit {
     // Esperar a que el script de reCAPTCHA se cargue y el elemento DOM exista
     const checkRecaptcha = () => {
       const container = document.getElementById('recaptcha-container');
-      
+
       if (typeof grecaptcha !== 'undefined' && container) {
         try {
           grecaptcha.render('recaptcha-container', {
@@ -76,7 +76,7 @@ export class CartComponent implements AfterViewInit {
   onRecaptchaSuccess(response: string) {
     this.recaptchaResponse = response;
     this.isRecaptchaValid = true;
-    console.log('reCAPTCHA completado exitosamente');
+    console.log('reCAPTCHA completado correctamente');
   }
 
   onRecaptchaExpired() {
@@ -144,7 +144,7 @@ export class CartComponent implements AfterViewInit {
   // Validar formulario completo antes del envío
   validateForm(): { isValid: boolean; errors: string[] } {
     const errors: string[] = [];
-    
+
     // Validar email
     const email = this.termsForm.get('email');
     if (!email?.value) {
@@ -152,7 +152,7 @@ export class CartComponent implements AfterViewInit {
     } else if (email.invalid) {
       errors.push('El formato del email no es válido');
     }
-    
+
     // Validar nombre
     const name = this.termsForm.get('name');
     if (!name?.value) {
@@ -160,7 +160,7 @@ export class CartComponent implements AfterViewInit {
     } else if (name.value.trim().length < 2) {
       errors.push('El nombre debe tener al menos 2 caracteres');
     }
-    
+
     // Validar teléfono
     const phone = this.termsForm.get('phone');
     if (!phone?.value) {
@@ -170,29 +170,29 @@ export class CartComponent implements AfterViewInit {
     } else if (phone.value.replace(/\s/g, '').length < 9) {
       errors.push('El teléfono debe tener al menos 9 dígitos');
     }
-    
+
     // Validar términos
     const acceptTerms = this.termsForm.get('acceptTerms');
     if (!acceptTerms?.value) {
       errors.push('Debes aceptar los términos para continuar');
     }
-    
+
     // Validar reCAPTCHA
     if (!this.isRecaptchaValid) {
       errors.push('Por favor, completa la verificación reCAPTCHA');
     }
-    
+
     // Validar que hay productos en el carrito
     if (this.cartItems.length === 0) {
       errors.push('No hay productos en el carrito para solicitar presupuesto');
     }
-    
+
     return {
       isValid: errors.length === 0,
       errors: errors
     };
   }
-  
+
   // Mostrar errores de validación
   showValidationErrors(errors: string[]) {
     let errorMessage = '❌ Por favor, corrige los siguientes errores:\n\n';
@@ -201,35 +201,35 @@ export class CartComponent implements AfterViewInit {
     });
     alert(errorMessage);
   }
-  
+
   // Manejar el envío del formulario
   onSubmit() {
     // Marcar todos los campos como touched para mostrar errores visuales
     Object.keys(this.termsForm.controls).forEach(key => {
       this.termsForm.get(key)?.markAsTouched();
     });
-    
+
     // Validar formulario completo
     const validation = this.validateForm();
-    
+
     if (validation.isValid) {
       // Preparar datos para envío
       const formData = this.prepareFormData();
-      
+
       // Simular envío exitoso (aquí se conectará al backend más adelante)
       this.handleSuccessfulSubmission(formData);
-      
+
     } else {
       // Mostrar errores de validación
       this.showValidationErrors(validation.errors);
       console.log('Errores de validación:', validation.errors);
     }
   }
-  
+
   // Preparar datos del formulario
   prepareFormData(): FormData {
     const formData = new FormData();
-    
+
     // Datos del formulario
     formData.append('email', this.termsForm.get('email')?.value?.trim());
     formData.append('name', this.termsForm.get('name')?.value?.trim());
@@ -238,20 +238,20 @@ export class CartComponent implements AfterViewInit {
     formData.append('address', this.termsForm.get('address')?.value?.trim() || '');
     formData.append('receiveOffers', this.termsForm.get('receiveOffers')?.value);
     formData.append('recaptchaResponse', this.recaptchaResponse);
-    
+
     // Agregar archivo de logo si existe
     const logoFile = this.termsForm.get('logo')?.value;
     if (logoFile) {
       formData.append('logo', logoFile);
     }
-    
+
     // Agregar productos del carrito
     formData.append('cartItems', JSON.stringify(this.cartItems));
     formData.append('totalUnits', this.totalUnits.toString());
-    
+
     return formData;
   }
-  
+
   // Manejar envío exitoso
   handleSuccessfulSubmission(formData: FormData) {
     console.log('✅ Formulario validado correctamente');
@@ -264,14 +264,14 @@ export class CartComponent implements AfterViewInit {
       cartItems: JSON.parse(formData.get('cartItems') as string),
       totalUnits: formData.get('totalUnits')
     });
-    
+
     // Resetear reCAPTCHA
     if (typeof grecaptcha !== 'undefined') {
       grecaptcha.reset();
     }
     this.isRecaptchaValid = false;
     this.recaptchaResponse = '';
-    
+
     // Mensaje de éxito
     alert('✅ ¡Presupuesto enviado correctamente!\n\nHemos recibido tu solicitud con los siguientes datos:\n' +
           `📧 Email: ${formData.get('email')}\n` +
@@ -279,11 +279,11 @@ export class CartComponent implements AfterViewInit {
           `📞 Teléfono: ${formData.get('phone')}\n` +
           `🛒 Productos: ${this.cartItems.length} artículos\n\n` +
           'Nos pondremos en contacto contigo pronto.');
-    
+
     // Opcional: Limpiar formulario después del envío exitoso
     // this.resetForm();
   }
-  
+
   // Resetear formulario (opcional)
   resetForm() {
     this.termsForm.reset({
@@ -296,7 +296,7 @@ export class CartComponent implements AfterViewInit {
       acceptTerms: false,
       receiveOffers: false
     });
-    
+
     // Resetear reCAPTCHA
     if (typeof grecaptcha !== 'undefined') {
       grecaptcha.reset();
