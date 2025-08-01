@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, Router } from '@angular/router';
+import { Subject, debounceTime, distinctUntilChanged, takeUntil } from 'rxjs';
 import { CategoriesService, FrontCategory } from '../services/categories.service';
 
 @Component({
@@ -9,16 +10,20 @@ import { CategoriesService, FrontCategory } from '../services/categories.service
   standalone: true,
   imports: [FormsModule, RouterModule, CommonModule],
   templateUrl: './header.component.html',
-  styleUrls: ['./header.component.css']  // Asegúrate de usar "styleUrls" en plural
+  styleUrls: ['./header.component.css']
 })
-export class HeaderComponent implements OnInit {
+export class HeaderComponent implements OnInit, OnDestroy {
 
+  // Propiedades para la búsqueda
   searchQuery: string = '';
+  private searchSubject = new Subject<string>();
   
   // Propiedades para categorías dinámicas
   categories: FrontCategory[] = [];
   isLoadingCategories = false;
   categoriesError = false;
+  
+  private destroy$ = new Subject<void>();
 
   constructor(
     private router: Router,
@@ -27,6 +32,12 @@ export class HeaderComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadCategories();
+    this.setupReactiveSearch();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   /**
@@ -77,10 +88,52 @@ export class HeaderComponent implements OnInit {
     return category._id;
   }
 
+  /**
+   * Configurar búsqueda reactiva con debounce
+   */
+  private setupReactiveSearch(): void {
+    this.searchSubject
+      .pipe(
+        debounceTime(500), // Esperar 500ms después de que el usuario deje de escribir
+        distinctUntilChanged(), // Solo navegar si el término cambió
+        takeUntil(this.destroy$)
+      )
+      .subscribe(searchTerm => {
+        if (searchTerm.trim().length >= 2) {
+          // Navegar a /productos con el término de búsqueda
+          this.router.navigate(['/productos'], { 
+            queryParams: { search: searchTerm.trim() },
+            queryParamsHandling: 'merge' // Mantener otros query params si existen
+          });
+        } else if (searchTerm.trim().length === 0) {
+          // Si se borra la búsqueda, navegar a /productos sin parámetros de búsqueda
+          this.router.navigate(['/productos']);
+        }
+      });
+  }
+
+  /**
+   * Manejar cambios en el input de búsqueda (búsqueda reactiva)
+   */
+  onSearchInput(): void {
+    // Emitir el término de búsqueda al Subject para navegación reactiva
+    this.searchSubject.next(this.searchQuery);
+  }
+
+  /**
+   * Manejar evento blur del input de búsqueda
+   */
+  onSearchBlur(): void {
+    // No hacer nada por ahora
+  }
+
+  /**
+   * Enviar búsqueda - navegar a /productos con el término
+   */
   onSearchSubmit(): void {
     if (this.searchQuery.trim()) {
       // Redirigir a la página del grid con el término de búsqueda como parámetro
-      this.router.navigate(['/productos'], { queryParams: { search: this.searchQuery } });
+      this.router.navigate(['/productos'], { queryParams: { search: this.searchQuery.trim() } });
     }
     // Desplazamiento automático hacia arriba
     window.scrollTo({

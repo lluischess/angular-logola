@@ -119,6 +119,52 @@ export class ProductsService {
   }
 
   /**
+   * Buscar productos por término de búsqueda (nombre, referencia o categoría)
+   */
+  searchProducts(searchTerm: string): Observable<FrontProduct[]> {
+    console.log(`🔍 [PRODUCTS-SERVICE] === BUSCANDO PRODUCTOS ===`);
+    console.log(`🔍 [PRODUCTS-SERVICE] Término de búsqueda: ${searchTerm}`);
+    console.log(`🔍 [PRODUCTS-SERVICE] URL completa: ${this.apiUrl}/search?q=${encodeURIComponent(searchTerm)}`);
+    
+    return this.http.get<any>(`${this.apiUrl}/search?q=${encodeURIComponent(searchTerm)}`)
+      .pipe(
+        map(response => {
+          console.log(`🔍 [PRODUCTS-SERVICE] === RESPUESTA BÚSQUEDA ===`);
+          console.log(`🔍 [PRODUCTS-SERVICE] Tipo de respuesta:`, typeof response);
+          console.log(`🔍 [PRODUCTS-SERVICE] Respuesta completa:`, response);
+          
+          // El endpoint de búsqueda puede devolver un array directamente o un objeto con productos
+          let products: FrontProduct[] = [];
+          
+          if (Array.isArray(response)) {
+            products = response;
+          } else if (response && Array.isArray(response.products)) {
+            products = response.products;
+          } else if (response && Array.isArray(response.data)) {
+            products = response.data;
+          }
+          
+          console.log(`📦 [PRODUCTS-SERVICE] === PRODUCTOS DE BÚSQUEDA PROCESADOS ===`);
+          console.log(`📦 [PRODUCTS-SERVICE] Cantidad de productos encontrados:`, products.length);
+          console.log(`📦 [PRODUCTS-SERVICE] Productos:`, products.map(p => ({ nombre: p.nombre, referencia: p.referencia, categoria: p.categoria })));
+          
+          return products;
+        }),
+        catchError(error => {
+          console.error(`❌ [PRODUCTS-SERVICE] === ERROR EN BÚSQUEDA ===`);
+          console.error(`❌ [PRODUCTS-SERVICE] Término: ${searchTerm}`);
+          console.error(`❌ [PRODUCTS-SERVICE] URL: ${this.apiUrl}/search?q=${encodeURIComponent(searchTerm)}`);
+          console.error(`❌ [PRODUCTS-SERVICE] Status:`, error.status);
+          console.error(`❌ [PRODUCTS-SERVICE] Status Text:`, error.statusText);
+          console.error(`❌ [PRODUCTS-SERVICE] Error completo:`, error);
+          
+          // En caso de error, devolver array vacío
+          return of([]);
+        })
+      );
+  }
+
+  /**
    * Obtener productos de una categoría específica (solo publicados)
    */
   getProductsByCategory(categorySlug: string): Observable<FrontProduct[]> {
@@ -198,41 +244,7 @@ export class ProductsService {
       );
   }
 
-  /**
-   * Buscar productos por término
-   */
-  searchProducts(searchTerm: string): Observable<FrontProduct[]> {
-    console.log(`🔍 [PRODUCTS-SERVICE] Buscando productos: ${searchTerm}`);
-    
-    return this.http.get<any>(`${this.apiUrl}?search=${encodeURIComponent(searchTerm)}&publicado=true`)
-      .pipe(
-        map(response => {
-          console.log('🔍 [PRODUCTS-SERVICE] Respuesta de búsqueda del backend:', response);
-          
-          // Extraer los productos de la respuesta {products: [...]}
-          const products = response.products || response;
-          
-          if (Array.isArray(products)) {
-            // Filtrar solo productos publicados y ordenar
-            const publishedProducts = products
-              .filter(product => product.publicado === true)
-              .sort((a, b) => (a.ordenCategoria || 0) - (b.ordenCategoria || 0));
-            
-            console.log('🔍 [PRODUCTS-SERVICE] Productos de búsqueda procesados:', publishedProducts);
-            return publishedProducts;
-          } else {
-            console.warn('⚠️ [PRODUCTS-SERVICE] Respuesta de búsqueda no es un array:', products);
-            return [];
-          }
-        }),
-        catchError(error => {
-          console.error('❌ [PRODUCTS-SERVICE] Error en búsqueda de productos:', error);
-          
-          // Fallback: devolver array vacío
-          return of([]);
-        })
-      );
-  }
+
 
   /**
    * Obtener URL absoluta para imagen
