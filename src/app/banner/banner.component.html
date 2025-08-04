@@ -1,18 +1,33 @@
 <section class="carousel-wrapper">
-  <div class="carousel-container" [ngStyle]="{ transform: 'translateX(' + offset + '%)' }">
-    <!-- Banner 1 -->
-    <div class="carousel-slide" style="background-image: url('assets/images/ChocoBanner.jpg');background-repeat: no-repeat;background-size: cover;">
+  <!-- Mostrar loading mientras cargan los banners -->
+  <div *ngIf="isLoading" class="carousel-loading d-flex justify-content-center align-items-center" style="height: 600px; background-color: #f8f9fa;">
+    <div class="text-center">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Cargando banners...</span>
+      </div>
+      <p class="mt-3 text-muted">Cargando banners...</p>
+    </div>
+  </div>
+
+  <!-- Mostrar banners dinámicos -->
+  <div *ngIf="!isLoading && banners.length > 0" class="carousel-container" [ngStyle]="{ transform: 'translateX(' + offset + '%)' }">
+    <!-- Banners dinámicos del backend -->
+    <div *ngFor="let banner of banners; let i = index" class="carousel-slide" [ngStyle]="getBannerStyles(banner)">
       <div class="container-lg">
-        <!-- Contenido del primer banner existente -->
+        <!-- Contenido dinámico del banner -->
         <div class="row">
           <div class="col-lg-6 pt-5 mt-5">
-            <h2 class="display-1 ls-1"><span class="fw-bold text-primary"> Todo lo que puedas</span><span class="fw-bold"> imaginar es real</span></h2>
-            <p class="fs-4">Descubre auténticos detalles de chocolate.</p>
+
+            <h2 class="display-1 ls-1" [ngStyle]="getTextStyles(banner)">
+              <span class="fw-bold">{{ banner.titulo }}</span>
+            </h2>
+            <p class="fs-4" [ngStyle]="getTextStyles(banner)">{{ banner.subtitulo }}</p>
             <div class="d-flex gap-3">
-              <a href="#" data-bs-toggle="offcanvas" data-bs-target="#offcanvasCart" aria-controls="offcanvasCart" class="btn btn-primary text-uppercase fs-6 rounded-pill px-4 py-3 mt-3">Crea tu presupuesto</a>
+              <a [href]="banner.enlace" class="btn text-uppercase fs-6 rounded-pill px-4 py-3 mt-3" [ngStyle]="getButtonStyles(banner)">{{ banner.nombreBoton }}</a>
             </div>
-            <!-- Estadísticas del primer banner -->
-            <div class="row my-5">
+            
+            <!-- Estadísticas del primer banner (solo en el primer slide) -->
+            <div *ngIf="i === 0" class="row my-5">
               <div class="col">
                 <div class="text-dark">
                   <div class="col-auto"><p class="fs-1 fw-bold lh-sm mb-0">320+</p></div>
@@ -35,7 +50,8 @@
           </div>
         </div>
 
-        <div class="row row-cols-1 row-cols-sm-3 row-cols-lg-3 g-0 justify-content-center">
+        <!-- Sección fija de las 3 tarjetas (solo en el primer slide) -->
+        <div *ngIf="i === 0" class="row row-cols-1 row-cols-sm-3 row-cols-lg-3 g-0 justify-content-center">
           <div class="col">
             <div class="card border-0 bg-primary rounded-0 p-4 text-light">
               <div class="row">
@@ -85,25 +101,17 @@
 
       </div>
     </div>
+  </div>
 
-    <!-- Banner 2 -->
-    <div class="carousel-slide" style="background-image: url('assets/images/ChocoBanner.jpg');background-repeat: no-repeat;background-size: cover;">
-      <div class="container-lg">
-        <!-- Contenido del segundo banner -->
-        <div class="row">
-          <div class="col-lg-6 pt-5 mt-5">
-            <h2 class="display-1 ls-1"><span class="fw-bold text-primary">Exquisito y</span><span class="fw-bold"> ecológico</span></h2>
-            <p class="fs-4">Sabores únicos y empaques sostenibles.</p>
-            <div class="d-flex gap-3">
-              <a href="#" class="btn btn-secondary text-uppercase fs-6 rounded-pill px-4 py-3 mt-3">Ver productos</a>
-            </div>
-          </div>
-        </div>
-      </div>
+  <!-- Mostrar mensaje si no hay banners -->
+  <div *ngIf="!isLoading && banners.length === 0" class="carousel-fallback d-flex justify-content-center align-items-center" style="height: 600px; background-color: #f8f9fa;">
+    <div class="text-center">
+      <h3 class="text-muted">No hay banners configurados</h3>
+      <p class="text-muted">Configure banners desde el panel de administración</p>
     </div>
   </div>
 
-  <!-- Flechas de navegación -->
-  <button class="carousel-control prev" (click)="prevSlide()">&#10094;</button>
-  <button class="carousel-control next" (click)="nextSlide()">&#10095;</button>
+  <!-- Flechas de navegación (solo si hay más de 1 banner) -->
+  <button *ngIf="!isLoading && banners.length > 1" class="carousel-control prev" (click)="prevSlide()">&#10094;</button>
+  <button *ngIf="!isLoading && banners.length > 1" class="carousel-control next" (click)="nextSlide()">&#10095;</button>
 </section>

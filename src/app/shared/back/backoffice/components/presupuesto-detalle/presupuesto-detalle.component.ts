@@ -1056,7 +1056,9 @@ export class PresupuestoDetalleComponent implements OnInit {
    * Convertir datos ENRIQUECIDOS del backend (Budget con productos reales) al formato del frontend
    */
   private convertEnrichedBudgetToPresupuesto(budget: any): Presupuesto {
-    console.log('🔄 DEBUG: Convirtiendo budget ENRIQUECIDO del backend:', budget);
+  console.log('🔄 DEBUG: Convirtiendo budget ENRIQUECIDO del backend:', budget);
+  console.log('🎨 DEBUG: Logotipo en budget - logoEmpresa:', budget.logoEmpresa);
+  console.log('🎨 DEBUG: Logotipo en budget - logotipoEmpresa:', budget.logotipoEmpresa);
     
     // Convertir productos enriquecidos del backend al formato del frontend
     const productos: ProductoPresupuesto[] = (budget.productos || []).map((prod: any, index: number) => {
@@ -1095,7 +1097,7 @@ export class PresupuestoDetalleComponent implements OnInit {
       fecha: budget.createdAt ? new Date(budget.createdAt) : new Date(),
       estado: budget.estado || 'pendiente',
       productos: productos,
-      logoEmpresa: budget.logoEmpresa || '/assets/images/logo-placeholder.jpg',
+      logoEmpresa: this.getLogoUrl(budget.logotipoEmpresa || budget.logoEmpresa),
       aceptaCorreosPublicitarios: budget.aceptaCorreosPublicitarios || false,
       cantidadTotal: cantidadTotal,
       precioTotal: precioTotal,
@@ -1140,7 +1142,7 @@ export class PresupuestoDetalleComponent implements OnInit {
       fecha: budget.createdAt ? new Date(budget.createdAt) : new Date(),
       estado: budget.estado || 'pendiente',
       productos: productos,
-      logoEmpresa: budget.logoEmpresa || '/assets/images/logo-placeholder.jpg',
+      logoEmpresa: this.getLogoUrl(budget.logotipoEmpresa || budget.logoEmpresa),
       aceptaCorreosPublicitarios: budget.aceptaCorreosPublicitarios || false,
       cantidadTotal: cantidadTotal,
       precioTotal: precioTotal,
@@ -1149,5 +1151,41 @@ export class PresupuestoDetalleComponent implements OnInit {
 
     console.log('✅ DEBUG: Presupuesto convertido:', presupuesto);
     return presupuesto;
+  }
+
+  /**
+   * Procesar URL del logotipo de empresa
+   */
+  private getLogoUrl(logoPath: string | undefined): string {
+    console.log('🎨 [PRESUPUESTO-DETALLE] Procesando URL del logotipo:', logoPath);
+    
+    if (!logoPath) {
+      console.log('🎨 [PRESUPUESTO-DETALLE] No hay logotipo, usando placeholder');
+      return '/assets/images/logo-placeholder.jpg';
+    }
+    
+    // Si ya es una URL completa, usarla tal como está
+    if (logoPath.startsWith('http')) {
+      console.log('🎨 [PRESUPUESTO-DETALLE] URL completa del logotipo:', logoPath);
+      return logoPath;
+    }
+    
+    // Si empieza con /uploads, construir URL completa del backend
+    if (logoPath.startsWith('/uploads')) {
+      const fullUrl = `http://localhost:3000${logoPath}`;
+      console.log('🎨 [PRESUPUESTO-DETALLE] URL construida del backend:', fullUrl);
+      return fullUrl;
+    }
+    
+    // Si es una referencia base64, manejarla apropiadamente
+    if (logoPath.startsWith('base64-logo-')) {
+      console.log('🎨 [PRESUPUESTO-DETALLE] Logotipo base64 detectado, usando placeholder temporalmente');
+      return '/assets/images/logo-placeholder.jpg';
+    }
+    
+    // Fallback: asumir que es una ruta relativa y construir URL completa
+    const fallbackUrl = `http://localhost:3000/uploads/logos/${logoPath}`;
+    console.log('🎨 [PRESUPUESTO-DETALLE] URL fallback construida:', fallbackUrl);
+    return fallbackUrl;
   }
 }

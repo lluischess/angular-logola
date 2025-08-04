@@ -3,35 +3,74 @@
   overflow: hidden;
   width: 100%;
   height: 100vh;
+  /* Asegurar que no se vea contenido fuera del contenedor */
+  -webkit-overflow-scrolling: touch;
+  /* Forzar el recorte del contenido de manera más agresiva */
+  clip-path: inset(0 0 0 0);
+  /* Eliminar cualquier scroll horizontal */
+  overflow-x: hidden;
+  /* Asegurar que el contenedor no se extienda más allá del viewport */
+  max-width: 100vw;
 }
 
 .carousel-container {
   display: flex;
   transition: transform 0.5s ease;
-  width: 200%; /* Ancho para los dos banners */
+  /* El ancho se calcula dinámicamente desde el componente TypeScript */
+  /* Asegurar que el contenedor tenga el ancho exacto sin incluir scrollbar */
+  width: 100%;
+  /* Eliminar espacios entre slides */
+  gap: 0;
 }
 
 .carousel-slide {
-  width: 50%; /* Cada banner ocupa la mitad del ancho del contenedor */
+  /* Usar width y max-width en lugar de min-width para control exacto */
+  width: 100%;
+  max-width: 100%;
+  min-width: 100%;
+  height: 100vh;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  position: relative;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  align-items: flex-start;
+  flex-shrink: 0;
+  /* Asegurar que cada slide ocupe exactamente el espacio disponible */
+  flex: 0 0 100%;
+  box-sizing: border-box;
+  /* Eliminar cualquier margen o padding que cause desalineación */
+  margin: 0;
+  padding: 0;
 }
 
 /* Estilos específicos para móvil */
 @media (max-width: 768px) {
-  .carousel-slide:nth-child(2) {
+  /* Aplicar a todos los banners excepto el primero (que tiene estadísticas y tarjetas) */
+  .carousel-slide:nth-child(n+2) {
     align-items: flex-start;
     padding-top: 2rem;
   }
-  
-  .carousel-slide:nth-child(2) .container-lg {
+
+  .carousel-slide:nth-child(n+2) .container-lg {
     padding-top: 1rem;
   }
-  
-  .carousel-slide:nth-child(2) .col-lg-6 {
+
+  .carousel-slide:nth-child(n+2) .col-lg-6 {
     padding-top: 1rem !important;
     margin-top: 1rem !important;
+  }
+
+  /* Asegurar que el texto y botones estén arriba en todos los banners móviles */
+  .carousel-slide:nth-child(n+2) .row {
+    align-items: flex-start;
+  }
+
+  .carousel-slide:nth-child(n+2) .col-lg-6 {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
   }
 }
 

@@ -21,9 +21,9 @@
           <li class="list-group-item d-flex justify-content-between align-items-center lh-sm">
             <div class="d-flex gap-2">
               <!-- Imagen del producto -->
-              <img [src]="item.imagen" alt="{{item.name}}" width="60" height="40" class="rounded">
+              <img [src]="getProductImage(item)" [alt]="getProductName(item)" width="60" height="40" class="rounded" (error)="onImageError($event)">
               <div>
-                <h6 class="my-0" style="font-size: 0.92rem;">{{ item.name | titlecase }}</h6>
+                <h6 class="my-0" style="font-size: 0.92rem;">{{ getProductName(item) | titlecase }}</h6>
                 <small class="text-body-secondary">{{ item.referencia }}</small>
               </div>
             </div>
@@ -32,11 +32,11 @@
             <div class="quantity-selector d-flex align-items-center">
               <input id="quantity-input-{{i}}" type="number" [(ngModel)]="item.quantity"
                     class="form-control mx-1 text-center" (input)="updateQuantity(i)"
-                    style="width: 100px;" min="0" />
+                    style="width: 100px;" [min]="getMinQuantity(item)" [placeholder]="'Mín: ' + getMinQuantity(item)" />
             </div>
 
             <!-- Botón de eliminar producto (pequeña cruz) -->
-            <button type="button" class="btn btn-close" aria-label="Remove" (click)="removeItem(item.id)"></button>
+            <button type="button" class="btn btn-close" aria-label="Remove" (click)="removeItem(item._id || item.id)"></button>
           </li>
 
 

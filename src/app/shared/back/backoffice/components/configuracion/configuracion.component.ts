@@ -268,21 +268,45 @@ export class ConfiguracionComponent implements OnInit {
         if (bannersResponse && Array.isArray(bannersResponse) && bannersResponse.length > 0) {
           // Mapear los banners del backend al formato del frontend
           this.configuracionData.banner.banners = bannersResponse.map((bannerConfig, index) => {
-            console.log(`Procesando banner ${index + 1}:`, bannerConfig);
+            console.log(`💾 [BACKOFFICE] Procesando banner ${index + 1} del backend:`, bannerConfig);
+            console.log(`🔍 [BACKOFFICE] Datos del banner:`, bannerConfig.datos);
 
-            return {
+            // Extraer campos específicos para debugging
+            const enlaceValue = bannerConfig.datos?.enlaceButton || bannerConfig.datos?.enlace || '';
+            const nombreBotonValue = bannerConfig.datos?.nombreButton || bannerConfig.datos?.nombreBoton || '';
+            const colorBotonValue = bannerConfig.datos?.colorBoton || '';
+            const colorTitulosValue = bannerConfig.datos?.colorTitulos || '';
+            
+            console.log(`🔍 [BACKOFFICE] Campos específicos del banner ${index + 1}:`, {
+              enlaceButton: bannerConfig.datos?.enlaceButton,
+              enlace: bannerConfig.datos?.enlace,
+              enlaceValue: enlaceValue,
+              nombreButton: bannerConfig.datos?.nombreButton,
+              nombreBoton: bannerConfig.datos?.nombreBoton,
+              nombreBotonValue: nombreBotonValue,
+              colorBoton: bannerConfig.datos?.colorBoton,
+              colorBotonValue: colorBotonValue,
+              colorTitulos: bannerConfig.datos?.colorTitulos,
+              colorTitulosValue: colorTitulosValue
+            });
+
+            const mappedBanner = {
               id: index + 1,
               titulo: bannerConfig.datos?.titulo || '',
               subtitulo: bannerConfig.datos?.subtitulo || '',
-              imagen: bannerConfig.datos?.imagen || '',
+              // Mapear nombres del backend al frontend
+              imagen: bannerConfig.datos?.imagenDesktop || bannerConfig.datos?.imagen || '',
               imagenMobile: bannerConfig.datos?.imagenMobile || '',
-              enlace: bannerConfig.datos?.enlace || '',
+              enlace: enlaceValue,
               activo: bannerConfig.datos?.activo !== undefined ? bannerConfig.datos.activo : true,
-              orden: bannerConfig.datos?.ordenBanner || (index + 1),
-              nombreBoton: bannerConfig.datos?.nombreBoton || '',
-              colorBoton: bannerConfig.datos?.colorBoton || '',
-              colorTitulos: bannerConfig.datos?.colorTitulos || ''
+              orden: bannerConfig.datos?.ordenBanner || bannerConfig.datos?.orden || (index + 1),
+              nombreBoton: nombreBotonValue,
+              colorBoton: colorBotonValue,
+              colorTitulos: colorTitulosValue
             };
+            
+            console.log(`🔄 [BACKOFFICE] Banner ${index + 1} mapeado para frontend:`, mappedBanner);
+            return mappedBanner;
           });
 
           console.log('Banners mapeados para el frontend:', this.configuracionData.banner.banners);
@@ -366,20 +390,44 @@ export class ConfiguracionComponent implements OnInit {
 
       case 'banner':
         // Para banners, guardamos los datos directamente del objeto configuracionData
-        dataToSave = {
-          banners: this.configuracionData.banner.banners.map(banner => ({
-            id: banner.id,
+        console.log('💾 [BACKOFFICE] Datos de banners antes del mapeo:', this.configuracionData.banner.banners);
+        
+        // Mapear nombres de campos del frontend al formato esperado por el backend
+        const mappedBanners = this.configuracionData.banner.banners.map(banner => {
+          console.log(`💾 [BACKOFFICE] Banner ${banner.id} antes del mapeo para guardado:`, {
+            enlace: banner.enlace,
+            nombreBoton: banner.nombreBoton,
+            colorBoton: banner.colorBoton,
+            colorTitulos: banner.colorTitulos,
+            bannerCompleto: banner
+          });
+          
+          const mappedBanner = {
             titulo: banner.titulo || '',
             subtitulo: banner.subtitulo || '',
-            imagen: banner.imagen || '',
+            imagenDesktop: banner.imagen || '', // Backend espera imagenDesktop
             imagenMobile: banner.imagenMobile || '',
-            enlace: banner.enlace || '',
-            activo: banner.activo,
-            orden: banner.orden,
-            nombreBoton: banner.nombreBoton || 'Ver Más',
+            enlaceButton: banner.enlace || '', // Backend espera enlaceButton
+            nombreButton: banner.nombreBoton || 'Ver Más', // Backend espera nombreButton
+            ordenBanner: banner.orden || 1, // Backend espera ordenBanner
             colorBoton: banner.colorBoton || '#3B82F6',
-            colorTitulos: banner.colorTitulos || '#FFFFFF'
-          }))
+            colorTitulos: banner.colorTitulos || '#FFFFFF',
+            activo: banner.activo !== false
+          };
+          
+          console.log(`🔄 [BACKOFFICE] Banner ${banner.id} mapeado para backend:`, {
+            enlaceButton: mappedBanner.enlaceButton,
+            nombreButton: mappedBanner.nombreButton,
+            colorBoton: mappedBanner.colorBoton,
+            colorTitulos: mappedBanner.colorTitulos,
+            bannerCompleto: mappedBanner
+          });
+          
+          return mappedBanner;
+        });
+        
+        dataToSave = {
+          banners: mappedBanners
         };
         sectionName = 'banners';
         break;
@@ -407,8 +455,11 @@ export class ConfiguracionComponent implements OnInit {
           console.log(`Configuración de ${sectionName} guardada correctamente:`, response);
           alert(`Configuración de ${sectionName.toUpperCase()} guardada correctamente`);
 
-          // Actualizar los datos locales con la respuesta del servidor si es necesario
-          if (response && response.data) {
+          // Para banners, recargar los datos desde el backend para asegurar sincronización
+          if (sectionName === 'banners') {
+            console.log('🔄 [BACKOFFICE] Recargando banners desde el backend tras guardado exitoso...');
+            this.reloadBannersFromBackend();
+          } else if (response && response.data) {
             this.updateLocalData(sectionName, response.data);
           }
         },
@@ -452,6 +503,65 @@ export class ConfiguracionComponent implements OnInit {
       default:
         console.warn(`Sección ${sectionName} no reconocida para actualización local`);
     }
+  }
+
+  /**
+   * Recarga los banners desde el backend para asegurar sincronización tras el guardado
+   */
+  private reloadBannersFromBackend(): void {
+    console.log('🔄 [BACKOFFICE] Iniciando recarga de banners desde backend...');
+    
+    this.configurationService.getConfigurationSection('banners')
+      .subscribe({
+        next: (bannersResponse) => {
+          console.log('💾 [BACKOFFICE] Banners recargados desde backend:', bannersResponse);
+          
+          if (bannersResponse && Array.isArray(bannersResponse) && bannersResponse.length > 0) {
+            // Mapear los banners del backend al formato del frontend (mismo código que en loadConfiguracion)
+            this.configuracionData.banner.banners = bannersResponse.map((bannerConfig, index) => {
+              console.log(`💾 [BACKOFFICE] Procesando banner recargado ${index + 1}:`, bannerConfig);
+              console.log(`🔍 [BACKOFFICE] Estructura completa de datos del banner ${index + 1}:`, {
+                _id: bannerConfig._id,
+                tipo: bannerConfig.tipo,
+                nombre: bannerConfig.nombre,
+                datos: bannerConfig.datos,
+                datosCompletos: JSON.stringify(bannerConfig.datos, null, 2)
+              });
+              
+              // Extraer campos específicos para debugging
+              const enlaceValue = bannerConfig.datos?.enlaceButton || bannerConfig.datos?.enlace || '';
+              const nombreBotonValue = bannerConfig.datos?.nombreButton || bannerConfig.datos?.nombreBoton || '';
+              const colorBotonValue = bannerConfig.datos?.colorBoton || '';
+              const colorTitulosValue = bannerConfig.datos?.colorTitulos || '';
+              
+              const mappedBanner = {
+                id: index + 1,
+                titulo: bannerConfig.datos?.titulo || '',
+                subtitulo: bannerConfig.datos?.subtitulo || '',
+                imagen: bannerConfig.datos?.imagenDesktop || bannerConfig.datos?.imagen || '',
+                imagenMobile: bannerConfig.datos?.imagenMobile || '',
+                enlace: enlaceValue,
+                activo: bannerConfig.datos?.activo !== undefined ? bannerConfig.datos.activo : true,
+                orden: bannerConfig.datos?.ordenBanner || bannerConfig.datos?.orden || (index + 1),
+                nombreBoton: nombreBotonValue,
+                colorBoton: colorBotonValue,
+                colorTitulos: colorTitulosValue
+              };
+              
+              console.log(`🔄 [BACKOFFICE] Banner ${index + 1} recargado y mapeado:`, mappedBanner);
+              return mappedBanner;
+            });
+            
+            console.log('✅ [BACKOFFICE] Banners recargados correctamente:', this.configuracionData.banner.banners);
+          } else {
+            console.log('⚠️ [BACKOFFICE] No se encontraron banners en la respuesta del backend tras recarga');
+            this.configuracionData.banner.banners = [];
+          }
+        },
+        error: (error) => {
+          console.error('❌ [BACKOFFICE] Error al recargar banners desde backend:', error);
+        }
+      });
   }
 
   /**
