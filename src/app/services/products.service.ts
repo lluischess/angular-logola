@@ -21,6 +21,13 @@ export interface FrontProduct {
   orden?: number;
   ordenCategoria?: number;
   fechaCreacion?: string;
+  // Campos SEO desde la BD (coinciden con el esquema del backend)
+  metaTitulo?: string;
+  metaDescripcion?: string;
+  palabrasClave?: string;
+  ogTitulo?: string;
+  ogDescripcion?: string;
+  ogImagen?: string;
 }
 
 @Injectable({

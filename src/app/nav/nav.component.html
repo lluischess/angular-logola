@@ -39,7 +39,7 @@
         <a [routerLink]="getCategoryUrl(category)" 
            data-bs-dismiss="offcanvas" 
            class="nav-link d-flex align-items-center gap-3 text-dark p-2"
-           [title]="category.seo?.metaDescription || 'Ver productos de ' + category.nombre">
+           [title]="category.metaDescripcion || 'Ver productos de ' + category.nombre">
           <span class="arrow">→</span>
           <span>{{ getCategoryMenuTitle(category) }}</span>
         </a>

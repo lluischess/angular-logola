@@ -71,7 +71,7 @@
             <li *ngFor="let category of categories; trackBy: trackByCategory">
               <a [routerLink]="['/productos', category.urlSlug || category.slug]" 
                  class="dropdown-item"
-                 [title]="category.seo?.metaDescription || 'Ver productos de ' + category.nombre">
+                 [title]="category.metaDescripcion || 'Ver productos de ' + category.nombre">
                 {{ getCategoryMenuTitle(category) }}
               </a>
             </li>

@@ -60,10 +60,10 @@ export class ConfigurationService {
   constructor(private http: HttpClient) {}
 
   /**
-   * Obtener toda la configuración
+   * Obtener toda la configuración pública (para frontend)
    */
   getConfiguration(): Observable<ConfigurationData> {
-    return this.http.get<ConfigurationData>(`${this.apiUrl}`);
+    return this.http.get<ConfigurationData>(`${this.apiUrl}/public`);
   }
 
   /**

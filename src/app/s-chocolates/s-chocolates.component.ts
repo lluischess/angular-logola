@@ -107,7 +107,7 @@ export class SChocolatesComponent implements OnInit, AfterViewInit {
         
         if (category) {
           this.chocolatesCategory = category;
-          this.categoryTitle = category.seo?.metaTitle || category.nombre;
+          this.categoryTitle = category.metaTitulo || category.nombre;
           this.categorySlug = category.urlSlug || category.slug || '';
           
           console.log('✅ [S-CHOCOLATES] Categoría encontrada:', category.nombre);

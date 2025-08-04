@@ -108,7 +108,7 @@ export class SCaramelosComponent implements OnInit, AfterViewInit {
         
         if (category) {
           this.caramelosCategory = category;
-          this.categoryTitle = category.seo?.metaTitle || category.nombre;
+          this.categoryTitle = category.metaTitulo || category.nombre;
           this.categorySlug = category.urlSlug || category.slug || '';
           
           console.log('✅ [S-CARAMELOS] Categoría encontrada:', category.nombre);

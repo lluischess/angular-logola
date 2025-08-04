@@ -1,8 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, ViewEncapsulation, CUSTOM_ELEMENTS_SCHEMA, ViewChild, AfterViewInit, ElementRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewEncapsulation, CUSTOM_ELEMENTS_SCHEMA, ViewChild, AfterViewInit, ElementRef } from '@angular/core';
 import { CartServiceService } from '../../shared/services/cart-service.service';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { ProductsService, FrontProduct } from '../../services/products.service';
+import { SeoService, SeoMetadata } from '../../services/seo.service';
+import { Subscription } from 'rxjs';
 
 // Importar Swiper
 import { register } from 'swiper/element/bundle';
@@ -22,7 +24,7 @@ register();
   styleUrls: ['./page-product.component.css'],
   encapsulation: ViewEncapsulation.None
 })
-export class PageProductComponent implements OnInit, AfterViewInit {
+export class PageProductComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('swiper') swiper!: ElementRef;
   public producto: FrontProduct | null = null;
   public relatedProducts: FrontProduct[] = [];
@@ -35,6 +37,9 @@ export class PageProductComponent implements OnInit, AfterViewInit {
   // Propiedades para el modal de imagen
   public modalImageSrc: string = '';
   public modalImageTitle: string = '';
+  
+  // Subscripciones para limpieza
+  private subscriptions: Subscription[] = [];
 
 
 
@@ -42,7 +47,8 @@ export class PageProductComponent implements OnInit, AfterViewInit {
     private cartService: CartServiceService,
     private route: ActivatedRoute,
     private el: ElementRef,
-    private productsService: ProductsService
+    private productsService: ProductsService,
+    private seoService: SeoService
   ) {}
 
   ngOnInit(): void {
@@ -55,6 +61,42 @@ export class PageProductComponent implements OnInit, AfterViewInit {
         this.showError('URL de producto no válida');
       }
     });
+  }
+
+  ngOnDestroy(): void {
+    // Limpiar subscripciones
+    this.subscriptions.forEach(sub => sub.unsubscribe());
+  }
+
+  /**
+   * Aplicar metadatos SEO del producto
+   */
+  private applyProductSeoMetadata(product: FrontProduct): void {
+    console.log('📱 [PAGE-PRODUCT] === APLICANDO METADATOS SEO DE PRODUCTO ===');
+    console.log('📱 [PAGE-PRODUCT] Producto:', product.nombre);
+    console.log('📱 [PAGE-PRODUCT] Campos SEO directos:');
+    console.log('  - metaTitulo:', product.metaTitulo);
+    console.log('  - metaDescripcion:', product.metaDescripcion);
+    console.log('  - palabrasClave:', product.palabrasClave);
+    console.log('  - ogTitulo:', product.ogTitulo);
+    console.log('  - ogDescripcion:', product.ogDescripcion);
+    console.log('  - ogImagen:', product.ogImagen);
+    
+    const seoMetadata: SeoMetadata = {
+      title: product.metaTitulo || `${product.nombre} - Logolate`,
+      description: product.metaDescripcion || `${product.nombre}. Producto artesanal de calidad premium. Medidas: ${product.medidas || 'Consultar'}. Referencia: ${product.referencia}`,
+      keywords: product.palabrasClave || `${product.nombre.toLowerCase()}, ${product.categoria.toLowerCase()}, artesanal, premium, logolate, ${product.referencia.toLowerCase()}`,
+      ogTitle: product.ogTitulo || product.metaTitulo || `${product.nombre} - Logolate`,
+      ogDescription: product.ogDescripcion || product.metaDescripcion || `${product.nombre}. Producto artesanal de calidad premium.`,
+      ogImage: product.ogImagen || (product.imagenes && product.imagenes.length > 0 ? this.productsService.getAbsoluteImageUrl(product.imagenes[0]) : ''),
+      canonical: `http://localhost:4200/producto/${product.urlSlug}`
+    };
+    
+    console.log('📱 [PAGE-PRODUCT] Metadatos SEO preparados:', seoMetadata);
+
+    // Aplicar metadatos SEO
+    this.seoService.updateSeoMetadata(seoMetadata);
+    console.log('📱 [PAGE-PRODUCT] Metadatos SEO aplicados para producto:', product.nombre);
   }
 
   /**
@@ -85,6 +127,9 @@ export class PageProductComponent implements OnInit, AfterViewInit {
             // No cargar productos relacionados para productos despublicados
             return;
           }
+          
+          // Aplicar metadatos SEO del producto
+          this.applyProductSeoMetadata(product);
           
           // Solo cargar productos relacionados si el producto está publicado
           this.loadRelatedProducts(product.categoria);

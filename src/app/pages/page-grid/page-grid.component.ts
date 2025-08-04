@@ -1,9 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CartServiceService } from '../../shared/services/cart-service.service';
 import { CategoriesService, FrontCategory } from '../../services/categories.service';
 import { ProductsService, FrontProduct } from '../../services/products.service';
+import { SeoService, SeoMetadata } from '../../services/seo.service';
+import { Subscription } from 'rxjs';
 
 // Declarar Bootstrap para TypeScript
 declare var bootstrap: any;
@@ -15,7 +17,7 @@ declare var bootstrap: any;
   templateUrl: './page-grid.component.html',
   styleUrl: './page-grid.component.css'
 })
-export class PageGridComponent implements OnInit {
+export class PageGridComponent implements OnInit, OnDestroy {
   // Productos reales desde el backend
   productos: FrontProduct[] = [];
   productosFiltrados: FrontProduct[] = []; // Productos filtrados según la categoría y/o búsqueda
@@ -31,13 +33,17 @@ export class PageGridComponent implements OnInit {
   categoriaEncontrada: FrontCategory | null = null;
   isLoadingCategory: boolean = false;
   categoryError: string = '';
+  
+  // Subscripciones para limpieza
+  private subscriptions: Subscription[] = [];
 
   constructor(
     private route: ActivatedRoute, 
     private cartService: CartServiceService,
     private router: Router,
     private categoriesService: CategoriesService,
-    private productsService: ProductsService
+    private productsService: ProductsService,
+    private seoService: SeoService
   ) {}
 
   ngOnInit(): void {
@@ -76,6 +82,42 @@ export class PageGridComponent implements OnInit {
     });
   }
 
+  ngOnDestroy(): void {
+    // Limpiar subscripciones
+    this.subscriptions.forEach(sub => sub.unsubscribe());
+  }
+
+  /**
+   * Aplicar metadatos SEO de la categoría
+   */
+  private applyCategorySeoMetadata(category: FrontCategory): void {
+    console.log('🏷️ [PAGE-GRID] === APLICANDO METADATOS SEO DE CATEGORÍA ===');
+    console.log('🏷️ [PAGE-GRID] Categoría:', category.nombre);
+    console.log('🏷️ [PAGE-GRID] Campos SEO directos:');
+    console.log('  - metaTitulo:', category.metaTitulo);
+    console.log('  - metaDescripcion:', category.metaDescripcion);
+    console.log('  - palabrasClave:', category.palabrasClave);
+    console.log('  - ogTitulo:', category.ogTitulo);
+    console.log('  - ogDescripcion:', category.ogDescripcion);
+    console.log('  - ogImagen:', category.ogImagen);
+    
+    const seoMetadata: SeoMetadata = {
+      title: category.metaTitulo || `Catálogo de ${category.nombre}`,
+      description: category.metaDescripcion || `Descubre nuestra selección de ${category.nombre.toLowerCase()}`,
+      keywords: category.palabrasClave || category.nombre.toLowerCase(),
+      ogTitle: category.ogTitulo || category.metaTitulo || `Catálogo de ${category.nombre}`,
+      ogDescription: category.ogDescripcion || category.metaDescripcion || `Descubre nuestra selección de ${category.nombre.toLowerCase()}`,
+      ogImage: category.ogImagen || 'https://logolate.com/images/default-category.jpg' // Imagen por defecto
+    };
+    
+    console.log('🏷️ [PAGE-GRID] Metadatos SEO preparados:', seoMetadata);
+    
+    // Aplicar los metadatos usando el servicio SEO
+    this.seoService.updateSeoMetadata(seoMetadata);
+    
+    console.log('🏷️ [PAGE-GRID] Metadatos SEO aplicados para categoría:', category.nombre);
+  }
+
   /**
    * Valida que la categoría esté publicada antes de mostrar productos
    */
@@ -84,24 +126,44 @@ export class PageGridComponent implements OnInit {
     this.categoriaValida = false;
     this.categoryError = '';
     
-    console.log(`🔍 [PAGE-GRID] Validando categoría: ${slug}`);
+    console.log(`🔍 [PAGE-GRID] === INICIANDO VALIDACIÓN DE CATEGORÍA ===`);
+    console.log(`🔍 [PAGE-GRID] Slug a validar: ${slug}`);
     
     this.categoriesService.getCategoryBySlug(slug).subscribe({
       next: (category) => {
+        console.log(`📦 [PAGE-GRID] === RESPUESTA DEL BACKEND RECIBIDA ===`);
+        console.log(`📦 [PAGE-GRID] Categoría recibida:`, category);
+        console.log(`📦 [PAGE-GRID] Categoría existe:`, !!category);
+        if (category) {
+          console.log(`📦 [PAGE-GRID] Nombre:`, category.nombre);
+          console.log(`📦 [PAGE-GRID] Publicado:`, category.publicado);
+          console.log(`📦 [PAGE-GRID] Campos SEO:`);
+          console.log(`  - metaTitulo:`, category.metaTitulo);
+          console.log(`  - metaDescripcion:`, category.metaDescripcion);
+          console.log(`  - palabrasClave:`, category.palabrasClave);
+        }
+        
         this.isLoadingCategory = false;
         
         if (category && category.publicado) {
+          console.log(`✅ [PAGE-GRID] === CATEGORÍA VÁLIDA Y PUBLICADA ===`);
           // Categoría encontrada y publicada
           this.categoriaEncontrada = category;
           this.categoriaValida = true;
           
           // Establecer título dinámico de la categoría
-          this.categoryTitle = category.seo?.metaTitle || category.nombre;
+          this.categoryTitle = category.metaTitulo || category.nombre;
+          console.log(`🏷️ [PAGE-GRID] Título establecido:`, this.categoryTitle);
+          
+          // Aplicar metadatos SEO de la categoría
+          console.log(`🔄 [PAGE-GRID] Llamando a applyCategorySeoMetadata...`);
+          this.applyCategorySeoMetadata(category);
           
           // Cargar productos de esta categoría
+          console.log(`🔄 [PAGE-GRID] Cargando productos de la categoría...`);
           this.loadProductsByCategory(slug);
           
-          console.log(`✅ [PAGE-GRID] Categoría válida y publicada: ${category.nombre}`);
+          console.log(`✅ [PAGE-GRID] Categoría procesada completamente: ${category.nombre}`);
         } else if (category && !category.publicado) {
           // Categoría encontrada pero despublicada
           this.categoriaValida = false;

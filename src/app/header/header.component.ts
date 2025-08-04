@@ -75,8 +75,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
    */
   getCategoryMenuTitle(category: FrontCategory): string {
     // Usar metaTitle si existe, sino crear uno basado en el nombre
-    if (category.seo?.metaTitle) {
-      return category.seo.metaTitle;
+    if (category.metaTitulo) {
+      return category.metaTitulo;
     }
     return `Catálogo de ${category.nombre}`;
   }

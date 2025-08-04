@@ -51,7 +51,7 @@ export class NovedadesComponent implements OnInit {
         
         if (category) {
           this.specialCategory = category;
-          this.categoryTitle = category.seo?.metaTitle || category.nombre;
+          this.categoryTitle = category.metaTitulo || category.nombre;
           // El backend devuelve 'urlSlug' no 'slug'
           this.categorySlug = category.urlSlug || category.slug;
           

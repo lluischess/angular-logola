@@ -11,11 +11,13 @@ export interface FrontCategory {
   urlSlug?: string; // Campo que devuelve el backend
   publicado: boolean;
   orden: number;
-  seo?: {
-    metaTitle?: string;
-    metaDescription?: string;
-    metaKeywords?: string;
-  };
+  // Campos SEO directos desde la BD (coinciden con el esquema del backend)
+  metaTitulo?: string;
+  metaDescripcion?: string;
+  palabrasClave?: string;
+  ogTitulo?: string;
+  ogDescripcion?: string;
+  ogImagen?: string;
   color?: string;
   configuracionEspecial?: boolean;
 }
@@ -131,7 +133,12 @@ export class CategoriesService {
               urlSlug: specialCategory.urlSlug,
               configuracionEspecial: specialCategory.configuracionEspecial,
               publicado: specialCategory.publicado,
-              seo: specialCategory.seo
+              metaTitulo: specialCategory.metaTitulo,
+              metaDescripcion: specialCategory.metaDescripcion,
+              palabrasClave: specialCategory.palabrasClave,
+              ogTitulo: specialCategory.ogTitulo,
+              ogDescripcion: specialCategory.ogDescripcion,
+              ogImagen: specialCategory.ogImagen
             });
             
             // Verificar que el slug existe
@@ -160,8 +167,8 @@ export class CategoriesService {
    * Obtener el título del menú para una categoría
    */
   getCategoryMenuTitle(category: FrontCategory): string {
-    // Usar metaTitle si existe, sino usar el nombre de la categoría
-    return category.seo?.metaTitle || `Catálogo de ${category.nombre}`;
+    // Usar metaTitulo si existe, sino usar el nombre de la categoría
+    return category.metaTitulo || `Catálogo de ${category.nombre}`;
   }
 
   /**
@@ -236,10 +243,8 @@ export class CategoriesService {
         slug: 'novedades',
         publicado: true,
         orden: 1,
-        seo: { 
-          metaTitle: 'Catálogo de Novedades',
-          metaDescription: 'Descubre nuestros productos más recientes y novedades exclusivas'
-        },
+        metaTitulo: 'Catálogo de Novedades',
+        metaDescripcion: 'Descubre nuestros productos más recientes y novedades exclusivas',
         configuracionEspecial: true
       },
       {
@@ -248,10 +253,8 @@ export class CategoriesService {
         slug: 'chocolates',
         publicado: true,
         orden: 2,
-        seo: { 
-          metaTitle: 'Catálogo de Chocolates',
-          metaDescription: 'Deliciosos chocolates artesanales de la mejor calidad'
-        }
+        metaTitulo: 'Catálogo de Chocolates',
+        metaDescripcion: 'Deliciosos chocolates artesanales de la mejor calidad'
       },
       {
         _id: 'default-3',
@@ -259,10 +262,8 @@ export class CategoriesService {
         slug: 'caramelos',
         publicado: true,
         orden: 3,
-        seo: { 
-          metaTitle: 'Catálogo de Caramelos',
-          metaDescription: 'Caramelos artesanales con sabores únicos y tradicionales'
-        }
+        metaTitulo: 'Catálogo de Caramelos',
+        metaDescripcion: 'Caramelos artesanales con sabores únicos y tradicionales'
       }
     ];
   }
