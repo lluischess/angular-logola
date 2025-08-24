@@ -19,6 +19,13 @@ export class AuthGuard implements CanActivate {
     state: RouterStateSnapshot
   ): Observable<boolean> | boolean {
     
+    // Solo aplicar autenticación a rutas que contengan '/logoadmin/'
+    if (!state.url.includes('/logoadmin/')) {
+      console.log('✅ Ruta pública, acceso permitido sin autenticación');
+      return true;
+    }
+
+    // Para rutas de logoadmin, verificar autenticación
     // Verificar si hay una sesión válida localmente
     if (!this.authService.isAuthenticated()) {
       console.log('❌ No hay sesión válida, redirigiendo al login');
