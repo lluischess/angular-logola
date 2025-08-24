@@ -9,12 +9,15 @@ export interface FrontProduct {
   numeroProducto?: number;
   referencia: string;
   nombre: string;
+  descripcion?: string;
   categoria: string;
   urlSlug?: string;
   medidas?: string;
   material?: string;
   ingredientes?: string;
   detalles?: string;
+  masDetalles?: string;
+  consumePreferente?: string;
   cantidadMinima?: number;
   imagenes?: string[]; 
   publicado: boolean;

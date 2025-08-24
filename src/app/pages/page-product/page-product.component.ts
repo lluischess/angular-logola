@@ -47,7 +47,7 @@ export class PageProductComponent implements OnInit, OnDestroy, AfterViewInit {
     private cartService: CartServiceService,
     private route: ActivatedRoute,
     private el: ElementRef,
-    private productsService: ProductsService,
+    public productsService: ProductsService,
     private seoService: SeoService
   ) {}
 
@@ -264,6 +264,36 @@ export class PageProductComponent implements OnInit, OnDestroy, AfterViewInit {
   getProductImageUrl(producto: FrontProduct): string {
     const firstImage = producto.imagenes && producto.imagenes.length > 0 ? producto.imagenes[0] : '';
     return this.productsService.getAbsoluteImageUrl(firstImage);
+  }
+
+  /**
+   * Obtener URL de imagen específica por índice
+   */
+  getProductImageByIndex(producto: FrontProduct, index: number): string {
+    if (!producto.imagenes || producto.imagenes.length === 0) {
+      return this.productsService.getAbsoluteImageUrl('');
+    }
+    
+    const imageIndex = Math.min(index, producto.imagenes.length - 1);
+    return this.productsService.getAbsoluteImageUrl(producto.imagenes[imageIndex]);
+  }
+
+  /**
+   * Verificar si el producto tiene múltiples imágenes
+   */
+  hasMultipleImages(producto: FrontProduct): boolean {
+    return !!(producto.imagenes && producto.imagenes.length > 1);
+  }
+
+  /**
+   * Obtener array de imágenes secundarias (excluyendo la primera)
+   */
+  getSecondaryImages(producto: FrontProduct): string[] {
+    if (!producto.imagenes || producto.imagenes.length <= 1) {
+      return [];
+    }
+    
+    return producto.imagenes.slice(1, 3); // Máximo 2 imágenes secundarias
   }
   
   /**

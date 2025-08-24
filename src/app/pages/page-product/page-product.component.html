@@ -51,17 +51,9 @@
           </div>
         </div>
       </div>
-    </div>
-  </div>
-</section>
 
-<!-- Producto cargado -->
-<section *ngIf="!isLoadingProduct && !hasError && producto && !isProductUnpublished">
-  <div class="container-lg">
-    <div class="row gy-4">
-
-      <!-- Imágenes del producto (Responsive: Se muestra arriba en móvil) -->
-      <div class="col-12 col-lg-6">
+      <!-- Imágenes del producto -->
+      <div class="col-12 col-lg-6 order-1 order-lg-2">
         <div class="product-images">
           <!-- Imagen principal -->
           <div class="main-image mb-3">
@@ -73,37 +65,64 @@
               style="max-height: 400px; object-fit: cover; cursor: pointer;object-fit: contain;" 
               (click)="openImageModal(getProductImageUrl(producto), producto.nombre)">
           </div>
-          <!-- Imágenes secundarias -->
-          <div class="secondary-images d-flex gap-2">
-            <div class="secondary-image flex-fill">
+          <!-- Imágenes secundarias (solo si hay múltiples imágenes) -->
+          <div *ngIf="hasMultipleImages(producto)" class="secondary-images d-flex gap-2">
+            <div *ngFor="let imagen of getSecondaryImages(producto); let i = index" class="secondary-image flex-fill">
               <img 
-                [src]="getProductImageUrl(producto)" 
-                [alt]="producto.nombre + ' - Vista 2'" 
+                [src]="productsService.getAbsoluteImageUrl(imagen)" 
+                [alt]="producto.nombre + ' - Vista ' + (i + 2)" 
                 (error)="onImageError($event)"
                 class="img-fluid rounded w-100 secondary-img" 
-                (click)="openImageModal(getProductImageUrl(producto), producto.nombre + ' - Vista 2')">
+                (click)="openImageModal(productsService.getAbsoluteImageUrl(imagen), producto.nombre + ' - Vista ' + (i + 2))">
             </div>
-            <div class="secondary-image flex-fill">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Producto cargado -->
+<section *ngIf="!isLoadingProduct && !hasError && producto && !isProductUnpublished">
+  <div class="container-lg">
+    <div class="row gy-4">
+
+      <!-- Imágenes del producto (Responsive: Se muestra arriba en móvil) -->
+      <div class="col-12 col-lg-6 order-1 order-lg-1">
+        <div class="product-images">
+          <!-- Imagen principal -->
+          <div class="main-image mb-3">
+            <img 
+              [src]="getProductImageUrl(producto)" 
+              [alt]="producto.nombre" 
+              (error)="onImageError($event)"
+              class="img-fluid rounded w-100" 
+              style="max-height: 400px; object-fit: cover; cursor: pointer;object-fit: contain;" 
+              (click)="openImageModal(getProductImageUrl(producto), producto.nombre)">
+          </div>
+          <!-- Imágenes secundarias (solo si hay múltiples imágenes) -->
+          <div *ngIf="hasMultipleImages(producto)" class="secondary-images d-flex gap-2">
+            <div *ngFor="let imagen of getSecondaryImages(producto); let i = index" class="secondary-image flex-fill">
               <img 
-                [src]="getProductImageUrl(producto)" 
-                [alt]="producto.nombre + ' - Vista 3'" 
+                [src]="productsService.getAbsoluteImageUrl(imagen)" 
+                [alt]="producto.nombre + ' - Vista ' + (i + 2)" 
                 (error)="onImageError($event)"
                 class="img-fluid rounded w-100 secondary-img" 
-                (click)="openImageModal(getProductImageUrl(producto), producto.nombre + ' - Vista 3')">
+                (click)="openImageModal(productsService.getAbsoluteImageUrl(imagen), producto.nombre + ' - Vista ' + (i + 2))">
             </div>
           </div>
         </div>
       </div>
 
       <!-- Información del producto -->
-      <div class="col-12 col-lg-6">
+      <div class="col-12 col-lg-6 order-2 order-lg-2">
         <div class="product-info">
           <!-- Nombre del producto -->
           <h1 class="product-title mb-3">{{ producto.nombre | titlecase }}</h1>
           <span class="text-muted">{{ producto.referencia | uppercase }}</span>
           <!-- Descripción del producto -->
           <p class="product-description text-muted mb-4">
-            Producto de alta calidad de nuestra selección especial.
+            {{ producto.descripcion || 'Descripción no disponible' }}
           </p>
           <!-- Botón de acción (Añadir al presupuesto o comprar) -->
           <div class="action-buttons mt-4 mb-3">
@@ -134,6 +153,14 @@
               <tr *ngIf="producto.detalles">
                 <td><strong>Detalles</strong></td>
                 <td>{{ producto.detalles }}</td>
+              </tr>
+              <tr *ngIf="producto.masDetalles">
+                <td><strong>Más detalles</strong></td>
+                <td>{{ producto.masDetalles }}</td>
+              </tr>
+              <tr *ngIf="producto.consumePreferente">
+                <td><strong>Consumo Preferente</strong></td>
+                <td>{{ producto.consumePreferente }}</td>
               </tr>
               <tr *ngIf="producto.cantidadMinima">
                 <td><strong>Cantidad Mínima de Compra</strong></td>

@@ -58,11 +58,12 @@
 
 /* Estilos específicos para las imágenes secundarias */
 .secondary-img {
-  height: 120px;
+  height: 250px;
+  width: 80px;
   object-fit: contain;
   cursor: pointer;
   background-color: #ffffff;
-  padding: 8px;
+  padding: 6px;
 }
 
 .secondary-img:hover {
@@ -92,22 +93,40 @@
   }
 
   .secondary-img {
-    height: 80px !important;
+    height: 60px !important;
+    width: 95px !important;
     padding: 4px;
   }
 
   .secondary-images {
     gap: 6px;
+    align-items: center;
+  }
+
+  .secondary-image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 70px;
   }
 }
 
 @media (max-width: 480px) {
   .secondary-img {
-    height: 70px !important;
+    height: 60px !important;
+    width: 95px !important;
     padding: 3px;
   }
 
   .secondary-images {
     gap: 4px;
+    align-items: center;
+  }
+
+  .secondary-image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 70px;
   }
 }
