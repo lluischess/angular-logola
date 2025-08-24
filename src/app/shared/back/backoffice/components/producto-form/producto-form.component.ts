@@ -209,7 +209,7 @@ export class ProductoFormComponent implements OnInit {
       imagenes: [[]],
       ingredientes: ['', [Validators.required, Validators.maxLength(500)]],
       masDetalles: ['', Validators.maxLength(1000)],
-      minimoUnidades: [1, [Validators.required, Validators.min(1), Validators.max(10000)]],
+      minimoUnidades: [1, [Validators.required, Validators.min(1), Validators.max(300000)]],
       precio: [null, [Validators.min(0)]],
       consumePreferente: ['', [Validators.maxLength(50)]],
       publicado: [false],

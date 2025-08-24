@@ -5,7 +5,7 @@
 
       <div class="col-lg-3 col-md-6 col-sm-6">
         <div class="footer-menu">
-          <img src="assets/images/logo.png" width="240" height="70" alt="logo">
+          <img [src]="getLogoFooterUrl()" width="240" height="70" alt="logo">
           <div class="social-links mt-3">
             <ul class="d-flex list-unstyled gap-2">
               <li>
@@ -14,7 +14,7 @@
                 </a>
               </li>
               <li>
-                <a href="https://www.instagram.com/logolate_spain/" class="btn btn-outline-light">
+                <a [href]="instagram" class="btn btn-outline-light">
                   <svg width="16" height="16"><use xlink:href="#instagram"></use></svg>
                 </a>
               </li>
@@ -28,16 +28,13 @@
           <h5 class="widget-title">Contacto</h5>
           <ul class="menu-list list-unstyled">
             <li class="menu-item">
-              <p class="nav-link mb-0">Tel. (+34) 938 612 858</p>
+              <p class="nav-link mb-0">Tel. {{telefono}}</p>
             </li>
             <li class="menu-item">
-              <p class="nav-link mb-0">La Garriga (Barcelona)</p>
+              <p class="nav-link mb-0">{{direccion}}</p>
             </li>
             <li class="menu-item">
-              <p class="nav-link mb-0">Spain 08530</p>
-            </li>
-            <li class="menu-item">
-              <a href="mailto:info@logolate.com" class="nav-link">{{email}}</a>
+              <a [href]="'mailto:' + email" class="nav-link">{{email}}</a>
             </li>
           </ul>
         </div>
@@ -47,7 +44,7 @@
           <h5 class="widget-title">Información</h5>
           <ul class="menu-list list-unstyled">
             <li class="menu-item">
-              <p class="nav-link mb-0">Horario de atención: Lunes a Viernes de 9:00 a 18:00</p>
+              <p class="nav-link mb-0">Horario de atención: {{horario}}</p>
             </li>
           </ul>
         </div>
@@ -57,9 +54,7 @@
           <h5 class="widget-title">¿Qué es Logolate?</h5>
           <ul class="menu-list list-unstyled">
             <li class="menu-item">
-              <p>En Logolate te ofrecemos chocolates personalizados de alta calidad, ideales para destacar en cualquier ocasión especial.
-                Con diseños únicos, técnicas innovadoras y empaques elegantes, sus productos se adaptan a la imagen de tu empresa o evento.
-                Sorprende a tus clientes con un detalle delicioso y personalizado que dejará huella</p>
+              <p>{{descripcion}}</p>
             </li>
           </ul>
         </div>

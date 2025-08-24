@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule, Router } from '@angular/router';
 import { Subject, debounceTime, distinctUntilChanged, takeUntil } from 'rxjs';
 import { CategoriesService, FrontCategory } from '../services/categories.service';
+import { ConfiguracionService, ConfiguracionCompleta } from '../services/configuracion.service';
 
 @Component({
   selector: 'app-header',
@@ -23,21 +24,58 @@ export class HeaderComponent implements OnInit, OnDestroy {
   isLoadingCategories = false;
   categoriesError = false;
   
+  // Propiedades para configuración dinámica
+  logoHeader: string = 'assets/images/logo.png';
+  isLoadingConfig = false;
+  configError = false;
+  
   private destroy$ = new Subject<void>();
 
   constructor(
     private router: Router,
-    private categoriesService: CategoriesService
+    private categoriesService: CategoriesService,
+    private configuracionService: ConfiguracionService
   ) { }
 
   ngOnInit(): void {
     this.loadCategories();
+    this.loadHeaderConfiguration();
     this.setupReactiveSearch();
   }
 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  /**
+   * Cargar configuración del header desde la BBDD
+   */
+  private loadHeaderConfiguration(): void {
+    console.log('🏠 [HEADER] === CARGANDO CONFIGURACIÓN ===');
+    this.isLoadingConfig = true;
+    this.configError = false;
+
+    this.configuracionService.getConfiguracion()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (config: ConfiguracionCompleta) => {
+          console.log('🏠 [HEADER] Configuración recibida:', config);
+          
+          if (config && config.general && config.general.logoHeader) {
+            this.logoHeader = config.general.logoHeader;
+            console.log('🏠 [HEADER] Logo del header actualizado:', this.logoHeader);
+          }
+          
+          this.isLoadingConfig = false;
+        },
+        error: (error: any) => {
+          console.error('❌ [HEADER] Error cargando configuración:', error);
+          this.configError = true;
+          this.isLoadingConfig = false;
+          // Mantener logo por defecto en caso de error
+        }
+      });
   }
 
   /**
@@ -139,6 +177,16 @@ export class HeaderComponent implements OnInit, OnDestroy {
     window.scrollTo({
       top: 0
     });
+  }
+
+  /**
+   * Obtener URL absoluta para el logo del header
+   */
+  getLogoHeaderUrl(): string {
+    if (this.logoHeader.startsWith('http')) {
+      return this.logoHeader;
+    }
+    return this.logoHeader;
   }
 
 }
