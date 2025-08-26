@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, firstValueFrom } from 'rxjs';
+import { EmailService } from './email.service';
+import { ConfigurationService } from '../shared/back/backoffice/services/configuration.service';
 
 // Interfaces para el servicio de presupuestos
 export interface BudgetProduct {
@@ -52,7 +54,11 @@ export class BudgetsService {
   private apiUrl = 'http://localhost:3000/budgets';
   private baseUrl = 'http://localhost:3000';
 
-  constructor(private http: HttpClient) { }
+  constructor(
+    private http: HttpClient,
+    private emailService: EmailService,
+    private configurationService: ConfigurationService
+  ) { }
 
   /**
    * Crear un nuevo presupuesto desde el carrito
@@ -62,7 +68,40 @@ export class BudgetsService {
     console.log('💰 [BUDGETS-SERVICE] Datos del presupuesto:', budgetData);
     console.log('💰 [BUDGETS-SERVICE] URL completa:', this.apiUrl);
     
-    return this.http.post<BudgetResponse>(this.apiUrl, budgetData);
+    return new Observable(observer => {
+      // Crear el presupuesto primero
+      this.http.post<BudgetResponse>(this.apiUrl, budgetData).subscribe({
+        next: (response) => {
+          console.log('✅ [BUDGETS-SERVICE] Presupuesto creado exitosamente:', response);
+          
+          // Si el presupuesto se creó correctamente y está en estado pendiente, enviar emails
+          if (response && response.estado === 'pendiente') {
+            this.sendEmailNotifications(response).subscribe({
+              next: (emailResults) => {
+                console.log('📧 [BUDGETS-SERVICE] Emails enviados:', emailResults);
+                // Devolver la respuesta del presupuesto independientemente del resultado de los emails
+                observer.next(response);
+                observer.complete();
+              },
+              error: (emailError) => {
+                console.warn('⚠️ [BUDGETS-SERVICE] Error enviando emails, pero presupuesto creado:', emailError);
+                // Devolver la respuesta del presupuesto aunque fallen los emails
+                observer.next(response);
+                observer.complete();
+              }
+            });
+          } else {
+            // Si no está en estado pendiente, no enviar emails
+            observer.next(response);
+            observer.complete();
+          }
+        },
+        error: (error) => {
+          console.error('❌ [BUDGETS-SERVICE] Error creando presupuesto:', error);
+          observer.error(error);
+        }
+      });
+    });
   }
 
   /**
@@ -261,5 +300,104 @@ export class BudgetsService {
     
     console.log('🔄 [BUDGETS-SERVICE] Productos mapeados finales:', mappedProducts);
     return mappedProducts;
+  }
+
+  /**
+   * Enviar notificaciones por email cuando se crea un presupuesto
+   */
+  private sendEmailNotifications(presupuesto: BudgetResponse): Observable<any> {
+    console.log('📧 [BUDGETS-SERVICE] === ENVIANDO NOTIFICACIONES POR EMAIL ===');
+    console.log('📧 [BUDGETS-SERVICE] Presupuesto:', presupuesto);
+    
+    return new Observable(observer => {
+      // Obtener el email de administración desde la configuración
+      this.configurationService.getConfigurationSection('general').subscribe({
+        next: (generalConfig) => {
+          console.log('📧 [BUDGETS-SERVICE] Configuración general obtenida:', generalConfig);
+          
+          const emailAdministracion = generalConfig?.datos?.emailAdministracion || 'admin@logolate.com';
+          console.log('📧 [BUDGETS-SERVICE] Email de administración:', emailAdministracion);
+          
+          // Preparar datos para el servicio de email
+          const emailData = {
+            presupuesto: {
+              id: presupuesto._id,
+              numeroPresupuesto: presupuesto.numeroPresupuesto.toString(),
+              fechaCreacion: presupuesto.fechaCreacion,
+              estado: presupuesto.estado,
+              total: presupuesto.precioTotal || 0,
+              cliente: {
+                nombre: presupuesto.cliente.nombre,
+                email: presupuesto.cliente.email,
+                telefono: presupuesto.cliente.telefono,
+                empresa: presupuesto.cliente.empresa
+              },
+              productos: presupuesto.productos.map(p => ({
+                nombre: p.nombre,
+                cantidad: p.cantidad,
+                precio: p.precioUnitario || 0,
+                subtotal: p.subtotal || 0
+              }))
+            },
+            emailAdministracion: emailAdministracion
+          };
+          
+          console.log('📧 [BUDGETS-SERVICE] Datos preparados para emails:', emailData);
+          
+          // Enviar ambos emails
+          this.emailService.sendNewPresupuestoEmails(emailData).subscribe({
+            next: (results: any) => {
+              console.log('✅ [BUDGETS-SERVICE] Emails procesados:', results);
+              observer.next(results);
+              observer.complete();
+            },
+            error: (error: any) => {
+              console.error('❌ [BUDGETS-SERVICE] Error enviando emails:', error);
+              observer.error(error);
+            }
+          });
+        },
+        error: (configError: any) => {
+          console.warn('⚠️ [BUDGETS-SERVICE] Error obteniendo configuración, usando email por defecto:', configError);
+          
+          // Usar email por defecto si no se puede obtener la configuración
+          const emailData = {
+            presupuesto: {
+              id: presupuesto._id,
+              numeroPresupuesto: presupuesto.numeroPresupuesto.toString(),
+              fechaCreacion: presupuesto.fechaCreacion,
+              estado: presupuesto.estado,
+              total: presupuesto.precioTotal || 0,
+              cliente: {
+                nombre: presupuesto.cliente.nombre,
+                email: presupuesto.cliente.email,
+                telefono: presupuesto.cliente.telefono,
+                empresa: presupuesto.cliente.empresa
+              },
+              productos: presupuesto.productos.map(p => ({
+                nombre: p.nombre,
+                cantidad: p.cantidad,
+                precio: p.precioUnitario || 0,
+                subtotal: p.subtotal || 0
+              }))
+            },
+            emailAdministracion: 'admin@logolate.com'
+          };
+          
+          // Enviar emails con configuración por defecto
+          this.emailService.sendNewPresupuestoEmails(emailData).subscribe({
+            next: (results: any) => {
+              console.log('✅ [BUDGETS-SERVICE] Emails enviados con configuración por defecto:', results);
+              observer.next(results);
+              observer.complete();
+            },
+            error: (error: any) => {
+              console.error('❌ [BUDGETS-SERVICE] Error enviando emails con configuración por defecto:', error);
+              observer.error(error);
+            }
+          });
+        }
+      });
+    });
   }
 }

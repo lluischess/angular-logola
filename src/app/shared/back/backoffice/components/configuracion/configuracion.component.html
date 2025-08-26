@@ -219,6 +219,26 @@
 
               <form [formGroup]="generalForm" class="config-form">
                 <div class="form-section">
+                  <h3>Email de Administración</h3>
+                  
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label for="emailAdministracion">Email de Administración *</label>
+                      <input 
+                        type="email" 
+                        id="emailAdministracion"
+                        formControlName="emailAdministracion"
+                        class="form-control"
+                        placeholder="admin@logolate.com">
+                      <small class="form-hint">Email donde se enviarán las notificaciones de nuevos presupuestos.</small>
+                      <div *ngIf="generalForm.get('emailAdministracion')?.invalid && generalForm.get('emailAdministracion')?.touched" class="error-message">
+                        El email de administración es requerido y debe ser válido.
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-section">
                   <h3>Logos e Imágenes</h3>
                   
                   <div class="form-row">
@@ -462,6 +482,53 @@
                             placeholder="#FFFFFF">
                         </div>
                         <small class="form-hint">Color del título y subtítulo.</small>
+                      </div>
+                    </div>
+
+                    <!-- Segundo botón opcional -->
+                    <div class="form-section">
+                      <h4>Segundo Botón (Opcional)</h4>
+                      
+                      <div class="form-row">
+                        <div class="form-group">
+                          <label>Enlace del segundo botón</label>
+                          <input 
+                            type="text" 
+                            [(ngModel)]="banner.enlaceButton2"
+                            class="form-control"
+                            placeholder="/productos">
+                          <small class="form-hint">URL o ruta donde llevará el segundo botón (opcional).</small>
+                        </div>
+                      </div>
+
+                      <div class="form-row">
+                        <div class="form-group">
+                          <label>Nombre del segundo botón</label>
+                          <input 
+                            type="text" 
+                            [(ngModel)]="banner.nombreButton2"
+                            class="form-control"
+                            placeholder="Explorar">
+                          <small class="form-hint">Texto que aparecerá en el segundo botón (opcional).</small>
+                        </div>
+                      </div>
+
+                      <div class="form-row">
+                        <div class="form-group col-half">
+                          <label>Color del segundo botón</label>
+                          <div class="color-input-group">
+                            <input 
+                              type="color" 
+                              [(ngModel)]="banner.colorBoton2"
+                              class="color-picker">
+                            <input 
+                              type="text" 
+                              [(ngModel)]="banner.colorBoton2"
+                              class="form-control color-text"
+                              placeholder="#6B7280">
+                          </div>
+                          <small class="form-hint">Color de fondo del segundo botón (opcional).</small>
+                        </div>
                       </div>
                     </div>
                   </div>

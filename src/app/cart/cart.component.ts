@@ -22,6 +22,7 @@ export class CartComponent implements OnInit, AfterViewInit, OnDestroy {
   totalUnits: number = 0;  // Variable para total de unidades
   isRecaptchaValid: boolean = false;
   recaptchaResponse: string = '';
+  isSubmitting: boolean = false;  // Estado para prevenir doble envío
   
   // Suscripciones para el sistema reactivo del carrito
   private cartItemsSubscription?: Subscription;
@@ -281,6 +282,12 @@ export class CartComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // Manejar el envío del formulario
   onSubmit() {
+    // Prevenir doble envío
+    if (this.isSubmitting) {
+      console.log('⚠️ [CART-COMPONENT] Envío ya en proceso, ignorando click adicional');
+      return;
+    }
+
     console.log('📋 [CART-COMPONENT] === INICIANDO ENVÍO DE PRESUPUESTO ===');
     
     // Marcar todos los campos como touched para mostrar errores visuales
@@ -293,6 +300,9 @@ export class CartComponent implements OnInit, AfterViewInit, OnDestroy {
 
     if (validation.isValid) {
       console.log('✅ [CART-COMPONENT] Validación exitosa, procediendo con envío');
+      
+      // Activar estado de envío
+      this.isSubmitting = true;
       
       // Preparar datos del presupuesto
       this.createBudgetRequest();
@@ -362,11 +372,17 @@ export class CartComponent implements OnInit, AfterViewInit, OnDestroy {
           console.log('🎉 [CART-COMPONENT] === PRESUPUESTO CREADO EXITOSAMENTE ===');
           console.log('🎉 [CART-COMPONENT] Respuesta del backend:', response);
           
+          // Desactivar estado de envío
+          this.isSubmitting = false;
+          
           this.handleSuccessfulBudgetCreation(response);
         },
         error: (error) => {
           console.error('❌ [CART-COMPONENT] === ERROR CREANDO PRESUPUESTO ===');
           console.error('❌ [CART-COMPONENT] Error completo:', error);
+          
+          // Desactivar estado de envío
+          this.isSubmitting = false;
           
           this.handleBudgetCreationError(error);
         }
@@ -374,6 +390,8 @@ export class CartComponent implements OnInit, AfterViewInit, OnDestroy {
       
     } catch (error) {
       console.error('❌ [CART-COMPONENT] Error inesperado:', error);
+      // Desactivar estado de envío en caso de error inesperado
+      this.isSubmitting = false;
       this.handleBudgetCreationError(error);
     }
   }

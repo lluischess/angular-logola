@@ -25,6 +25,7 @@ interface ConfiguracionData {
     };
   };
   general: {
+    emailAdministracion: string;
     logoHeader: string;
     logoFooter: string;
     favicon: string;
@@ -42,6 +43,10 @@ interface ConfiguracionData {
       nombreBoton: string;
       colorBoton: string;
       colorTitulos: string;
+      // Segundo botón opcional
+      enlaceButton2?: string;
+      nombreButton2?: string;
+      colorBoton2?: string;
     }>;
   };
 }
@@ -99,6 +104,7 @@ export class ConfiguracionComponent implements OnInit {
       }
     },
     general: {
+      emailAdministracion: 'admin@logolate.com',
       logoHeader: '/assets/images/logo-header.png',
       logoFooter: '/assets/images/logo-footer.png',
       favicon: '/assets/images/favicon.ico'
@@ -174,6 +180,7 @@ export class ConfiguracionComponent implements OnInit {
 
     // Formulario General
     this.generalForm = this.fb.group({
+      emailAdministracion: ['', [Validators.required, Validators.email]],
       logoHeader: [''],
       logoFooter: [''],
       favicon: ['']
@@ -302,7 +309,11 @@ export class ConfiguracionComponent implements OnInit {
               orden: bannerConfig.datos?.ordenBanner || bannerConfig.datos?.orden || (index + 1),
               nombreBoton: nombreBotonValue,
               colorBoton: colorBotonValue,
-              colorTitulos: colorTitulosValue
+              colorTitulos: colorTitulosValue,
+              // Segundo botón opcional
+              enlaceButton2: bannerConfig.datos?.enlaceButton2 || '',
+              nombreButton2: bannerConfig.datos?.nombreButton2 || '',
+              colorBoton2: bannerConfig.datos?.colorBoton2 || ''
             };
             
             console.log(`🔄 [BACKOFFICE] Banner ${index + 1} mapeado para frontend:`, mappedBanner);
@@ -399,6 +410,10 @@ export class ConfiguracionComponent implements OnInit {
             nombreBoton: banner.nombreBoton,
             colorBoton: banner.colorBoton,
             colorTitulos: banner.colorTitulos,
+            // Segundo botón
+            enlaceButton2: banner.enlaceButton2,
+            nombreButton2: banner.nombreButton2,
+            colorBoton2: banner.colorBoton2,
             bannerCompleto: banner
           });
           
@@ -412,7 +427,11 @@ export class ConfiguracionComponent implements OnInit {
             ordenBanner: banner.orden || 1, // Backend espera ordenBanner
             colorBoton: banner.colorBoton || '#3B82F6',
             colorTitulos: banner.colorTitulos || '#FFFFFF',
-            activo: banner.activo !== false
+            activo: banner.activo !== false,
+            // Segundo botón opcional
+            enlaceButton2: banner.enlaceButton2 || '',
+            nombreButton2: banner.nombreButton2 || '',
+            colorBoton2: banner.colorBoton2 || ''
           };
           
           console.log(`🔄 [BACKOFFICE] Banner ${banner.id} mapeado para backend:`, {
@@ -420,6 +439,10 @@ export class ConfiguracionComponent implements OnInit {
             nombreButton: mappedBanner.nombreButton,
             colorBoton: mappedBanner.colorBoton,
             colorTitulos: mappedBanner.colorTitulos,
+            // Segundo botón
+            enlaceButton2: mappedBanner.enlaceButton2,
+            nombreButton2: mappedBanner.nombreButton2,
+            colorBoton2: mappedBanner.colorBoton2,
             bannerCompleto: mappedBanner
           });
           
@@ -545,10 +568,20 @@ export class ConfiguracionComponent implements OnInit {
                 orden: bannerConfig.datos?.ordenBanner || bannerConfig.datos?.orden || (index + 1),
                 nombreBoton: nombreBotonValue,
                 colorBoton: colorBotonValue,
-                colorTitulos: colorTitulosValue
+                colorTitulos: colorTitulosValue,
+                // Segundo botón opcional
+                enlaceButton2: bannerConfig.datos?.enlaceButton2 || '',
+                nombreButton2: bannerConfig.datos?.nombreButton2 || '',
+                colorBoton2: bannerConfig.datos?.colorBoton2 || ''
               };
               
-              console.log(`🔄 [BACKOFFICE] Banner ${index + 1} recargado y mapeado:`, mappedBanner);
+              console.log(`🔄 [BACKOFFICE] Banner ${index + 1} recargado y mapeado:`, {
+                ...mappedBanner,
+                // Debug específico segundo botón
+                enlaceButton2_original: bannerConfig.datos?.enlaceButton2,
+                nombreButton2_original: bannerConfig.datos?.nombreButton2,
+                colorBoton2_original: bannerConfig.datos?.colorBoton2
+              });
               return mappedBanner;
             });
             

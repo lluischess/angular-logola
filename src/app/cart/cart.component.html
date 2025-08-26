@@ -139,8 +139,12 @@
         </div>
 
         <!-- Botón de enviar -->
-        <button class="w-100 btn btn-primary btn-lg" type="submit" [disabled]="!termsForm.valid">
-          Enviar presupuesto
+        <button class="w-100 btn btn-primary btn-lg" type="submit" [disabled]="!termsForm.valid || isSubmitting">
+          <span *ngIf="!isSubmitting">Enviar presupuesto</span>
+          <span *ngIf="isSubmitting">
+            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+            Enviando...
+          </span>
         </button>
       </form>
     </div> <!-- Fin del form-container -->

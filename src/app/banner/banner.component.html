@@ -24,6 +24,13 @@
             <p class="fs-4" [ngStyle]="getTextStyles(banner)">{{ banner.subtitulo }}</p>
             <div class="d-flex gap-3">
               <a [href]="banner.enlace" class="btn text-uppercase fs-6 rounded-pill px-4 py-3 mt-3" [ngStyle]="getButtonStyles(banner)">{{ banner.nombreBoton }}</a>
+              <!-- Segundo botón opcional -->
+              <a *ngIf="banner.enlaceButton2 && banner.nombreButton2" 
+                 [href]="banner.enlaceButton2" 
+                 class="btn text-uppercase fs-6 rounded-pill px-4 py-3 mt-3" 
+                 [ngStyle]="getSecondButtonStyles(banner)">
+                {{ banner.nombreButton2 }}
+              </a>
             </div>
             
             <!-- Estadísticas del primer banner (solo en el primer slide) -->
