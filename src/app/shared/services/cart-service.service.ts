@@ -9,10 +9,15 @@ export class CartServiceService {
   private cartItems: any[] = [];
   private cartItemsSubject = new BehaviorSubject<any[]>([]);
   private totalUnitsSubject = new BehaviorSubject<number>(0);
+  private readonly CART_STORAGE_KEY = 'logolate_cart_items';
 
   // Observables públicos para que los componentes se suscriban
   public cartItems$ = this.cartItemsSubject.asObservable();
   public totalUnits$ = this.totalUnitsSubject.asObservable();
+
+  constructor() {
+    this.loadCartFromStorage();
+  }
 
   // Obtener los productos en el carrito
   getCartItems() {
@@ -124,8 +129,40 @@ export class CartServiceService {
     console.log('🔔 [CART-SERVICE] Total productos:', this.cartItems.length);
     console.log('🔔 [CART-SERVICE] Total unidades:', this.getTotalUnits());
     
+    // Guardar en localStorage
+    this.saveCartToStorage();
+    
     // Actualizar los BehaviorSubjects para notificar a los componentes suscritos
     this.cartItemsSubject.next([...this.cartItems]);
     this.totalUnitsSubject.next(this.getTotalUnits());
+  }
+
+  // Cargar carrito desde localStorage
+  private loadCartFromStorage(): void {
+    try {
+      const savedCart = localStorage.getItem(this.CART_STORAGE_KEY);
+      if (savedCart) {
+        this.cartItems = JSON.parse(savedCart);
+        console.log('🔄 [CART-SERVICE] Carrito cargado desde localStorage:', this.cartItems.length, 'productos');
+        // Notificar a los componentes sin guardar de nuevo
+        this.cartItemsSubject.next([...this.cartItems]);
+        this.totalUnitsSubject.next(this.getTotalUnits());
+      } else {
+        console.log('🔄 [CART-SERVICE] No hay carrito guardado en localStorage');
+      }
+    } catch (error) {
+      console.error('❌ [CART-SERVICE] Error cargando carrito desde localStorage:', error);
+      this.cartItems = [];
+    }
+  }
+
+  // Guardar carrito en localStorage
+  private saveCartToStorage(): void {
+    try {
+      localStorage.setItem(this.CART_STORAGE_KEY, JSON.stringify(this.cartItems));
+      console.log('💾 [CART-SERVICE] Carrito guardado en localStorage');
+    } catch (error) {
+      console.error('❌ [CART-SERVICE] Error guardando carrito en localStorage:', error);
+    }
   }
 }

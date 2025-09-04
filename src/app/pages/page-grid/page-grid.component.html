@@ -4,7 +4,13 @@
     <div class="row">
       <div class="col-md-12">
         <div class="section-header d-flex flex-wrap justify-content-between my-4">
-          <h2 class="section-title">{{ categoryTitle }}</h2>
+          <div class="w-100 text-center">
+            <h2 class="section-title">{{ categoryTitle }}</h2>
+            <!-- Descripción de la categoría -->
+            <div *ngIf="categoriaEncontrada?.descripcion" class="category-description mt-3">
+              <p class="text-muted fs-5 lh-base">{{ categoriaEncontrada?.descripcion }}</p>
+            </div>
+          </div>
         </div>
       </div>
     </div>

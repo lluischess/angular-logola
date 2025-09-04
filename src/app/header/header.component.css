@@ -18,3 +18,15 @@
   transition: all 0.3s ease;
 }
 */
+
+/* Ajustar posición del contador del carrito */
+.cart-counter {
+  top: -5px !important;
+  right: -5px !important;
+  transform: none !important;
+  font-size: 0.75rem;
+  min-width: 18px;
+  height: 18px;
+  line-height: 18px;
+  padding: 0 !important;
+}

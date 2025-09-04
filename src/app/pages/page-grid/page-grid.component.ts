@@ -136,6 +136,7 @@ export class PageGridComponent implements OnInit, OnDestroy {
         console.log(`📦 [PAGE-GRID] Categoría existe:`, !!category);
         if (category) {
           console.log(`📦 [PAGE-GRID] Nombre:`, category.nombre);
+          console.log(`📦 [PAGE-GRID] Descripción:`, category.descripcion);
           console.log(`📦 [PAGE-GRID] Publicado:`, category.publicado);
           console.log(`📦 [PAGE-GRID] Campos SEO:`);
           console.log(`  - metaTitulo:`, category.metaTitulo);

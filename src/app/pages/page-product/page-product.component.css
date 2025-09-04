@@ -130,3 +130,12 @@
     height: 70px;
   }
 }
+
+/* Separador de título */
+.title-separator {
+  width: 60px;
+  height: 2px;
+  background: linear-gradient(90deg, #8B4513, #D2691E);
+  margin: 1rem auto;
+  border-radius: 1px;
+}

@@ -118,7 +118,10 @@
       <div class="col-12 col-lg-6 order-2 order-lg-2">
         <div class="product-info">
           <!-- Nombre del producto -->
-          <h1 class="product-title mb-3">{{ producto.nombre | titlecase }}</h1>
+          <div class="text-center">
+            <h1 class="product-title mb-3">{{ producto.nombre | titlecase }}</h1>
+            <div class="title-separator"></div>
+          </div>
           <span class="text-muted">{{ producto.referencia | uppercase }}</span>
           <!-- Descripción del producto -->
           <p class="product-description text-muted mb-4">
@@ -179,12 +182,18 @@
   <div class="container-lg overflow-hidden py-5">
     <div class="row">
       <div class="col-md-12">
-        <div class="section-header d-flex justify-content-between my-4">
-          <h2 class="section-title">Detalles Relacionados</h2>
-          <div class="d-flex align-items-center">
-            <div class="swiper-buttons">
-              <button class="swiper-prev products-carousel-prev btn btn-primary" tabindex="-1" aria-label="Previous slide">❮</button>
-              <button class="swiper-next products-carousel-next btn btn-primary" tabindex="0" aria-label="Next slide">❯</button>
+        <div class="section-header my-4">
+          <div class="d-flex justify-content-between align-items-center">
+            <div class="flex-fill"></div>
+            <div class="text-center">
+              <h2 class="section-title">Detalles Relacionados</h2>
+              <div class="title-separator"></div>
+            </div>
+            <div class="flex-fill d-flex justify-content-end align-items-center">
+              <div class="swiper-buttons">
+                <button class="swiper-prev products-carousel-prev btn btn-primary" tabindex="-1" aria-label="Previous slide">❮</button>
+                <button class="swiper-next products-carousel-next btn btn-primary" tabindex="0" aria-label="Next slide">❯</button>
+              </div>
             </div>
           </div>
         </div>

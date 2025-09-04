@@ -2,3 +2,31 @@
   margin-bottom: 50px;
   margin-top: 50px;
 }
+
+/* Separador de título */
+.title-separator {
+  width: 60px;
+  height: 2px;
+  background: linear-gradient(90deg, #8B4513, #D2691E);
+  margin: 1rem auto;
+  border-radius: 1px;
+}
+
+/* Responsive para mobile - centrar título */
+@media (max-width: 767px) {
+  .section-header .d-flex {
+    flex-direction: column !important;
+    align-items: center !important;
+  }
+  
+  .section-header .flex-fill:first-child,
+  .section-header .flex-fill:last-child {
+    display: none !important;
+  }
+  
+  .section-header .flex-fill:last-child {
+    display: flex !important;
+    justify-content: center !important;
+    margin-top: 1rem;
+  }
+}

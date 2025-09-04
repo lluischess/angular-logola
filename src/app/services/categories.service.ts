@@ -11,6 +11,7 @@ export interface FrontCategory {
   urlSlug?: string; // Campo que devuelve el backend
   publicado: boolean;
   orden: number;
+  descripcion?: string; // Campo descripción de la categoría
   // Campos SEO directos desde la BD (coinciden con el esquema del backend)
   metaTitulo?: string;
   metaDescripcion?: string;
