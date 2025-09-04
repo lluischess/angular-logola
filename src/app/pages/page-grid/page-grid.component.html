@@ -67,14 +67,14 @@
               <!-- Imagen del producto -->
               <figure>
                 <a [routerLink]="['/producto', producto.urlSlug || producto._id]" title="{{ producto.nombre }}">
-                  <img [src]="getProductImageUrl(producto)" 
-                       alt="{{ producto.nombre }}" 
+                  <img [src]="getProductImageUrl(producto)"
+                       alt="{{ producto.nombre }}"
                        class="tab-image img-fluid"
                        (error)="onImageError($event)">
                 </a>
               </figure>
               <!-- Información del producto -->
-              <div class="product-info text-center d-flex flex-column justify-content-between flex-grow-1">
+              <div class="product-info text-center d-flex flex-column flex-grow-1">
                 <h3 class="fs-6 fw-normal">{{ producto.nombre | titlecase }}</h3>
                 <span class="text-muted">{{ producto.referencia | uppercase }}</span>
                 <div class="d-flex justify-content-center align-items-center gap-2" *ngIf="producto.medidas">
@@ -91,7 +91,7 @@
           </div>
           <!-- Fin del *ngFor -->
         </div>
-        
+
         <!-- Mensaje si no hay productos en la categoría -->
         <div class="text-center py-5" *ngIf="productosFiltrados.length === 0">
           <div class="mb-3">
