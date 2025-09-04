@@ -61,53 +61,118 @@
     <!-- Checkbox para aceptar términos -->
     @if (cartItems.length > 0){
     <!-- Formulario de envío de presupuesto -->
-    <div class="form-container"> <!-- Nuevo contenedor con clase form-container -->
+    <div class="form-container"> 
       <form [formGroup]="termsForm" (ngSubmit)="onSubmit()">
-        <!-- Email -->
-        <div class="mb-3">
-          <label for="email" class="form-label">Email *</label>
-          <input type="email" id="email" class="form-control" formControlName="email" required>
-          <div *ngIf="termsForm.get('email')?.touched && termsForm.get('email')?.invalid" class="text-danger">
-            Email es requerido y debe ser válido.
+        <!-- Fila 1: Nombre y Email (escritorio) -->
+        <div class="form-row-desktop d-none d-lg-flex">
+          <div class="form-group">
+            <label for="name" class="form-label">Nombre *</label>
+            <input type="text" id="name" class="form-control" formControlName="name" required>
+            <div *ngIf="termsForm.get('name')?.touched && termsForm.get('name')?.invalid" class="text-danger">
+              <span *ngIf="termsForm.get('name')?.errors?.['required']">El nombre es requerido.</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="email" class="form-label">Email *</label>
+            <input type="email" id="email" class="form-control" formControlName="email" required>
+            <div *ngIf="termsForm.get('email')?.touched && termsForm.get('email')?.invalid" class="text-danger">
+              <span *ngIf="termsForm.get('email')?.errors?.['required']">El email es requerido.</span>
+              <span *ngIf="termsForm.get('email')?.errors?.['email']">El email no tiene un formato válido.</span>
+            </div>
           </div>
         </div>
 
-        <!-- Nombre -->
-        <div class="mb-3">
-          <label for="name" class="form-label">Nombre *</label>
-          <input type="text" id="name" class="form-control" formControlName="name" required>
-          <div *ngIf="termsForm.get('name')?.touched && termsForm.get('name')?.invalid" class="text-danger">
-            El nombre es requerido.
+        <!-- Fila 2: Teléfono y Empresa (escritorio) -->
+        <div class="form-row-desktop d-none d-lg-flex">
+          <div class="form-group">
+            <label for="phone" class="form-label">Teléfono *</label>
+            <input type="tel" id="phone" class="form-control" formControlName="phone" required>
+            <div *ngIf="termsForm.get('phone')?.touched && termsForm.get('phone')?.invalid" class="text-danger">
+              <span *ngIf="termsForm.get('phone')?.errors?.['required']">El teléfono es requerido.</span>
+              <span *ngIf="termsForm.get('phone')?.errors?.['pattern']">El teléfono solo puede contener números y espacios.</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="company" class="form-label">Empresa</label>
+            <input type="text" id="company" class="form-control" formControlName="company">
           </div>
         </div>
 
-        <!-- Teléfono -->
-        <div class="mb-3">
-          <label for="phone" class="form-label">Teléfono de contacto *</label>
-          <input type="tel" id="phone" class="form-control" formControlName="phone" required 
-                 placeholder="Ej: 123 456 789">
-          <div *ngIf="termsForm.get('phone')?.touched && termsForm.get('phone')?.invalid" class="text-danger">
-            <span *ngIf="termsForm.get('phone')?.errors?.['required']">El teléfono es requerido.</span>
-            <span *ngIf="termsForm.get('phone')?.errors?.['pattern']">El teléfono solo puede contener números y espacios.</span>
-          </div>
-        </div>
-
-        <!-- Empresa (opcional) -->
-        <div class="mb-3">
-          <label for="company" class="form-label">Empresa</label>
-          <input type="text" id="company" class="form-control" formControlName="company">
-        </div>
-
-        <!-- Dirección (opcional) -->
-        <div class="mb-3">
+        <!-- Dirección (escritorio) -->
+        <div class="mb-3 d-none d-lg-block">
           <label for="address" class="form-label">Dirección</label>
           <input type="text" id="address" class="form-control" formControlName="address" placeholder="Calle, número, ciudad, código postal">
+        </div>
+
+        <!-- Versión móvil - campos individuales -->
+        <div class="d-lg-none">
+          <!-- Nombre -->
+          <div class="mb-3">
+            <label for="name-mobile" class="form-label">Nombre *</label>
+            <input type="text" id="name-mobile" class="form-control" formControlName="name" required>
+            <div *ngIf="termsForm.get('name')?.touched && termsForm.get('name')?.invalid" class="text-danger">
+              <span *ngIf="termsForm.get('name')?.errors?.['required']">El nombre es requerido.</span>
+            </div>
+          </div>
+
+          <!-- Email -->
+          <div class="mb-3">
+            <label for="email-mobile" class="form-label">Email *</label>
+            <input type="email" id="email-mobile" class="form-control" formControlName="email" required>
+            <div *ngIf="termsForm.get('email')?.touched && termsForm.get('email')?.invalid" class="text-danger">
+              <span *ngIf="termsForm.get('email')?.errors?.['required']">El email es requerido.</span>
+              <span *ngIf="termsForm.get('email')?.errors?.['email']">El email no tiene un formato válido.</span>
+            </div>
+          </div>
+
+          <!-- Teléfono -->
+          <div class="mb-3">
+            <label for="phone-mobile" class="form-label">Teléfono *</label>
+            <input type="tel" id="phone-mobile" class="form-control" formControlName="phone" required>
+            <div *ngIf="termsForm.get('phone')?.touched && termsForm.get('phone')?.invalid" class="text-danger">
+              <span *ngIf="termsForm.get('phone')?.errors?.['required']">El teléfono es requerido.</span>
+              <span *ngIf="termsForm.get('phone')?.errors?.['pattern']">El teléfono solo puede contener números y espacios.</span>
+            </div>
+          </div>
+
+          <!-- Empresa (opcional) -->
+          <div class="mb-3">
+            <label for="company-mobile" class="form-label">Empresa</label>
+            <input type="text" id="company-mobile" class="form-control" formControlName="company">
+          </div>
+
+          <!-- Dirección (opcional) -->
+          <div class="mb-3">
+            <label for="address-mobile" class="form-label">Dirección</label>
+            <input type="text" id="address-mobile" class="form-control" formControlName="address" placeholder="Calle, número, ciudad, código postal">
+          </div>
         </div>
 
         <!-- Logotipo (opcional) -->
         <div class="mb-3">
           <label for="logo" class="form-label">Logotipo</label>
           <input type="file" id="logo" class="form-control" (change)="onFileSelected($event)">
+        </div>
+
+        <!-- Observaciones (opcional) -->
+        <div class="mb-3">
+          <label for="observaciones" class="form-label">Observaciones</label>
+          <textarea 
+            id="observaciones" 
+            class="form-control" 
+            formControlName="observaciones" 
+            rows="4"
+            maxlength="600"
+            placeholder="Añade cualquier observación o detalle adicional sobre tu presupuesto (máximo 600 caracteres)">
+          </textarea>
+          <div class="form-text">
+            <span [class.text-warning]="(termsForm.get('observaciones')?.value?.length || 0) > 500">
+              {{ termsForm.get('observaciones')?.value?.length || 0 }}/600 caracteres
+            </span>
+          </div>
+          <div *ngIf="termsForm.get('observaciones')?.touched && termsForm.get('observaciones')?.invalid" class="text-danger">
+            <span *ngIf="termsForm.get('observaciones')?.errors?.['maxlength']">Las observaciones no pueden superar los 600 caracteres.</span>
+          </div>
         </div>
 
         <!-- Checkbox para ofertas (opcional) -->

@@ -5,6 +5,7 @@ import { RouterModule, Router } from '@angular/router';
 import { Subject, debounceTime, distinctUntilChanged, takeUntil } from 'rxjs';
 import { CategoriesService, FrontCategory } from '../services/categories.service';
 import { ConfiguracionService, ConfiguracionCompleta } from '../services/configuracion.service';
+import { CartServiceService } from '../shared/services/cart-service.service';
 
 @Component({
   selector: 'app-header',
@@ -29,18 +30,23 @@ export class HeaderComponent implements OnInit, OnDestroy {
   isLoadingConfig = false;
   configError = false;
   
+  // Propiedades para el carrito
+  cartItemCount = 0;
+  
   private destroy$ = new Subject<void>();
 
   constructor(
     private router: Router,
     private categoriesService: CategoriesService,
-    private configuracionService: ConfiguracionService
+    private configuracionService: ConfiguracionService,
+    private cartService: CartServiceService
   ) { }
 
   ngOnInit(): void {
     this.loadCategories();
     this.loadHeaderConfiguration();
     this.setupReactiveSearch();
+    this.subscribeToCartChanges();
   }
 
   ngOnDestroy(): void {
@@ -187,6 +193,18 @@ export class HeaderComponent implements OnInit, OnDestroy {
       return this.logoHeader;
     }
     return this.logoHeader;
+  }
+
+  /**
+   * Suscribirse a cambios en el carrito para actualizar el contador
+   */
+  private subscribeToCartChanges(): void {
+    this.cartService.cartItems$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(items => {
+        this.cartItemCount = items.length;
+        console.log('🛒 [HEADER] Contador de carrito actualizado:', this.cartItemCount);
+      });
   }
 
 }

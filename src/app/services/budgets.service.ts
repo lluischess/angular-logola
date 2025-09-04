@@ -28,6 +28,7 @@ export interface CreateBudgetRequest {
   productos: BudgetProduct[];
   logotipoEmpresa?: string;
   aceptaCorreosPublicitarios?: boolean;
+  observaciones?: string;
   notas?: string;
   precioTotal?: number;
   fechaVencimiento?: string;

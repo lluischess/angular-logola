@@ -1101,7 +1101,8 @@ export class PresupuestoDetalleComponent implements OnInit {
       aceptaCorreosPublicitarios: budget.aceptaCorreosPublicitarios || false,
       cantidadTotal: cantidadTotal,
       precioTotal: precioTotal,
-      apuntes: budget.cliente?.detalles || budget.detallesCliente || ''
+      apuntes: budget.cliente?.detalles || budget.detallesCliente || '',
+      observaciones: budget.observaciones || ''
     };
 
     console.log('✅ DEBUG: Presupuesto ENRIQUECIDO convertido:', presupuesto);
@@ -1146,7 +1147,8 @@ export class PresupuestoDetalleComponent implements OnInit {
       aceptaCorreosPublicitarios: budget.aceptaCorreosPublicitarios || false,
       cantidadTotal: cantidadTotal,
       precioTotal: precioTotal,
-      apuntes: budget.cliente?.detalles || budget.detallesCliente || ''
+      apuntes: budget.cliente?.detalles || budget.detallesCliente || '',
+      observaciones: budget.observaciones || ''
     };
 
     console.log('✅ DEBUG: Presupuesto convertido:', presupuesto);

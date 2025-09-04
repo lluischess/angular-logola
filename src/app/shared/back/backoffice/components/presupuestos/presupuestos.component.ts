@@ -24,6 +24,7 @@ export interface Presupuesto {
   cantidadTotal: number;
   precioTotal?: number;
   apuntes?: string;
+  observaciones?: string;
 }
 
 export interface ProductoPresupuesto {

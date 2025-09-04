@@ -98,6 +98,7 @@ export class CartComponent implements OnInit, AfterViewInit, OnDestroy {
       company: [''],  // Campo opcional
       address: [''],  // Campo opcional para dirección
       logo: [null],  // Campo opcional para archivo de logotipo
+      observaciones: ['', [Validators.maxLength(600)]],  // Campo opcional con máximo 600 caracteres
       acceptTerms: [false, Validators.requiredTrue],
       receiveOffers: [false]  // Checkbox opcional para ofertas
     });
@@ -249,6 +250,12 @@ export class CartComponent implements OnInit, AfterViewInit, OnDestroy {
       errors.push('El teléfono solo puede contener números y espacios');
     }
 
+    // Validar observaciones (máximo 600 caracteres)
+    const observacionesControl = this.termsForm.get('observaciones');
+    if (observacionesControl?.value && observacionesControl.hasError('maxlength')) {
+      errors.push('Las observaciones no pueden superar los 600 caracteres');
+    }
+
     // Validar términos y condiciones
     if (!this.termsForm.get('acceptTerms')?.value) {
       errors.push('Debes aceptar los términos y condiciones');
@@ -360,6 +367,7 @@ export class CartComponent implements OnInit, AfterViewInit, OnDestroy {
         productos: await this.budgetsService.enrichCartItemsWithPrices(this.cartItems),
         logotipoEmpresa: logoPath,
         aceptaCorreosPublicitarios: this.termsForm.get('receiveOffers')?.value || false,
+        observaciones: this.termsForm.get('observaciones')?.value?.trim() || '',
         notas: 'Presupuesto creado desde el frontoffice',
         precioTotal: 0 // Se calculará en el backend
       };
@@ -522,6 +530,7 @@ export class CartComponent implements OnInit, AfterViewInit, OnDestroy {
 
     // Este método ya no se usa, pero se mantiene para compatibilidad
     alert('✅ ¡Presupuesto enviado correctamente! (modo legacy)');
+    this.resetForm();
   }
 
   // Resetear formulario (opcional)
@@ -533,6 +542,7 @@ export class CartComponent implements OnInit, AfterViewInit, OnDestroy {
       company: '',
       address: '',
       logo: null,
+      observaciones: '',
       acceptTerms: false,
       receiveOffers: false
     });

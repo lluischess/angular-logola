@@ -27,6 +27,12 @@ button[type="submit"] {
 
 /* Versiones de pantallas grandes (escritorio) */
 @media (min-width: 992px) {
+  /* Carrito ocupa media pantalla en escritorio */
+  .offcanvas.offcanvas-end {
+    width: 50vw !important;
+    max-width: 50vw !important;
+  }
+
   /* Botón de cerrar a la derecha en escritorio */
   .offcanvas-header {
     text-align: right;
@@ -46,6 +52,40 @@ button[type="submit"] {
   /* Ajustar el espacio superior en escritorio */
   .offcanvas-body {
     padding-top: 4.8rem; /* Ajustamos ligeramente el espacio superior */
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+
+  /* Adaptar el contenido para el nuevo ancho */
+  .list-group-item {
+    padding: 1rem;
+  }
+
+  /* Alinear cantidades a la derecha en escritorio */
+  .list-group-item .quantity-selector {
+    margin-left: auto;
+    margin-right: 1rem;
+  }
+
+  /* Mejorar el espaciado del formulario en escritorio */
+  .form-container {
+    padding: 2rem;
+    margin-top: 2rem;
+  }
+
+  /* Organizar campos del formulario en dos columnas cuando sea posible */
+  .form-row-desktop {
+    display: flex;
+    gap: 1rem;
+  }
+
+  .form-row-desktop .form-group {
+    flex: 1;
+  }
+
+  /* Hacer el textarea más grande en escritorio */
+  .form-container textarea {
+    min-height: 120px;
   }
 }
 

@@ -180,6 +180,15 @@
                   </span>
                 </span>
               </div>
+
+              <div class="info-row" *ngIf="presupuesto.observaciones">
+                <span class="info-label">Observaciones del Cliente:</span>
+                <span class="info-value">
+                  <div class="observaciones-content">
+                    {{ presupuesto.observaciones }}
+                  </div>
+                </span>
+              </div>
             </div>
 
             <!-- Acciones de estado -->

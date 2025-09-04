@@ -29,9 +29,13 @@
               <svg width="24" height="24"><use xlink:href="#wishlist"></use></svg>
             </a>
           </li> -->
-          <li>
+          <li class="position-relative">
             <a href="#" class="p-2" data-bs-toggle="offcanvas" data-bs-target="#offcanvasCart" aria-controls="offcanvasCart">
               <svg width="24" height="24"><use xlink:href="#shopping-bag"></use></svg>
+              <span *ngIf="cartItemCount > 0" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                {{ cartItemCount }}
+                <span class="visually-hidden">productos en carrito</span>
+              </span>
             </a>
           </li>
         </ul>
@@ -125,9 +129,13 @@
             <svg width="24" height="24"><use xlink:href="#wishlist"></use></svg>
           </a>
         </li> -->
-        <li>
+        <li class="position-relative">
           <a href="#" class="p-2 mx-1" data-bs-toggle="offcanvas" data-bs-target="#offcanvasCart" aria-controls="offcanvasCart">
             <svg width="24" height="24"><use xlink:href="#shopping-bag"></use></svg>
+            <span *ngIf="cartItemCount > 0" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+              {{ cartItemCount }}
+              <span class="visually-hidden">productos en carrito</span>
+            </span>
           </a>
         </li>
       </ul>
