@@ -39,21 +39,21 @@ export interface ConfiguracionCompleta {
 })
 export class ConfiguracionService {
   private readonly apiUrl = 'http://localhost:3000/configuration';
-  
+
   // BehaviorSubject para mantener el estado de la configuración
   private configuracionSubject = new BehaviorSubject<ConfiguracionCompleta | null>(null);
   public configuracion$ = this.configuracionSubject.asObservable();
 
   constructor(private http: HttpClient) {
-    console.log('🔧 [CONFIGURACION-SERVICE] Servicio inicializado');
+    //console.log('🔧 [CONFIGURACION-SERVICE] Servicio inicializado');
   }
 
   /**
    * Obtener toda la configuración desde el backend
    */
   getConfiguracion(): Observable<ConfiguracionCompleta> {
-    console.log('🔧 [CONFIGURACION-SERVICE] === OBTENIENDO CONFIGURACIÓN COMPLETA ===');
-    
+    //console.log('🔧 [CONFIGURACION-SERVICE] === OBTENIENDO CONFIGURACIÓN COMPLETA ===');
+
     // Hacer llamadas paralelas a todos los endpoints específicos con manejo de errores individual
     const footer$ = this.http.get<any>(`${this.apiUrl}/footer`).pipe(
       tap(response => console.log('🔧 [CONFIGURACION-SERVICE] Footer endpoint response:', response)),
@@ -62,7 +62,7 @@ export class ConfiguracionService {
         return throwError(() => error);
       })
     );
-    
+
     const general$ = this.http.get<any>(`${this.apiUrl}/general`).pipe(
       tap(response => console.log('🔧 [CONFIGURACION-SERVICE] General endpoint response:', response)),
       catchError(error => {
@@ -70,7 +70,7 @@ export class ConfiguracionService {
         return throwError(() => error);
       })
     );
-    
+
     const seo$ = this.http.get<any>(`${this.apiUrl}/seo`).pipe(
       tap(response => console.log('🔧 [CONFIGURACION-SERVICE] SEO endpoint response:', response)),
       catchError(error => {
@@ -78,7 +78,7 @@ export class ConfiguracionService {
         return throwError(() => error);
       })
     );
-    
+
     const banners$ = this.http.get<any>(`${this.apiUrl}/banners`).pipe(
       tap(response => console.log('🔧 [CONFIGURACION-SERVICE] Banners endpoint response:', response)),
       catchError(error => {
@@ -86,20 +86,20 @@ export class ConfiguracionService {
         return throwError(() => error);
       })
     );
-    
+
     return combineLatest([footer$, general$, seo$, banners$]).pipe(
       map(([footerResponse, generalResponse, seoResponse, bannersResponse]) => {
-        console.log('🔧 [CONFIGURACION-SERVICE] === RESPUESTAS DETALLADAS ===');
-        console.log('🔧 [CONFIGURACION-SERVICE] Footer response:', footerResponse);
-        console.log('🔧 [CONFIGURACION-SERVICE] General response:', generalResponse);
-        console.log('🔧 [CONFIGURACION-SERVICE] SEO response:', seoResponse);
-        console.log('🔧 [CONFIGURACION-SERVICE] Banners response:', bannersResponse);
-        
-        console.log('🔧 [CONFIGURACION-SERVICE] === ESTRUCTURA DETALLADA DE DATOS ===');
-        console.log('🔧 [CONFIGURACION-SERVICE] Footer.datos:', footerResponse?.datos);
-        console.log('🔧 [CONFIGURACION-SERVICE] General.datos:', generalResponse?.datos);
-        console.log('🔧 [CONFIGURACION-SERVICE] SEO.datos:', seoResponse?.datos);
-        
+        //console.log('🔧 [CONFIGURACION-SERVICE] === RESPUESTAS DETALLADAS ===');
+        //console.log('🔧 [CONFIGURACION-SERVICE] Footer response:', footerResponse);
+        //console.log('🔧 [CONFIGURACION-SERVICE] General response:', generalResponse);
+        //console.log('🔧 [CONFIGURACION-SERVICE] SEO response:', seoResponse);
+        //console.log('🔧 [CONFIGURACION-SERVICE] Banners response:', bannersResponse);
+
+        //console.log('🔧 [CONFIGURACION-SERVICE] === ESTRUCTURA DETALLADA DE DATOS ===');
+        //console.log('🔧 [CONFIGURACION-SERVICE] Footer.datos:', footerResponse?.datos);
+        //console.log('🔧 [CONFIGURACION-SERVICE] General.datos:', generalResponse?.datos);
+        //console.log('🔧 [CONFIGURACION-SERVICE] SEO.datos:', seoResponse?.datos);
+
         // Mapear las respuestas al formato esperado (accediendo a .datos)
         const configuracion: ConfiguracionCompleta = {
           general: {
@@ -123,12 +123,12 @@ export class ConfiguracionService {
           },
           banners: Array.isArray(bannersResponse) ? bannersResponse : []
         };
-        
-        console.log('🔧 [CONFIGURACION-SERVICE] === CONFIGURACIÓN MAPEADA ===');
-        console.log('🔧 [CONFIGURACION-SERVICE] General:', configuracion.general);
-        console.log('🔧 [CONFIGURACION-SERVICE] Footer:', configuracion.footer);
-        console.log('🔧 [CONFIGURACION-SERVICE] SEO:', configuracion.seo);
-        
+
+        //console.log('🔧 [CONFIGURACION-SERVICE] === CONFIGURACIÓN MAPEADA ===');
+        //console.log('🔧 [CONFIGURACION-SERVICE] General:', configuracion.general);
+        //console.log('🔧 [CONFIGURACION-SERVICE] Footer:', configuracion.footer);
+        //console.log('🔧 [CONFIGURACION-SERVICE] SEO:', configuracion.seo);
+
         return configuracion;
       }),
       tap((configuracion: ConfiguracionCompleta) => {
@@ -138,7 +138,7 @@ export class ConfiguracionService {
       catchError(error => {
         console.error('❌ [CONFIGURACION-SERVICE] === ERROR OBTENIENDO CONFIGURACIÓN ===');
         console.error('❌ [CONFIGURACION-SERVICE] Error:', error);
-        
+
         // Devolver configuración por defecto en caso de error
         const defaultConfig: ConfiguracionCompleta = {
           general: {
@@ -162,7 +162,7 @@ export class ConfiguracionService {
           },
           banners: []
         };
-        
+
         this.configuracionSubject.next(defaultConfig);
         return throwError(() => error);
       })
@@ -201,20 +201,20 @@ export class ConfiguracionService {
    */
   getAbsoluteImageUrl(relativePath: string): string {
     if (!relativePath) return '';
-    
+
     if (relativePath.startsWith('http://') || relativePath.startsWith('https://')) {
       return relativePath;
     }
-    
+
     if (relativePath.startsWith('assets/')) {
       return relativePath;
     }
-    
+
     // Si es una ruta del backend, asegurar que tenga el protocolo
     if (relativePath.startsWith('/uploads/') || relativePath.includes('localhost:3000')) {
       return relativePath.startsWith('http') ? relativePath : `http://localhost:3000${relativePath}`;
     }
-    
+
     return relativePath;
   }
 }

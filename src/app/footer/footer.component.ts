@@ -19,11 +19,11 @@ export class FooterComponent implements OnInit, OnDestroy {
   public descripcion: string = 'En Logolate te ofrecemos chocolates personalizados de alta calidad...';
   public instagram: string = 'https://www.instagram.com/logolate_spain/';
   public logoFooter: string = 'assets/images/logo.png';
-  
+
   // Estado de carga
   public isLoadingConfig: boolean = false;
   public configError: boolean = false;
-  
+
   private destroy$ = new Subject<void>();
 
   constructor(private configuracionService: ConfiguracionService) {}
@@ -41,7 +41,7 @@ export class FooterComponent implements OnInit, OnDestroy {
    * Cargar configuración del footer desde la BBDD
    */
   private loadFooterConfiguration(): void {
-    console.log('🦶 [FOOTER] === CARGANDO CONFIGURACIÓN ===');
+    //console.log('🦶 [FOOTER] === CARGANDO CONFIGURACIÓN ===');
     this.isLoadingConfig = true;
     this.configError = false;
 
@@ -49,22 +49,22 @@ export class FooterComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (config: ConfiguracionCompleta) => {
-          console.log('🦶 [FOOTER] === CONFIGURACIÓN RECIBIDA DETALLADA ===');
-          console.log('🦶 [FOOTER] Configuración completa:', config);
-          console.log('🦶 [FOOTER] config.footer:', config.footer);
-          console.log('🦶 [FOOTER] config.general:', config.general);
-          
+          //console.log('🦶 [FOOTER] === CONFIGURACIÓN RECIBIDA DETALLADA ===');
+          //console.log('🦶 [FOOTER] Configuración completa:', config);
+          //console.log('🦶 [FOOTER] config.footer:', config.footer);
+          //console.log('🦶 [FOOTER] config.general:', config.general);
+
           if (config) {
             // Mapear datos de contacto del footer con logging detallado
             if (config.footer) {
-              console.log('🦶 [FOOTER] === MAPEANDO DATOS DEL FOOTER ===');
-              console.log('  - config.footer.telefono:', config.footer.telefono);
-              console.log('  - config.footer.email:', config.footer.email);
-              console.log('  - config.footer.direccion:', config.footer.direccion);
-              console.log('  - config.footer.horario:', config.footer.horario);
-              console.log('  - config.footer.descripcion:', config.footer.descripcion);
-              console.log('  - config.footer.instagram:', config.footer.instagram);
-              
+              //console.log('🦶 [FOOTER] === MAPEANDO DATOS DEL FOOTER ===');
+              //console.log('  - config.footer.telefono:', config.footer.telefono);
+              //console.log('  - config.footer.email:', config.footer.email);
+              //console.log('  - config.footer.direccion:', config.footer.direccion);
+              //console.log('  - config.footer.horario:', config.footer.horario);
+              //console.log('  - config.footer.descripcion:', config.footer.descripcion);
+              //console.log('  - config.footer.instagram:', config.footer.instagram);
+
               this.telefono = config.footer.telefono || this.telefono;
               this.email = config.footer.email || this.email;
               this.direccion = config.footer.direccion || this.direccion;
@@ -74,24 +74,24 @@ export class FooterComponent implements OnInit, OnDestroy {
             } else {
               console.warn('🦶 [FOOTER] config.footer es undefined o null');
             }
-            
+
             // Mapear logo del footer desde configuración general
             if (config.general && config.general.logoFooter) {
-              console.log('🦶 [FOOTER] Logo footer encontrado:', config.general.logoFooter);
+              //console.log('🦶 [FOOTER] Logo footer encontrado:', config.general.logoFooter);
               this.logoFooter = config.general.logoFooter;
             } else {
               console.warn('🦶 [FOOTER] Logo footer no encontrado en config.general.logoFooter');
             }
-            
-            console.log('🦶 [FOOTER] Datos aplicados:');
-            console.log('  - Teléfono:', this.telefono);
-            console.log('  - Email:', this.email);
-            console.log('  - Dirección:', this.direccion);
-            console.log('  - Horario:', this.horario);
-            console.log('  - Instagram:', this.instagram);
-            console.log('  - Logo Footer:', this.logoFooter);
+
+            //console.log('🦶 [FOOTER] Datos aplicados:');
+            //console.log('  - Teléfono:', this.telefono);
+            //console.log('  - Email:', this.email);
+            //console.log('  - Dirección:', this.direccion);
+            //console.log('  - Horario:', this.horario);
+            //console.log('  - Instagram:', this.instagram);
+            //console.log('  - Logo Footer:', this.logoFooter);
           }
-          
+
           this.isLoadingConfig = false;
         },
         error: (error: any) => {

@@ -43,7 +43,7 @@ export class ProductosComponent implements OnInit {
   stats: ProductStats | null = null;
   isLoading = true;
   error: string | null = null;
-  
+
   // Filtros
   filtroId: string = '';
   filtroReferencia: string = '';
@@ -55,7 +55,7 @@ export class ProductosComponent implements OnInit {
   // Ordenamiento - por defecto por categoría
   sortColumn: string = 'categoria';
   sortDirection: 'asc' | 'desc' = 'asc';
-  
+
   // Arrow buttons for reordering
   reorderingProduct: Producto | null = null;
   showReorderFeedback: boolean = false;
@@ -75,18 +75,18 @@ export class ProductosComponent implements OnInit {
    * Cargar lista de productos desde el backend
    */
   loadProducts(): void {
-    console.log('🔄 Iniciando carga de productos...');
+    //console.log('🔄 Iniciando carga de productos...');
     this.isLoading = true;
     this.error = null;
-    
+
     this.productsService.getProducts({
       sortBy: 'categoria',
       sortOrder: 'asc',
       limit: 100
     }).subscribe({
       next: (response) => {
-        console.log('✅ Respuesta del backend para productos:', response);
-        
+        //console.log('✅ Respuesta del backend para productos:', response);
+
         // Adaptar la respuesta del backend
         let productos: any[] = [];
         if (response && typeof response === 'object') {
@@ -98,7 +98,7 @@ export class ProductosComponent implements OnInit {
             productos = response as any[];
           }
         }
-        
+
         // Convertir productos del backend al formato del componente
         this.productos = productos.map(product => ({
           _id: product._id,
@@ -115,10 +115,10 @@ export class ProductosComponent implements OnInit {
           descripcion: product.descripcion,
           precio: product.precio
         }));
-        
-        console.log('📈 Cantidad de productos cargados:', this.productos.length);
-        console.log('🎯 Productos asignados al componente:', this.productos);
-        
+
+        //console.log('📈 Cantidad de productos cargados:', this.productos.length);
+        //console.log('🎯 Productos asignados al componente:', this.productos);
+
         // Aplicar ordenamiento y filtros
         this.sortData();
         this.applyFilters();
@@ -132,7 +132,7 @@ export class ProductosComponent implements OnInit {
           message: error.message,
           url: error.url
         });
-        
+
         this.error = 'Error al cargar los productos. Por favor, intenta de nuevo.';
         this.productos = [];
         this.filteredProductos = [];
@@ -145,35 +145,35 @@ export class ProductosComponent implements OnInit {
    * Cargar estadísticas de productos
    */
   private loadStats(): void {
-    console.log('📊 Iniciando carga de estadísticas de productos...');
-    
+    //console.log('📊 Iniciando carga de estadísticas de productos...');
+
     this.productsService.getStats().subscribe({
       next: (stats) => {
-        console.log('✅ Respuesta del backend para estadísticas de productos:', stats);
+        //console.log('✅ Respuesta del backend para estadísticas de productos:', stats);
         this.stats = stats;
       },
       error: (error) => {
         console.error('❌ Error cargando estadísticas de productos:', error);
-        
+
         // Calcular estadísticas desde los productos cargados como fallback
         if (this.productos && this.productos.length > 0) {
           const total = this.productos.length;
           const publicados = this.productos.filter(p => p.publicado).length;
           const noPublicados = total - publicados;
-          
+
           // Contar por categoría
           const porCategoria: { [categoria: string]: number } = {};
           this.productos.forEach(p => {
             porCategoria[p.categoria] = (porCategoria[p.categoria] || 0) + 1;
           });
-          
+
           this.stats = {
             total,
             publicados,
             noPublicados,
             porCategoria
           };
-          console.log('🔄 Estadísticas calculadas como fallback:', this.stats);
+          //console.log('🔄 Estadísticas calculadas como fallback:', this.stats);
         }
       }
     });
@@ -186,7 +186,7 @@ export class ProductosComponent implements OnInit {
         (this.filtroReferencia === '' || producto.referencia.toLowerCase().includes(this.filtroReferencia.toLowerCase())) &&
         (this.filtroCategoria === '' || producto.categoria.toLowerCase().includes(this.filtroCategoria.toLowerCase())) &&
         (this.filtroCantidadMinima === '' || producto.cantidadMinima.toString().includes(this.filtroCantidadMinima)) &&
-        (this.filtroPublicado === '' || 
+        (this.filtroPublicado === '' ||
           (this.filtroPublicado === 'si' && producto.publicado) ||
           (this.filtroPublicado === 'no' && !producto.publicado) ||
           this.filtroPublicado === 'todos') &&
@@ -326,7 +326,7 @@ export class ProductosComponent implements OnInit {
       if (productId) {
         this.productsService.deleteProduct(productId).subscribe({
           next: () => {
-            console.log('✅ Producto eliminado correctamente');
+            //console.log('✅ Producto eliminado correctamente');
             this.loadProducts(); // Recargar la lista
           },
           error: (error) => {
@@ -342,10 +342,10 @@ export class ProductosComponent implements OnInit {
     const productId = producto._id || producto.id?.toString();
     if (productId) {
       const updatedProduct = { ...producto, publicado: !producto.publicado };
-      
+
       this.productsService.updateProduct(productId, updatedProduct).subscribe({
         next: () => {
-          console.log('✅ Estado de publicación actualizado');
+          //console.log('✅ Estado de publicación actualizado');
           producto.publicado = !producto.publicado;
           this.applyFilters();
           this.loadStats(); // Actualizar estadísticas
@@ -369,7 +369,7 @@ export class ProductosComponent implements OnInit {
     if (productId) {
       this.productsService.reorderProduct(productId, 'up').subscribe({
         next: () => {
-          console.log('✅ Producto movido hacia arriba');
+          //console.log('✅ Producto movido hacia arriba');
           this.loadProducts(); // Recargar para ver el nuevo orden
         },
         error: (error) => {
@@ -385,7 +385,7 @@ export class ProductosComponent implements OnInit {
     if (productId) {
       this.productsService.reorderProduct(productId, 'down').subscribe({
         next: () => {
-          console.log('✅ Producto movido hacia abajo');
+          //console.log('✅ Producto movido hacia abajo');
           this.loadProducts(); // Recargar para ver el nuevo orden
         },
         error: (error) => {

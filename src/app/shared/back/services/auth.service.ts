@@ -44,11 +44,11 @@ export class AuthService {
           localStorage.setItem('authToken', response.token);
           localStorage.setItem('currentUser', JSON.stringify(response.user));
           localStorage.setItem('username', response.user.name);
-          
+
           // Actualizar estado de autenticación
           this.isAuthenticatedSubject.next(true);
-          
-          console.log('✅ Login exitoso:', response.user.name);
+
+          //console.log('✅ Login exitoso:', response.user.name);
         }),
         catchError(this.handleError)
       );
@@ -59,7 +59,7 @@ export class AuthService {
    */
   checkToken(): Observable<TokenValidationResponse> {
     const token = localStorage.getItem('authToken');
-    
+
     if (!token) {
       return throwError(() => new Error('No token found'));
     }
@@ -90,7 +90,7 @@ export class AuthService {
   logout(): void {
     this.clearSession();
     this.router.navigate(['/logoadmin/login']);
-    console.log('🚪 Logout realizado');
+    //console.log('🚪 Logout realizado');
   }
 
   /**
@@ -148,7 +148,7 @@ export class AuthService {
    */
   private handleError = (error: HttpErrorResponse): Observable<never> => {
     let errorMessage = 'Error de autenticación';
-    
+
     if (error.error instanceof ErrorEvent) {
       // Error del cliente
       errorMessage = `Error: ${error.error.message}`;
@@ -168,7 +168,7 @@ export class AuthService {
           errorMessage = `Error ${error.status}: ${error.error?.message || 'Error desconocido'}`;
       }
     }
-    
+
     console.error('❌ Error de autenticación:', errorMessage);
     return throwError(() => new Error(errorMessage));
   }

@@ -24,7 +24,7 @@ export class BackofficeSidebarComponent implements OnInit {
   // Propiedades exactas del dashboard
   sidebarCollapsed = false;
   currentUser: any = null;
-  
+
   menuItems: MenuItem[] = [
     {
       icon: '📊',
@@ -89,20 +89,20 @@ export class BackofficeSidebarComponent implements OnInit {
   toggleSidebar(): void {
     this.sidebarCollapsed = !this.sidebarCollapsed;
   }
-  
+
   navigateTo(route: string): void {
     // Actualizar estado activo del menú
     this.menuItems.forEach(item => {
       item.active = item.route === route;
     });
-    
+
     // Auto-ocultar menú en móvil al seleccionar nav-item
     const isMobile = window.innerWidth <= 768;
     if (isMobile && !this.sidebarCollapsed) {
       this.sidebarCollapsed = true;
-      console.log('Auto-ocultando menú en móvil al seleccionar nav-item - ancho:', window.innerWidth);
+      //console.log('Auto-ocultando menú en móvil al seleccionar nav-item - ancho:', window.innerWidth);
     }
-    
+
     // Navegar a la ruta
     this.router.navigate([route]);
   }
@@ -111,7 +111,7 @@ export class BackofficeSidebarComponent implements OnInit {
     // Limpiar localStorage
     localStorage.removeItem('backoffice_token');
     localStorage.removeItem('backoffice_user');
-    
+
     // Redirigir al login
     this.router.navigate(['/logoadmin']);
   }

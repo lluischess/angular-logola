@@ -25,48 +25,48 @@ export class SeoService {
    * Actualizar todos los metadatos SEO de la página
    */
   updateSeoMetadata(metadata: SeoMetadata): void {
-    console.log(' [SEO] === INICIANDO ACTUALIZACIÓN DE METADATOS ===');
-    console.log(' [SEO] Metadatos recibidos:', metadata);
+    //console.log(' [SEO] === INICIANDO ACTUALIZACIÓN DE METADATOS ===');
+    //console.log(' [SEO] Metadatos recibidos:', metadata);
 
     // Título de la página
     if (metadata.title) {
-      console.log(' [SEO] Actualizando título:', metadata.title);
+      //console.log(' [SEO] Actualizando título:', metadata.title);
       this.titleService.setTitle(metadata.title);
-      console.log(' [SEO] Título actual en DOM:', document.title);
+      //console.log(' [SEO] Título actual en DOM:', document.title);
     }
 
     // Meta descripción
     if (metadata.description) {
-      console.log(' [SEO] Actualizando descripción:', metadata.description);
+      //console.log(' [SEO] Actualizando descripción:', metadata.description);
       this.metaService.updateTag({ name: 'description', content: metadata.description });
       const descTag = document.querySelector('meta[name="description"]');
-      console.log(' [SEO] Descripción actual en DOM:', descTag?.getAttribute('content'));
+      //console.log(' [SEO] Descripción actual en DOM:', descTag?.getAttribute('content'));
     }
 
     // Meta keywords
     if (metadata.keywords) {
-      console.log(' [SEO] Actualizando keywords:', metadata.keywords);
+      //console.log(' [SEO] Actualizando keywords:', metadata.keywords);
       this.metaService.updateTag({ name: 'keywords', content: metadata.keywords });
       const keyTag = document.querySelector('meta[name="keywords"]');
-      console.log(' [SEO] Keywords actuales en DOM:', keyTag?.getAttribute('content'));
+      //console.log(' [SEO] Keywords actuales en DOM:', keyTag?.getAttribute('content'));
     }
 
     // Open Graph título
     if (metadata.ogTitle) {
-      console.log(' [SEO] Actualizando OG title:', metadata.ogTitle);
+      //console.log(' [SEO] Actualizando OG title:', metadata.ogTitle);
       this.metaService.updateTag({ property: 'og:title', content: metadata.ogTitle });
     }
 
     // Open Graph descripción
     if (metadata.ogDescription) {
-      console.log(' [SEO] Actualizando OG description:', metadata.ogDescription);
+      //console.log(' [SEO] Actualizando OG description:', metadata.ogDescription);
       this.metaService.updateTag({ property: 'og:description', content: metadata.ogDescription });
     }
 
     // Open Graph imagen
     if (metadata.ogImage) {
       const imageUrl = this.getAbsoluteImageUrl(metadata.ogImage);
-      console.log(' [SEO] Actualizando OG image:', imageUrl);
+      //console.log(' [SEO] Actualizando OG image:', imageUrl);
       this.metaService.updateTag({ property: 'og:image', content: imageUrl });
     }
 
@@ -79,7 +79,7 @@ export class SeoService {
     this.metaService.updateTag({ property: 'og:type', content: 'website' });
     this.metaService.updateTag({ property: 'og:site_name', content: 'Logolate' });
 
-    console.log('🔍 [SEO] Metadatos actualizados:', metadata);
+    //console.log('🔍 [SEO] Metadatos actualizados:', metadata);
   }
 
   /**
@@ -92,8 +92,8 @@ export class SeoService {
     this.metaService.removeTag('property="og:title"');
     this.metaService.removeTag('property="og:description"');
     this.metaService.removeTag('property="og:image"');
-    
-    console.log('🧹 [SEO] Metadatos limpiados');
+
+    //console.log('🧹 [SEO] Metadatos limpiados');
   }
 
   /**
@@ -102,14 +102,14 @@ export class SeoService {
   private updateCanonicalUrl(url: string): void {
     // Buscar link canónico existente
     let canonicalLink = document.querySelector('link[rel="canonical"]') as HTMLLinkElement;
-    
+
     if (!canonicalLink) {
       // Crear link canónico si no existe
       canonicalLink = document.createElement('link');
       canonicalLink.setAttribute('rel', 'canonical');
       document.head.appendChild(canonicalLink);
     }
-    
+
     canonicalLink.setAttribute('href', url);
   }
 
@@ -118,22 +118,22 @@ export class SeoService {
    */
   private getAbsoluteImageUrl(imageUrl: string): string {
     if (!imageUrl) return '';
-    
+
     // Si ya es una URL completa, usarla tal como está
     if (imageUrl.startsWith('http')) {
       return imageUrl;
     }
-    
+
     // Si empieza con /uploads, construir URL completa del backend
     if (imageUrl.startsWith('/uploads')) {
       return `http://localhost:3000${imageUrl}`;
     }
-    
+
     // Si es una ruta relativa, asumir que está en assets
     if (imageUrl.startsWith('assets/')) {
       return `http://localhost:4200/${imageUrl}`;
     }
-    
+
     // Fallback: construir URL del backend
     return `http://localhost:3000/uploads/images/${imageUrl}`;
   }

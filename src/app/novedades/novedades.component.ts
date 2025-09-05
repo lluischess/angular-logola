@@ -21,14 +21,14 @@ export class NovedadesComponent implements OnInit {
   specialCategory: FrontCategory | null = null;
   categoryTitle: string = 'Novedades';
   categorySlug: string = '';
-  
+
   // Propiedades para los productos
   productos: FrontProduct[] = [];
   isLoadingCategory: boolean = false;
   isLoadingProducts: boolean = false;
   hasError: boolean = false;
   errorMessage: string = '';
-  
+
   constructor(
     private cartService: CartServiceService,
     private categoriesService: CategoriesService,
@@ -37,24 +37,24 @@ export class NovedadesComponent implements OnInit {
   ngOnInit(): void {
     this.loadSpecialCategory();
   }
-  
+
   /**
    * Cargar la categoría marcada como "Configuración Especial"
    */
   private loadSpecialCategory(): void {
     this.isLoadingCategory = true;
     this.hasError = false;
-    
+
     this.categoriesService.getSpecialCategory().subscribe({
       next: (category: FrontCategory | null) => {
         this.isLoadingCategory = false;
-        
+
         if (category) {
           this.specialCategory = category;
           this.categoryTitle = category.metaTitulo || category.nombre;
           // El backend devuelve 'urlSlug' no 'slug'
           this.categorySlug = category.urlSlug || category.slug;
-          
+
           // Cargar productos de la categoría especial
           this.loadSpecialProducts(this.categorySlug);
         } else {
@@ -68,23 +68,23 @@ export class NovedadesComponent implements OnInit {
       }
     });
   }
-  
+
   /**
    * Cargar hasta 6 productos de la categoría especial
    */
   private loadSpecialProducts(categorySlug: string): void {
     this.isLoadingProducts = true;
-    
+
     this.productsService.getProductsByCategory(categorySlug).subscribe({
       next: (products: FrontProduct[]) => {
         this.isLoadingProducts = false;
-        
+
         if (products && products.length > 0) {
           // Limitar a máximo 6 productos y ordenar por ordenCategoria
           const sortedProducts = products
             .sort((a, b) => (a.ordenCategoria || 0) - (b.ordenCategoria || 0))
             .slice(0, 6);
-          
+
           this.productos = sortedProducts;
         } else {
           this.productos = [];
@@ -97,7 +97,7 @@ export class NovedadesComponent implements OnInit {
       }
     });
   }
-  
+
   /**
    * Mostrar error
    */
@@ -106,7 +106,7 @@ export class NovedadesComponent implements OnInit {
     this.errorMessage = message;
     this.productos = [];
   }
-  
+
   /**
    * Obtener URL absoluta para imagen de producto
    */
@@ -116,7 +116,7 @@ export class NovedadesComponent implements OnInit {
     }
     return this.productsService.getPlaceholderImage();
   }
-  
+
   /**
    * Manejar error de carga de imagen
    */
@@ -124,15 +124,15 @@ export class NovedadesComponent implements OnInit {
     if (event.target) {
       // Evitar bucle infinito: si ya es el placeholder, no hacer nada más
       if (event.target.src.includes('placeholder-product.jpg') || event.target.src.includes('placeholder.jpg')) {
-        console.log('⚠️ [NOVEDADES] Error cargando placeholder, ocultando imagen');
+        //console.log('⚠️ [NOVEDADES] Error cargando placeholder, ocultando imagen');
         event.target.style.display = 'none';
         return;
       }
-      
+
       event.target.src = this.productsService.getPlaceholderImage();
     }
   }
-  
+
   /**
    * TrackBy function para optimizar el renderizado de la lista
    */
@@ -142,8 +142,8 @@ export class NovedadesComponent implements OnInit {
 
   addToCart(producto: any) {
     this.cartService.addToCart(producto);
-    console.log(`${producto.nombre} añadido al carrito`);
-    
+    //console.log(`${producto.nombre} añadido al carrito`);
+
     // Abrir el offcanvas del carrito automáticamente
     const offcanvasElement = document.getElementById('offcanvasCart');
     if (offcanvasElement) {
@@ -152,7 +152,7 @@ export class NovedadesComponent implements OnInit {
       if (!offcanvas) {
         offcanvas = new bootstrap.Offcanvas(offcanvasElement);
       }
-      
+
       // Añadir event listener para limpiar el backdrop cuando se cierre
       offcanvasElement.addEventListener('hidden.bs.offcanvas', () => {
         // Limpiar cualquier backdrop que pueda quedar
@@ -165,7 +165,7 @@ export class NovedadesComponent implements OnInit {
         document.body.style.overflow = '';
         document.body.style.paddingRight = '';
       }, { once: true });
-      
+
       offcanvas.show();
     }
   }

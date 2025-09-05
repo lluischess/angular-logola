@@ -124,7 +124,7 @@ export class CategoriaFormComponent implements OnInit {
       const categoriaData = this.categoriaForm.value;
 
       // Validaciones antes de enviar
-      console.log('🔍 Iniciando validaciones...');
+      //console.log('🔍 Iniciando validaciones...');
 
       // 1. Validar nombre único
       const nombreUnico = await this.validateUniqueName(
@@ -151,7 +151,7 @@ export class CategoriaFormComponent implements OnInit {
         }
       }
 
-      console.log('✅ Todas las validaciones pasaron correctamente');
+      //console.log('✅ Todas las validaciones pasaron correctamente');
 
       // Auto-generar slug si no existe
       if (!categoriaData.urlSlug && categoriaData.nombre) {
@@ -162,7 +162,7 @@ export class CategoriaFormComponent implements OnInit {
         // Actualizar categoría existente
         this.categoriesService.updateCategory(this.categoriaId, categoriaData).subscribe({
           next: (updatedCategory) => {
-            console.log('Categoría actualizada correctamente:', updatedCategory);
+            //console.log('Categoría actualizada correctamente:', updatedCategory);
             this.router.navigate(['/logoadmin/categorias']);
           },
           error: (error) => {
@@ -173,17 +173,17 @@ export class CategoriaFormComponent implements OnInit {
         });
       } else {
         // Crear nueva categoría
-        console.log('📤 Enviando datos de categoría al backend:', categoriaData);
-        console.log('🔍 Validez del formulario:', this.categoriaForm.valid);
-        console.log('🔍 Errores del formulario:', this.categoriaForm.errors);
+        //console.log('📤 Enviando datos de categoría al backend:', categoriaData);
+        //console.log('🔍 Validez del formulario:', this.categoriaForm.valid);
+        //console.log('🔍 Errores del formulario:', this.categoriaForm.errors);
 
         // Verificar cada campo individualmente
         Object.keys(this.categoriaForm.controls).forEach(key => {
           const control = this.categoriaForm.get(key);
           if (control && control.errors) {
-            console.log(`❌ Campo ${key} tiene errores:`, control.errors);
+            //console.log(`❌ Campo ${key} tiene errores:`, control.errors);
           } else {
-            console.log(`✅ Campo ${key} válido:`, control?.value);
+            //console.log(`✅ Campo ${key} válido:`, control?.value);
           }
         });
 
@@ -207,11 +207,11 @@ export class CategoriaFormComponent implements OnInit {
           }
         });
 
-        console.log('🧹 Datos limpios a enviar:', cleanData);
+        //console.log('🧹 Datos limpios a enviar:', cleanData);
 
         this.categoriesService.createCategory(cleanData).subscribe({
           next: (newCategory) => {
-            console.log('✅ Categoría creada correctamente:', newCategory);
+            //console.log('✅ Categoría creada correctamente:', newCategory);
             this.router.navigate(['/logoadmin/categorias']);
           },
           error: (error) => {
@@ -229,7 +229,7 @@ export class CategoriaFormComponent implements OnInit {
                 errorMessage = `Ya existe una categoría con el orden ${ordenConflicto}. El sistema calculará automáticamente el próximo orden disponible.`;
 
                 // Recalcular el próximo orden disponible
-                console.log('🔄 Recalculando orden debido a conflicto...');
+                //console.log('🔄 Recalculando orden debido a conflicto...');
                 setTimeout(() => {
                   this.loadNextAvailableOrder();
                   this.error = null; // Limpiar el error después de recalcular
@@ -284,7 +284,7 @@ export class CategoriaFormComponent implements OnInit {
    */
   private validateUniqueName(nombre: string, excludeId?: string): Promise<boolean> {
     return new Promise((resolve) => {
-      console.log('🔍 Validando nombre único:', nombre);
+      //console.log('🔍 Validando nombre único:', nombre);
 
       this.categoriesService.getCategories({
         search: nombre,
@@ -306,7 +306,7 @@ export class CategoriaFormComponent implements OnInit {
             (!excludeId || cat._id !== excludeId)
           );
 
-          console.log('🔍 Existe nombre duplicado:', existeNombre);
+          //console.log('🔍 Existe nombre duplicado:', existeNombre);
           resolve(!existeNombre); // Retorna true si es único
         },
         error: (error) => {
@@ -322,7 +322,7 @@ export class CategoriaFormComponent implements OnInit {
    */
   private validateUniqueSpecialConfig(excludeId?: string): Promise<boolean> {
     return new Promise((resolve) => {
-      console.log('🎆 Validando configuración especial única...');
+      //console.log('🎆 Validando configuración especial única...');
 
       this.categoriesService.getCategories({
         limit: 100
@@ -343,7 +343,7 @@ export class CategoriaFormComponent implements OnInit {
             (!excludeId || cat._id !== excludeId)
           );
 
-          console.log('🔍 Existe categoría especial:', existeEspecial);
+          //console.log('🔍 Existe categoría especial:', existeEspecial);
           resolve(!existeEspecial); // Retorna true si no existe otra especial
         },
         error: (error) => {
@@ -358,7 +358,7 @@ export class CategoriaFormComponent implements OnInit {
    * Cargar el próximo orden disponible para nuevas categorías
    */
   private loadNextAvailableOrder(): void {
-    console.log('🔢 Calculando próximo orden disponible...');
+    //console.log('🔢 Calculando próximo orden disponible...');
 
     this.categoriesService.getCategories({
       sortBy: 'orden',
@@ -366,7 +366,7 @@ export class CategoriaFormComponent implements OnInit {
       limit: 1
     }).subscribe({
       next: (response) => {
-        console.log('✅ Respuesta para calcular orden:', response);
+        //console.log('✅ Respuesta para calcular orden:', response);
 
         let nextOrder = 1; // Orden por defecto
 
@@ -386,19 +386,19 @@ export class CategoriaFormComponent implements OnInit {
         if (categorias && categorias.length > 0) {
           const maxOrder = Math.max(...categorias.map(cat => cat.orden || 0));
           nextOrder = maxOrder + 1;
-          console.log('📈 Máximo orden encontrado:', maxOrder, '- Próximo orden:', nextOrder);
+          //console.log('📈 Máximo orden encontrado:', maxOrder, '- Próximo orden:', nextOrder);
         } else {
-          console.log('🎆 No hay categorías existentes, usando orden 1');
+          //console.log('🎆 No hay categorías existentes, usando orden 1');
         }
 
         // Actualizar el formulario con el nuevo orden
         this.categoriaForm.patchValue({ orden: nextOrder });
-        console.log('🎯 Orden asignado al formulario:', nextOrder);
+        //console.log('🎯 Orden asignado al formulario:', nextOrder);
       },
       error: (error) => {
         console.error('❌ Error calculando próximo orden:', error);
         // En caso de error, usar orden 1 como fallback
-        console.log('🔄 Usando orden 1 como fallback');
+        //console.log('🔄 Usando orden 1 como fallback');
         this.categoriaForm.patchValue({ orden: 1 });
       }
     });

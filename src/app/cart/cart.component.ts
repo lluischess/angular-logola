@@ -23,7 +23,7 @@ export class CartComponent implements OnInit, AfterViewInit, OnDestroy {
   isRecaptchaValid: boolean = false;
   recaptchaResponse: string = '';
   isSubmitting: boolean = false;  // Estado para prevenir doble envío
-  
+
   // Suscripciones para el sistema reactivo del carrito
   private cartItemsSubscription?: Subscription;
   private totalUnitsSubscription?: Subscription;
@@ -75,17 +75,17 @@ export class CartComponent implements OnInit, AfterViewInit, OnDestroy {
   onRecaptchaSuccess(response: string) {
     this.recaptchaResponse = response;
     this.isRecaptchaValid = true;
-    console.log('reCAPTCHA completado correctamente');
+    //console.log('reCAPTCHA completado correctamente');
   }
 
   onRecaptchaExpired() {
     this.recaptchaResponse = '';
     this.isRecaptchaValid = false;
-    console.log('reCAPTCHA expirado');
+    //console.log('reCAPTCHA expirado');
   }
 
   constructor(
-    private fb: FormBuilder, 
+    private fb: FormBuilder,
     private cartService: CartServiceService,
     private budgetsService: BudgetsService,
     private productsService: ProductsService
@@ -105,39 +105,39 @@ export class CartComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit() {
-    console.log('🔄 [CART-COMPONENT] Inicializando carrito reactivo...');
-    
+    //console.log('🔄 [CART-COMPONENT] Inicializando carrito reactivo...');
+
     // Obtener productos del carrito inicialmente
     this.cartItems = this.cartService.getCartItems();
-    
+
     // Validar y corregir cantidades para que cumplan con los mínimos
     this.cartService.validateCartQuantities();
-    
+
     // Suscribirse a cambios reactivos del carrito
     this.cartItemsSubscription = this.cartService.cartItems$.subscribe(items => {
-      console.log('🔄 [CART-COMPONENT] Actualización reactiva de productos:', items.length);
+      //console.log('🔄 [CART-COMPONENT] Actualización reactiva de productos:', items.length);
       this.cartItems = items;
     });
-    
+
     this.totalUnitsSubscription = this.cartService.totalUnits$.subscribe(total => {
-      console.log('🔄 [CART-COMPONENT] Actualización reactiva de total:', total);
+      //console.log('🔄 [CART-COMPONENT] Actualización reactiva de total:', total);
       this.totalUnits = total;
     });
-    
+
     // Actualizar total de unidades inicial
     this.updateTotalUnits();
-    
-    console.log('🔄 [CART-COMPONENT] Carrito reactivo inicializado con', this.cartItems.length, 'productos');
+
+    //console.log('🔄 [CART-COMPONENT] Carrito reactivo inicializado con', this.cartItems.length, 'productos');
   }
 
   ngOnDestroy() {
-    console.log('🔄 [CART-COMPONENT] Limpiando suscripciones del carrito...');
-    
+    //console.log('🔄 [CART-COMPONENT] Limpiando suscripciones del carrito...');
+
     // Limpiar suscripciones para evitar memory leaks
     if (this.cartItemsSubscription) {
       this.cartItemsSubscription.unsubscribe();
     }
-    
+
     if (this.totalUnitsSubscription) {
       this.totalUnitsSubscription.unsubscribe();
     }
@@ -148,22 +148,22 @@ export class CartComponent implements OnInit, AfterViewInit, OnDestroy {
     const newQuantity = parseInt(inputElement.value) || 0;
     const product = this.cartItems[index];
     const minQuantity = this.getMinQuantity(product);
-    
-    console.log('📊 [CART] Actualizando cantidad para:', product.nombre || 'producto');
-    console.log('📊 [CART] Nueva cantidad:', newQuantity, '| Mínima:', minQuantity);
-    
+
+    //console.log('📊 [CART] Actualizando cantidad para:', product.nombre || 'producto');
+    //console.log('📊 [CART] Nueva cantidad:', newQuantity, '| Mínima:', minQuantity);
+
     // Validar cantidad mínima
     if (newQuantity < minQuantity) {
       console.warn('⚠️ [CART] Cantidad menor al mínimo, ajustando a:', minQuantity);
       inputElement.value = minQuantity.toString();
       this.cartItems[index].quantity = minQuantity;
-      
+
       // Mostrar mensaje al usuario
       alert(`La cantidad mínima para "${this.getProductName(product)}" es ${minQuantity} unidades.`);
     } else {
       this.cartItems[index].quantity = newQuantity;
     }
-    
+
     this.updateTotalUnits();  // Actualiza el total de unidades
   }
 
@@ -178,25 +178,25 @@ export class CartComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // Eliminar un producto del carrito
   removeItem(productId: any) {
-    console.log('🗑️ [CART-COMPONENT] Eliminando producto con ID:', productId);
-    
+    //console.log('🗑️ [CART-COMPONENT] Eliminando producto con ID:', productId);
+
     const itemToRemove = this.cartItems.find(item => (item._id || item.id) === productId);
     if (itemToRemove) {
-      console.log('🗑️ [CART-COMPONENT] Producto a eliminar:', itemToRemove.nombre || itemToRemove.name);
+      //console.log('🗑️ [CART-COMPONENT] Producto a eliminar:', itemToRemove.nombre || itemToRemove.name);
     }
-    
+
     // Solo llamar al servicio - el sistema reactivo se encargará de actualizar la UI
     this.cartService.removeFromCart(productId);
-    
-    console.log('🗑️ [CART-COMPONENT] Eliminación solicitada - actualización reactiva en proceso...');
+
+    //console.log('🗑️ [CART-COMPONENT] Eliminación solicitada - actualización reactiva en proceso...');
   }
 
   // Para manejar la subida de archivos
   onFileSelected(event: any) {
     const file = event.target.files[0];
     if (file) {
-      console.log('📁 [CART-COMPONENT] Archivo seleccionado:', file.name, file.size, 'bytes');
-      
+      //console.log('📁 [CART-COMPONENT] Archivo seleccionado:', file.name, file.size, 'bytes');
+
       // Validar tamaño del archivo (10MB máximo)
       const maxSize = 10 * 1024 * 1024; // 10MB
       if (file.size > maxSize) {
@@ -205,7 +205,7 @@ export class CartComponent implements OnInit, AfterViewInit, OnDestroy {
         event.target.value = ''; // Limpiar el input
         return;
       }
-      
+
       // Validar tipo de archivo
       const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/svg+xml', 'image/webp'];
       if (!allowedTypes.includes(file.type)) {
@@ -213,9 +213,9 @@ export class CartComponent implements OnInit, AfterViewInit, OnDestroy {
         event.target.value = ''; // Limpiar el input
         return;
       }
-      
+
       this.termsForm.patchValue({ logo: file });
-      console.log('✅ [CART-COMPONENT] Archivo válido y listo para subir');
+      //console.log('✅ [CART-COMPONENT] Archivo válido y listo para subir');
     }
   }
 
@@ -291,12 +291,12 @@ export class CartComponent implements OnInit, AfterViewInit, OnDestroy {
   onSubmit() {
     // Prevenir doble envío
     if (this.isSubmitting) {
-      console.log('⚠️ [CART-COMPONENT] Envío ya en proceso, ignorando click adicional');
+      //console.log('⚠️ [CART-COMPONENT] Envío ya en proceso, ignorando click adicional');
       return;
     }
 
-    console.log('📋 [CART-COMPONENT] === INICIANDO ENVÍO DE PRESUPUESTO ===');
-    
+    //console.log('📋 [CART-COMPONENT] === INICIANDO ENVÍO DE PRESUPUESTO ===');
+
     // Marcar todos los campos como touched para mostrar errores visuales
     Object.keys(this.termsForm.controls).forEach(key => {
       this.termsForm.get(key)?.markAsTouched();
@@ -306,46 +306,46 @@ export class CartComponent implements OnInit, AfterViewInit, OnDestroy {
     const validation = this.validateForm();
 
     if (validation.isValid) {
-      console.log('✅ [CART-COMPONENT] Validación exitosa, procediendo con envío');
-      
+      //console.log('✅ [CART-COMPONENT] Validación exitosa, procediendo con envío');
+
       // Activar estado de envío
       this.isSubmitting = true;
-      
+
       // Preparar datos del presupuesto
       this.createBudgetRequest();
 
     } else {
       // Mostrar errores de validación
       this.showValidationErrors(validation.errors);
-      console.log('❌ [CART-COMPONENT] Errores de validación:', validation.errors);
+      //console.log('❌ [CART-COMPONENT] Errores de validación:', validation.errors);
     }
   }
 
   // Crear solicitud de presupuesto real
   private async createBudgetRequest() {
     try {
-      console.log('💰 [CART-COMPONENT] === CREANDO PRESUPUESTO REAL ===');
-      
+      //console.log('💰 [CART-COMPONENT] === CREANDO PRESUPUESTO REAL ===');
+
       // Subir logotipo si existe
       let logoPath: string | undefined;
       const logoFile = this.termsForm.get('logo')?.value;
-      
+
       if (logoFile) {
-        console.log('📤 [CART-COMPONENT] Subiendo logotipo...');
+        //console.log('📤 [CART-COMPONENT] Subiendo logotipo...');
         try {
           // Intentar subida normal primero
           const logoResponse = await firstValueFrom(this.budgetsService.uploadLogo(logoFile));
           logoPath = logoResponse?.imagePath;
-          console.log('✅ [CART-COMPONENT] Logotipo subido (método normal):', logoPath);
+          //console.log('✅ [CART-COMPONENT] Logotipo subido (método normal):', logoPath);
         } catch (logoError) {
           console.warn('⚠️ [CART-COMPONENT] Error en subida normal, intentando base64...');
           console.warn('⚠️ [CART-COMPONENT] Error original:', logoError);
-          
+
           try {
             // Fallback: usar método base64
             const logoBase64Response = await firstValueFrom(this.budgetsService.uploadLogoBase64(logoFile));
             logoPath = logoBase64Response?.imagePath;
-            console.log('✅ [CART-COMPONENT] Logotipo subido (método base64):', logoPath);
+            //console.log('✅ [CART-COMPONENT] Logotipo subido (método base64):', logoPath);
           } catch (base64Error) {
             console.warn('⚠️ [CART-COMPONENT] Error también en base64:', base64Error);
             console.warn('⚠️ [CART-COMPONENT] Continuando sin logotipo...');
@@ -353,7 +353,7 @@ export class CartComponent implements OnInit, AfterViewInit, OnDestroy {
           }
         }
       }
-      
+
       // Preparar datos del presupuesto
       const budgetRequest: CreateBudgetRequest = {
         cliente: {
@@ -371,31 +371,31 @@ export class CartComponent implements OnInit, AfterViewInit, OnDestroy {
         notas: 'Presupuesto creado desde el frontoffice',
         precioTotal: 0 // Se calculará en el backend
       };
-      
-      console.log('📋 [CART-COMPONENT] Datos del presupuesto preparados:', budgetRequest);
-      
+
+      //console.log('📋 [CART-COMPONENT] Datos del presupuesto preparados:', budgetRequest);
+
       // Enviar presupuesto al backend
       this.budgetsService.createBudget(budgetRequest).subscribe({
         next: (response) => {
-          console.log('🎉 [CART-COMPONENT] === PRESUPUESTO CREADO EXITOSAMENTE ===');
-          console.log('🎉 [CART-COMPONENT] Respuesta del backend:', response);
-          
+          //console.log('🎉 [CART-COMPONENT] === PRESUPUESTO CREADO EXITOSAMENTE ===');
+          //console.log('🎉 [CART-COMPONENT] Respuesta del backend:', response);
+
           // Desactivar estado de envío
           this.isSubmitting = false;
-          
+
           this.handleSuccessfulBudgetCreation(response);
         },
         error: (error) => {
           console.error('❌ [CART-COMPONENT] === ERROR CREANDO PRESUPUESTO ===');
           console.error('❌ [CART-COMPONENT] Error completo:', error);
-          
+
           // Desactivar estado de envío
           this.isSubmitting = false;
-          
+
           this.handleBudgetCreationError(error);
         }
       });
-      
+
     } catch (error) {
       console.error('❌ [CART-COMPONENT] Error inesperado:', error);
       // Desactivar estado de envío en caso de error inesperado
@@ -432,9 +432,9 @@ export class CartComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // Manejar creación exitosa de presupuesto real
   handleSuccessfulBudgetCreation(response: any) {
-    console.log('🎉 [CART-COMPONENT] === PRESUPUESTO CREADO EXITOSAMENTE ===');
-    console.log('🎉 [CART-COMPONENT] Respuesta completa:', response);
-    
+    //console.log('🎉 [CART-COMPONENT] === PRESUPUESTO CREADO EXITOSAMENTE ===');
+    //console.log('🎉 [CART-COMPONENT] Respuesta completa:', response);
+
     // Resetear reCAPTCHA
     if (typeof grecaptcha !== 'undefined') {
       try {
@@ -455,7 +455,7 @@ export class CartComponent implements OnInit, AfterViewInit, OnDestroy {
     const numeroPresupuesto = response.numeroPresupuesto || 'N/A';
     const clienteNombre = response.cliente?.nombre || this.termsForm.get('name')?.value;
     const clienteEmail = response.cliente?.email || this.termsForm.get('email')?.value;
-    
+
     alert(`✅ ¡Presupuesto creado correctamente!\n\n` +
           `📋 Número de presupuesto: ${numeroPresupuesto}\n` +
           `👤 Cliente: ${clienteNombre}\n` +
@@ -473,9 +473,9 @@ export class CartComponent implements OnInit, AfterViewInit, OnDestroy {
   handleBudgetCreationError(error: any) {
     console.error('❌ [CART-COMPONENT] === ERROR EN CREACIÓN DE PRESUPUESTO ===');
     console.error('❌ [CART-COMPONENT] Error completo:', error);
-    
+
     let errorMessage = '❌ Error al crear el presupuesto\n\n';
-    
+
     if (error.status === 400 && error.error?.message) {
       // Error de validación del backend
       if (Array.isArray(error.error.message)) {
@@ -498,11 +498,11 @@ export class CartComponent implements OnInit, AfterViewInit, OnDestroy {
       // Otros errores
       errorMessage += `Error ${error.status}: ${error.statusText || 'Error desconocido'}\n`;
     }
-    
+
     errorMessage += '\nSi el problema persiste, contacta con nuestro equipo de soporte.';
-    
+
     alert(errorMessage);
-    
+
     // Resetear reCAPTCHA para permitir reintento
     if (typeof grecaptcha !== 'undefined') {
       try {
@@ -517,16 +517,16 @@ export class CartComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // Manejar envío exitoso (método legacy - mantenido para compatibilidad)
   handleSuccessfulSubmission(formData: FormData) {
-    console.log('✅ Formulario validado correctamente (método legacy)');
-    console.log('📋 Datos del presupuesto:', {
-      email: formData.get('email'),
-      name: formData.get('name'),
-      phone: formData.get('phone'),
-      company: formData.get('company'),
-      receiveOffers: formData.get('receiveOffers'),
-      cartItems: JSON.parse(formData.get('cartItems') as string),
-      totalUnits: formData.get('totalUnits')
-    });
+    //console.log('✅ Formulario validado correctamente (método legacy)');
+    // console.log('📋 Datos del presupuesto:', {
+    //   email: formData.get('email'),
+    //   name: formData.get('name'),
+    //   phone: formData.get('phone'),
+    //   company: formData.get('company'),
+    //   receiveOffers: formData.get('receiveOffers'),
+    //   cartItems: JSON.parse(formData.get('cartItems') as string),
+    //   totalUnits: formData.get('totalUnits')
+    // });
 
     // Este método ya no se usa, pero se mantiene para compatibilidad
     alert('✅ ¡Presupuesto enviado correctamente! (modo legacy)');
@@ -561,31 +561,31 @@ export class CartComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // Métodos para manejo de productos en el carrito
   getProductImage(product: any): string {
-    console.log('🖼️ [CART] Obteniendo imagen para producto:', product);
-    
+    //console.log('🖼️ [CART] Obteniendo imagen para producto:', product);
+
     if (product.imagenes && product.imagenes.length > 0) {
       let imagePath = product.imagenes[0];
-      
+
       // Si la ruta ya incluye el dominio completo, usarla tal como está
       if (imagePath.startsWith('http')) {
-        console.log('🖼️ [CART] Usando ruta completa:', imagePath);
+        //console.log('🖼️ [CART] Usando ruta completa:', imagePath);
         return imagePath;
       }
-      
+
       // Si la ruta empieza con /uploads, añadir el dominio del backend
       if (imagePath.startsWith('/uploads')) {
         const fullPath = `http://localhost:3000${imagePath}`;
-        console.log('🖼️ [CART] Ruta construida:', fullPath);
+        //console.log('🖼️ [CART] Ruta construida:', fullPath);
         return fullPath;
       }
-      
+
       // Si no tiene prefijo, asumir que es una ruta relativa
       const fullPath = `http://localhost:3000/uploads/productos/${imagePath}`;
-      console.log('🖼️ [CART] Ruta relativa construida:', fullPath);
+      //console.log('🖼️ [CART] Ruta relativa construida:', fullPath);
       return fullPath;
     }
-    
-    console.log('🖼️ [CART] Sin imágenes, usando placeholder');
+
+    //console.log('🖼️ [CART] Sin imágenes, usando placeholder');
     return '/assets/images/placeholder-product.jpg';
   }
 
@@ -594,13 +594,13 @@ export class CartComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   onImageError(event: any): void {
-    console.log('❌ [CART] Error cargando imagen:', event.target.src);
+    //console.log('❌ [CART] Error cargando imagen:', event.target.src);
     event.target.src = '/assets/images/placeholder-product.jpg';
   }
 
   getMinQuantity(product: any): number {
     const minQty = product.cantidadMinima || product.minimumQuantity || 1;
-    console.log('📊 [CART] Cantidad mínima para', product.nombre || 'producto', ':', minQty);
+    //console.log('📊 [CART] Cantidad mínima para', product.nombre || 'producto', ':', minQty);
     return minQty;
   }
 }

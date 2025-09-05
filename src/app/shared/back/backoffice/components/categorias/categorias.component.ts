@@ -33,7 +33,7 @@ export class CategoriasComponent implements OnInit {
    * Cargar lista de categorías desde el backend
    */
   loadCategorias(): void {
-    console.log('🔄 Iniciando carga de categorías...');
+    //console.log('🔄 Iniciando carga de categorías...');
     this.isLoading = true;
     this.error = null;
 
@@ -42,7 +42,7 @@ export class CategoriasComponent implements OnInit {
       sortOrder: 'asc'
     }).subscribe({
       next: (response) => {
-        console.log('✅ Respuesta del backend para categorías:', response);
+        //console.log('✅ Respuesta del backend para categorías:', response);
 
         // El backend devuelve {categories: [...]} pero esperamos {data: [...]}
         // Vamos a adaptar la respuesta
@@ -52,26 +52,26 @@ export class CategoriasComponent implements OnInit {
           // Si la respuesta tiene la propiedad 'categories' (formato actual del backend)
           if ('categories' in response && Array.isArray((response as any).categories)) {
             categorias = (response as any).categories;
-            console.log('📊 Datos de categorías desde response.categories:', categorias);
+            //console.log('📊 Datos de categorías desde response.categories:', categorias);
           }
           // Si la respuesta tiene la propiedad 'data' (formato esperado)
           else if ('data' in response && Array.isArray((response as any).data)) {
             categorias = (response as any).data;
-            console.log('📊 Datos de categorías desde response.data:', categorias);
+            //console.log('📊 Datos de categorías desde response.data:', categorias);
           }
           // Si la respuesta es directamente un array
           else if (Array.isArray(response)) {
             categorias = response as Category[];
-            console.log('📊 Datos de categorías como array directo:', categorias);
+            //console.log('📊 Datos de categorías como array directo:', categorias);
           }
         }
 
-        console.log('📈 Cantidad de categorías procesadas:', categorias.length);
+        //console.log('📈 Cantidad de categorías procesadas:', categorias.length);
 
         this.categorias = categorias;
         this.isLoading = false;
 
-        console.log('🎯 Categorías asignadas al componente:', this.categorias);
+        //console.log('🎯 Categorías asignadas al componente:', this.categorias);
 
         // Cargar estadísticas después de tener las categorías
         this.loadStats();
@@ -96,13 +96,13 @@ export class CategoriasComponent implements OnInit {
    * Cargar estadísticas de categorías
    */
   private loadStats(): void {
-    console.log('📊 Iniciando carga de estadísticas de categorías...');
+    //console.log('📊 Iniciando carga de estadísticas de categorías...');
 
     this.categoriesService.getStats().subscribe({
       next: (stats) => {
-        console.log('✅ Respuesta del backend para estadísticas:', stats);
-        console.log('🔍 Tipo de respuesta:', typeof stats);
-        console.log('🔍 Propiedades de la respuesta:', Object.keys(stats || {}));
+        //console.log('✅ Respuesta del backend para estadísticas:', stats);
+        //console.log('🔍 Tipo de respuesta:', typeof stats);
+        //console.log('🔍 Propiedades de la respuesta:', Object.keys(stats || {}));
 
         // Adaptar la respuesta del backend si es necesario
         let processedStats: CategoryStats | null = null;
@@ -111,16 +111,16 @@ export class CategoriasComponent implements OnInit {
           // Si la respuesta tiene las propiedades esperadas directamente
           if ('total' in stats && 'publicadas' in stats) {
             processedStats = stats as CategoryStats;
-            console.log('📈 Estadísticas procesadas (formato directo):', processedStats);
+            //console.log('📈 Estadísticas procesadas (formato directo):', processedStats);
           }
           // Si la respuesta está anidada en otra propiedad
           else if ('stats' in stats) {
             processedStats = (stats as any).stats as CategoryStats;
-            console.log('📈 Estadísticas procesadas (formato anidado):', processedStats);
+            //console.log('📈 Estadísticas procesadas (formato anidado):', processedStats);
           }
           // Si necesitamos calcular las estadísticas desde las categorías
           else {
-            console.log('⚠️ Formato de estadísticas no reconocido, calculando desde categorías...');
+            //console.log('⚠️ Formato de estadísticas no reconocido, calculando desde categorías...');
             if (this.categorias && this.categorias.length > 0) {
               const total = this.categorias.length;
               const publicadas = this.categorias.filter(cat => cat.publicado).length;
@@ -133,13 +133,13 @@ export class CategoriasComponent implements OnInit {
                 noPublicadas,
                 configuracionEspecial
               };
-              console.log('📈 Estadísticas calculadas manualmente:', processedStats);
+              //console.log('📈 Estadísticas calculadas manualmente:', processedStats);
             }
           }
         }
 
         this.stats = processedStats;
-        console.log('🎯 Estadísticas asignadas al componente:', this.stats);
+        //console.log('🎯 Estadísticas asignadas al componente:', this.stats);
       },
       error: (error) => {
         console.error('❌ Error cargando estadísticas:', error);
@@ -163,7 +163,7 @@ export class CategoriasComponent implements OnInit {
             noPublicadas,
             configuracionEspecial
           };
-          console.log('🔄 Estadísticas calculadas como fallback:', this.stats);
+          //console.log('🔄 Estadísticas calculadas como fallback:', this.stats);
         }
       }
     });
@@ -180,7 +180,7 @@ export class CategoriasComponent implements OnInit {
     this.categoriesService.updateCategory(categoria._id, { publicado: newStatus }).subscribe({
       next: (updatedCategory) => {
         categoria.publicado = updatedCategory.publicado;
-        console.log(`Categoría "${categoria.nombre}" ${categoria.publicado ? 'publicada' : 'despublicada'}`);
+        //console.log(`Categoría "${categoria.nombre}" ${categoria.publicado ? 'publicada' : 'despublicada'}`);
       },
       error: (error) => {
         console.error('Error actualizando categoría:', error);
@@ -244,7 +244,7 @@ export class CategoriasComponent implements OnInit {
     if (confirm(`¿Estás seguro de que quieres eliminar la categoría "${categoria.nombre}"?`)) {
       this.categoriesService.deleteCategory(categoria._id).subscribe({
         next: () => {
-          console.log(`Categoría "${categoria.nombre}" eliminada correctamente`);
+          //console.log(`Categoría "${categoria.nombre}" eliminada correctamente`);
           this.loadCategorias(); // Recargar la lista
         },
         error: (error) => {

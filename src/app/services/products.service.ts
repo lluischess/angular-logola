@@ -19,7 +19,7 @@ export interface FrontProduct {
   masDetalles?: string;
   consumePreferente?: string;
   cantidadMinima?: number;
-  imagenes?: string[]; 
+  imagenes?: string[];
   publicado: boolean;
   orden?: number;
   ordenCategoria?: number;
@@ -46,22 +46,22 @@ export class ProductsService {
    * Obtener un producto específico por ID
    */
   getProductById(productId: string): Observable<FrontProduct> {
-    console.log(`🔍 [PRODUCTS-SERVICE] === CARGANDO PRODUCTO POR ID ===`);
-    console.log(`🔍 [PRODUCTS-SERVICE] ID solicitado: ${productId}`);
-    console.log(`🔍 [PRODUCTS-SERVICE] URL completa: ${this.apiUrl}/${productId}`);
-    
+    //console.log(`🔍 [PRODUCTS-SERVICE] === CARGANDO PRODUCTO POR ID ===`);
+    //console.log(`🔍 [PRODUCTS-SERVICE] ID solicitado: ${productId}`);
+    //console.log(`🔍 [PRODUCTS-SERVICE] URL completa: ${this.apiUrl}/${productId}`);
+
     return this.http.get<any>(`${this.apiUrl}/${productId}`)
       .pipe(
         map(response => {
-          console.log(`🔍 [PRODUCTS-SERVICE] === RESPUESTA PRODUCTO INDIVIDUAL ===`);
-          console.log(`🔍 [PRODUCTS-SERVICE] Tipo de respuesta:`, typeof response);
-          console.log(`🔍 [PRODUCTS-SERVICE] Respuesta completa:`, response);
-          
+          //console.log(`🔍 [PRODUCTS-SERVICE] === RESPUESTA PRODUCTO INDIVIDUAL ===`);
+          //console.log(`🔍 [PRODUCTS-SERVICE] Tipo de respuesta:`, typeof response);
+          //console.log(`🔍 [PRODUCTS-SERVICE] Respuesta completa:`, response);
+
           // El endpoint /{id} devuelve directamente el producto
           if (response && response._id) {
-            console.log(`📦 [PRODUCTS-SERVICE] === PRODUCTO PROCESADO ===`);
-            console.log(`📦 [PRODUCTS-SERVICE] Nombre: ${response.nombre}`);
-            console.log(`📦 [PRODUCTS-SERVICE] ID: ${response._id}`);
+            //console.log(`📦 [PRODUCTS-SERVICE] === PRODUCTO PROCESADO ===`);
+            //console.log(`📦 [PRODUCTS-SERVICE] Nombre: ${response.nombre}`);
+            //console.log(`📦 [PRODUCTS-SERVICE] ID: ${response._id}`);
             return response;
           } else {
             console.warn(`⚠️ [PRODUCTS-SERVICE] === PRODUCTO NO ENCONTRADO ===`);
@@ -75,7 +75,7 @@ export class ProductsService {
           console.error(`❌ [PRODUCTS-SERVICE] Status:`, error.status);
           console.error(`❌ [PRODUCTS-SERVICE] Status Text:`, error.statusText);
           console.error(`❌ [PRODUCTS-SERVICE] Error completo:`, error);
-          
+
           // Re-lanzar el error para que el componente lo maneje
           return throwError(() => error);
         })
@@ -87,25 +87,25 @@ export class ProductsService {
    * Incluye productos despublicados para mostrar mensaje informativo
    */
   getProductBySlug(productSlug: string): Observable<FrontProduct> {
-    console.log(`🔍 [PRODUCTS-SERVICE] === CARGANDO PRODUCTO POR SLUG ===`);
-    console.log(`🔍 [PRODUCTS-SERVICE] Slug solicitado: ${productSlug}`);
-    console.log(`🔍 [PRODUCTS-SERVICE] URL completa: ${this.apiUrl}/slug/${productSlug}`);
-    
+    //console.log(`🔍 [PRODUCTS-SERVICE] === CARGANDO PRODUCTO POR SLUG ===`);
+    //console.log(`🔍 [PRODUCTS-SERVICE] Slug solicitado: ${productSlug}`);
+    //console.log(`🔍 [PRODUCTS-SERVICE] URL completa: ${this.apiUrl}/slug/${productSlug}`);
+
     return this.http.get<any>(`${this.apiUrl}/slug/${productSlug}`)
       .pipe(
         map(response => {
-          console.log(`🔍 [PRODUCTS-SERVICE] === RESPUESTA PRODUCTO POR SLUG ===`);
-          console.log(`🔍 [PRODUCTS-SERVICE] Tipo de respuesta:`, typeof response);
-          console.log(`🔍 [PRODUCTS-SERVICE] Respuesta completa:`, response);
-          
+          //console.log(`🔍 [PRODUCTS-SERVICE] === RESPUESTA PRODUCTO POR SLUG ===`);
+          //console.log(`🔍 [PRODUCTS-SERVICE] Tipo de respuesta:`, typeof response);
+          //console.log(`🔍 [PRODUCTS-SERVICE] Respuesta completa:`, response);
+
           // El endpoint /slug/{slug} devuelve directamente el producto
           if (response && response._id) {
-            console.log(`📦 [PRODUCTS-SERVICE] === PRODUCTO PROCESADO POR SLUG ===`);
-            console.log(`📦 [PRODUCTS-SERVICE] Nombre: ${response.nombre}`);
-            console.log(`📦 [PRODUCTS-SERVICE] Slug: ${response.urlSlug}`);
-            console.log(`📦 [PRODUCTS-SERVICE] Publicado: ${response.publicado}`);
-            console.log(`📦 [PRODUCTS-SERVICE] ID: ${response._id}`);
-            
+            //console.log(`📦 [PRODUCTS-SERVICE] === PRODUCTO PROCESADO POR SLUG ===`);
+            //console.log(`📦 [PRODUCTS-SERVICE] Nombre: ${response.nombre}`);
+            //console.log(`📦 [PRODUCTS-SERVICE] Slug: ${response.urlSlug}`);
+            //console.log(`📦 [PRODUCTS-SERVICE] Publicado: ${response.publicado}`);
+            //console.log(`📦 [PRODUCTS-SERVICE] ID: ${response._id}`);
+
             // Devolver el producto independientemente de si está publicado o no
             // El componente manejará la lógica de visualización
             return response;
@@ -121,7 +121,7 @@ export class ProductsService {
           console.error(`❌ [PRODUCTS-SERVICE] Status:`, error.status);
           console.error(`❌ [PRODUCTS-SERVICE] Status Text:`, error.statusText);
           console.error(`❌ [PRODUCTS-SERVICE] Error completo:`, error);
-          
+
           // Re-lanzar el error para que el componente lo maneje
           return throwError(() => error);
         })
@@ -132,20 +132,20 @@ export class ProductsService {
    * Buscar productos por término de búsqueda (nombre, referencia o categoría)
    */
   searchProducts(searchTerm: string): Observable<FrontProduct[]> {
-    console.log(`🔍 [PRODUCTS-SERVICE] === BUSCANDO PRODUCTOS ===`);
-    console.log(`🔍 [PRODUCTS-SERVICE] Término de búsqueda: ${searchTerm}`);
-    console.log(`🔍 [PRODUCTS-SERVICE] URL completa: ${this.apiUrl}/search?q=${encodeURIComponent(searchTerm)}`);
-    
+    //console.log(`🔍 [PRODUCTS-SERVICE] === BUSCANDO PRODUCTOS ===`);
+    //console.log(`🔍 [PRODUCTS-SERVICE] Término de búsqueda: ${searchTerm}`);
+    //console.log(`🔍 [PRODUCTS-SERVICE] URL completa: ${this.apiUrl}/search?q=${encodeURIComponent(searchTerm)}`);
+
     return this.http.get<any>(`${this.apiUrl}/search?q=${encodeURIComponent(searchTerm)}`)
       .pipe(
         map(response => {
-          console.log(`🔍 [PRODUCTS-SERVICE] === RESPUESTA BÚSQUEDA ===`);
-          console.log(`🔍 [PRODUCTS-SERVICE] Tipo de respuesta:`, typeof response);
-          console.log(`🔍 [PRODUCTS-SERVICE] Respuesta completa:`, response);
-          
+          //console.log(`🔍 [PRODUCTS-SERVICE] === RESPUESTA BÚSQUEDA ===`);
+          //console.log(`🔍 [PRODUCTS-SERVICE] Tipo de respuesta:`, typeof response);
+          //console.log(`🔍 [PRODUCTS-SERVICE] Respuesta completa:`, response);
+
           // El endpoint de búsqueda puede devolver un array directamente o un objeto con productos
           let products: FrontProduct[] = [];
-          
+
           if (Array.isArray(response)) {
             products = response;
           } else if (response && Array.isArray(response.products)) {
@@ -153,11 +153,11 @@ export class ProductsService {
           } else if (response && Array.isArray(response.data)) {
             products = response.data;
           }
-          
-          console.log(`📦 [PRODUCTS-SERVICE] === PRODUCTOS DE BÚSQUEDA PROCESADOS ===`);
-          console.log(`📦 [PRODUCTS-SERVICE] Cantidad de productos encontrados:`, products.length);
-          console.log(`📦 [PRODUCTS-SERVICE] Productos:`, products.map(p => ({ nombre: p.nombre, referencia: p.referencia, categoria: p.categoria })));
-          
+
+          //console.log(`📦 [PRODUCTS-SERVICE] === PRODUCTOS DE BÚSQUEDA PROCESADOS ===`);
+          //console.log(`📦 [PRODUCTS-SERVICE] Cantidad de productos encontrados:`, products.length);
+          //console.log(`📦 [PRODUCTS-SERVICE] Productos:`, products.map(p => ({ nombre: p.nombre, referencia: p.referencia, categoria: p.categoria })));
+
           return products;
         }),
         catchError(error => {
@@ -167,7 +167,7 @@ export class ProductsService {
           console.error(`❌ [PRODUCTS-SERVICE] Status:`, error.status);
           console.error(`❌ [PRODUCTS-SERVICE] Status Text:`, error.statusText);
           console.error(`❌ [PRODUCTS-SERVICE] Error completo:`, error);
-          
+
           // En caso de error, devolver array vacío
           return of([]);
         })
@@ -178,24 +178,24 @@ export class ProductsService {
    * Obtener productos de una categoría específica (solo publicados)
    */
   getProductsByCategory(categorySlug: string): Observable<FrontProduct[]> {
-    console.log(`🔍 [PRODUCTS-SERVICE] === INICIANDO LLAMADA AL BACKEND ===`);
-    console.log(`🔍 [PRODUCTS-SERVICE] Categoría solicitada: ${categorySlug}`);
-    console.log(`🔍 [PRODUCTS-SERVICE] URL completa: ${this.apiUrl}/category/${categorySlug}`);
-    console.log(`🔍 [PRODUCTS-SERVICE] Base URL: ${this.apiUrl}`);
-    
+    //console.log(`🔍 [PRODUCTS-SERVICE] === INICIANDO LLAMADA AL BACKEND ===`);
+    //console.log(`🔍 [PRODUCTS-SERVICE] Categoría solicitada: ${categorySlug}`);
+    //console.log(`🔍 [PRODUCTS-SERVICE] URL completa: ${this.apiUrl}/category/${categorySlug}`);
+    //console.log(`🔍 [PRODUCTS-SERVICE] Base URL: ${this.apiUrl}`);
+
     return this.http.get<any>(`${this.apiUrl}/category/${categorySlug}`)
       .pipe(
         map(response => {
-          console.log(`🔍 [PRODUCTS-SERVICE] === RESPUESTA RECIBIDA ===`);
-          console.log(`🔍 [PRODUCTS-SERVICE] Tipo de respuesta:`, typeof response);
-          console.log(`🔍 [PRODUCTS-SERVICE] Es array:`, Array.isArray(response));
-          console.log(`🔍 [PRODUCTS-SERVICE] Respuesta completa:`, response);
-          
+          //console.log(`🔍 [PRODUCTS-SERVICE] === RESPUESTA RECIBIDA ===`);
+          //console.log(`🔍 [PRODUCTS-SERVICE] Tipo de respuesta:`, typeof response);
+          //console.log(`🔍 [PRODUCTS-SERVICE] Es array:`, Array.isArray(response));
+          //console.log(`🔍 [PRODUCTS-SERVICE] Respuesta completa:`, response);
+
           // El endpoint /category/{slug} devuelve directamente un array de productos ya filtrados
           if (Array.isArray(response)) {
-            console.log(`📦 [PRODUCTS-SERVICE] === PRODUCTOS PROCESADOS ===`);
-            console.log(`📦 [PRODUCTS-SERVICE] Cantidad: ${response.length}`);
-            console.log(`📦 [PRODUCTS-SERVICE] Primer producto:`, response[0]);
+            //console.log(`📦 [PRODUCTS-SERVICE] === PRODUCTOS PROCESADOS ===`);
+            //console.log(`📦 [PRODUCTS-SERVICE] Cantidad: ${response.length}`);
+            //console.log(`📦 [PRODUCTS-SERVICE] Primer producto:`, response[0]);
             return response;
           } else {
             console.warn(`⚠️ [PRODUCTS-SERVICE] === RESPUESTA NO ES ARRAY ===`);
@@ -211,7 +211,7 @@ export class ProductsService {
           console.error(`❌ [PRODUCTS-SERVICE] Status Text:`, error.statusText);
           console.error(`❌ [PRODUCTS-SERVICE] Error completo:`, error);
           console.error(`❌ [PRODUCTS-SERVICE] Message:`, error.message);
-          
+
           // Fallback: devolver array vacío
           return of([]);
         })
@@ -222,23 +222,23 @@ export class ProductsService {
    * Obtener todos los productos publicados
    */
   getAllPublishedProducts(): Observable<FrontProduct[]> {
-    console.log('📦 [PRODUCTS-SERVICE] Cargando todos los productos publicados');
-    
+    //console.log('📦 [PRODUCTS-SERVICE] Cargando todos los productos publicados');
+
     return this.http.get<any>(`${this.apiUrl}?publicado=true`)
       .pipe(
         map(response => {
-          console.log('📦 [PRODUCTS-SERVICE] Respuesta cruda del backend:', response);
-          
+          //console.log('📦 [PRODUCTS-SERVICE] Respuesta cruda del backend:', response);
+
           // Extraer los productos de la respuesta {products: [...]}
           const products = response.products || response;
-          
+
           if (Array.isArray(products)) {
             // Filtrar solo productos publicados y ordenar
             const publishedProducts = products
               .filter(product => product.publicado === true)
               .sort((a, b) => (a.ordenCategoria || 0) - (b.ordenCategoria || 0));
-            
-            console.log('📦 [PRODUCTS-SERVICE] Productos publicados procesados:', publishedProducts);
+
+            //console.log('📦 [PRODUCTS-SERVICE] Productos publicados procesados:', publishedProducts);
             return publishedProducts;
           } else {
             console.warn('⚠️ [PRODUCTS-SERVICE] Respuesta no es un array:', products);
@@ -247,7 +247,7 @@ export class ProductsService {
         }),
         catchError(error => {
           console.error('❌ [PRODUCTS-SERVICE] Error cargando todos los productos:', error);
-          
+
           // Fallback: devolver array vacío
           return of([]);
         })

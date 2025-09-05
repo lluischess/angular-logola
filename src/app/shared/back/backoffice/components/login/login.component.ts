@@ -50,14 +50,14 @@ export class LoginComponent {
     if (this.loginForm.valid && !this.isLoading) {
       this.isLoading = true;
       this.errorMessage = '';
-      
+
       const { username, password } = this.loginForm.value;
 
       // Usar AuthService integrado con backend NestJS
       this.authService.login(username, password).subscribe({
         next: (response) => {
-          console.log('✅ Login exitoso con backend:', response.user.name);
-          
+          //console.log('✅ Login exitoso con backend:', response.user.name);
+
           // Verificar que sea uno de los 4 usuarios administradores válidos
           if (this.authService.isValidAdmin()) {
             // Redirigir al dashboard
@@ -66,7 +66,7 @@ export class LoginComponent {
             this.errorMessage = 'Usuario no autorizado para acceder al backoffice.';
             this.authService.logout();
           }
-          
+
           this.isLoading = false;
         },
         error: (error) => {

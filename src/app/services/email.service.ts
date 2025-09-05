@@ -83,9 +83,9 @@ export class EmailService {
    * Enviar ambos emails de nuevo presupuesto (admin + cliente)
    */
   sendNewPresupuestoEmails(data: PresupuestoEmailData): Observable<any> {
-    console.log('📧 [EMAIL-SERVICE] === ENVIANDO EMAILS DE NUEVO PRESUPUESTO ===');
-    console.log('📧 [EMAIL-SERVICE] Datos recibidos:', data);
-    
+    //console.log('📧 [EMAIL-SERVICE] === ENVIANDO EMAILS DE NUEVO PRESUPUESTO ===');
+    //console.log('📧 [EMAIL-SERVICE] Datos recibidos:', data);
+
     // Usar el nuevo endpoint del backend
     const emailData = {
       presupuesto: data.presupuesto,
@@ -94,7 +94,7 @@ export class EmailService {
 
     return this.http.post<any>(`${this.apiUrl}/send-presupuesto-notifications`, emailData).pipe(
       tap(response => {
-        console.log('✅ [EMAIL-SERVICE] Respuesta del backend:', response);
+        //console.log('✅ [EMAIL-SERVICE] Respuesta del backend:', response);
       }),
       catchError(error => {
         console.error('❌ [EMAIL-SERVICE] Error del backend:', error);
@@ -141,7 +141,7 @@ export class EmailService {
             <h1>🆕 Nuevo Presupuesto Recibido</h1>
             <p>Presupuesto #${presupuesto.numeroPresupuesto}</p>
           </div>
-          
+
           <div class="content">
             <div class="info-box">
               <h3>📋 Información del Presupuesto</h3>
@@ -235,7 +235,7 @@ export class EmailService {
             <h1>✅ Presupuesto Recibido</h1>
             <p>¡Gracias por confiar en Logolate!</p>
           </div>
-          
+
           <div class="content">
             <div class="highlight">
               <h3>🎉 ¡Hemos recibido tu presupuesto!</h3>

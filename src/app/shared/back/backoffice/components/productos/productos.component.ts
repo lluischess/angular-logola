@@ -44,7 +44,7 @@ export class ProductosComponent implements OnInit {
   stats: ProductStats | null = null;
   isLoading = true;
   error: string | null = null;
-  
+
   // Filtros
   filtroReferencia: string = '';
   filtroCategoria: string = '';
@@ -55,7 +55,7 @@ export class ProductosComponent implements OnInit {
   // Ordenamiento
   sortColumn: string = 'categoria';
   sortDirection: 'asc' | 'desc' = 'asc';
-  
+
   // Reordering
   reorderingProduct: Producto | null = null;
   showReorderFeedback: boolean = false;
@@ -74,7 +74,7 @@ export class ProductosComponent implements OnInit {
   loadProducts(): void {
     this.isLoading = true;
     this.error = null;
-    
+
     this.productsService.getProducts({
       sortBy: 'categoria',
       sortOrder: 'asc',
@@ -91,14 +91,14 @@ export class ProductosComponent implements OnInit {
             productos = response;
           }
         }
-        
+
         // Debug: Log raw product data to see what we're receiving
-        console.log('🔍 Raw products from backend:', productos);
-        
+        //console.log('🔍 Raw products from backend:', productos);
+
         this.productos = productos.map(product => {
           // Debug: Log each product's image data
-          console.log(`📸 Product ${product.nombre} images:`, product.imagenes);
-          
+          //console.log(`📸 Product ${product.nombre} images:`, product.imagenes);
+
           return {
             _id: product._id,
             id: product._id,
@@ -117,7 +117,7 @@ export class ProductosComponent implements OnInit {
             precio: product.precio
           };
         });
-        
+
         this.sortData();
         this.applyFilters();
         this.isLoading = false;
@@ -141,12 +141,12 @@ export class ProductosComponent implements OnInit {
           const total = this.productos.length;
           const publicados = this.productos.filter(p => p.publicado).length;
           const noPublicados = total - publicados;
-          
+
           const porCategoria: { [categoria: string]: number } = {};
           this.productos.forEach(p => {
             porCategoria[p.categoria] = (porCategoria[p.categoria] || 0) + 1;
           });
-          
+
           this.stats = { total, publicados, noPublicados, porCategoria };
         }
       }
@@ -155,23 +155,23 @@ export class ProductosComponent implements OnInit {
 
   applyFilters(): void {
     this.filteredProductos = this.productos.filter(producto => {
-      const matchesReferencia = !this.filtroReferencia || 
+      const matchesReferencia = !this.filtroReferencia ||
         producto.referencia.toLowerCase().includes(this.filtroReferencia.toLowerCase());
-      
-      const matchesCategoria = !this.filtroCategoria || 
+
+      const matchesCategoria = !this.filtroCategoria ||
         producto.categoria.toLowerCase().includes(this.filtroCategoria.toLowerCase());
-      
-      const matchesCantidadMinima = !this.filtroCantidadMinima || 
+
+      const matchesCantidadMinima = !this.filtroCantidadMinima ||
         producto.cantidadMinima.toString().includes(this.filtroCantidadMinima);
-      
-      const matchesPublicado = !this.filtroPublicado || 
+
+      const matchesPublicado = !this.filtroPublicado ||
         (this.filtroPublicado === 'true' && producto.publicado) ||
         (this.filtroPublicado === 'false' && !producto.publicado);
-      
-      const matchesOrden = !this.filtroOrden || 
+
+      const matchesOrden = !this.filtroOrden ||
         (producto.ordenCategoria || producto.orden || 1).toString().includes(this.filtroOrden);
-      
-      return matchesReferencia && matchesCategoria && matchesCantidadMinima && 
+
+      return matchesReferencia && matchesCategoria && matchesCantidadMinima &&
              matchesPublicado && matchesOrden;
     });
   }
@@ -252,23 +252,23 @@ export class ProductosComponent implements OnInit {
 
   hasProductImage(producto: Producto): boolean {
     const hasImage = !!(producto.imagenes && producto.imagenes.length > 0);
-    console.log(`🖼️ hasProductImage for ${producto.nombre}:`, hasImage, 'imagenes:', producto.imagenes);
+    //console.log(`🖼️ hasProductImage for ${producto.nombre}:`, hasImage, 'imagenes:', producto.imagenes);
     return hasImage;
   }
 
   getProductImageUrl(producto: Producto): string {
     if (this.hasProductImage(producto)) {
       let imageUrl = producto.imagenes![0];
-      
+
       // Convert relative URLs to absolute URLs with backend domain
       if (imageUrl.startsWith('/')) {
         imageUrl = `http://localhost:3000${imageUrl}`;
       }
-      
-      console.log(`🔗 Image URL for ${producto.nombre}:`, imageUrl);
+
+      //console.log(`🔗 Image URL for ${producto.nombre}:`, imageUrl);
       return imageUrl;
     }
-    console.log(`❌ No image for ${producto.nombre}, using placeholder`);
+    //console.log(`❌ No image for ${producto.nombre}, using placeholder`);
     // Return a data URL placeholder instead of missing file
     return 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTAiIGhlaWdodD0iNTAiIHZpZXdCb3g9IjAgMCA1MCA1MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjUwIiBoZWlnaHQ9IjUwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0yNSAyMEM4LjQzIDIwIDIwIDguNDMgMjAgMjVTOC40MyAzMCAyNSAzMCAzMCA4LjQzIDMwIDI1UzguNDMgMjAgMjUgMjBaTTI1IDI3QzguNDMgMjcgMjcgOC40MyAyNyAyNVM4LjQzIDIzIDI1IDIzUzIzIDguNDMgMjMgMjVTOC40MyAyNyAyNSAyN1oiIGZpbGw9IiM5Q0EzQUYiLz4KPC9zdmc+';
   }
@@ -278,10 +278,10 @@ export class ProductosComponent implements OnInit {
     if (event.target.src.includes('data:image') || event.target.dataset.fallbackUsed) {
       return;
     }
-    
+
     // Mark that we've used fallback to prevent infinite loop
     event.target.dataset.fallbackUsed = 'true';
-    
+
     // Use a simple data URL as fallback instead of missing file
     event.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTAiIGhlaWdodD0iNTAiIHZpZXdCb3g9IjAgMCA1MCA1MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjUwIiBoZWlnaHQ9IjUwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0yNSAyMEM4LjQzIDIwIDIwIDguNDMgMjAgMjVTOC40MyAzMCAyNSAzMCAzMCA4LjQzIDMwIDI1UzguNDMgMjAgMjUgMjBaTTI1IDI3QzguNDMgMjcgMjcgOC40MyAyNyAyNVM4LjQzIDIzIDI1IDIzUzIzIDguNDMgMjMgMjVTOC40MyAyNyAyNSAyN1oiIGZpbGw9IiM5Q0EzQUYiLz4KPC9zdmc+';
   }
@@ -329,7 +329,7 @@ export class ProductosComponent implements OnInit {
 
   private reorderProduct(productId: string, newOrder: number, producto: Producto): void {
     this.reorderingProduct = producto;
-    
+
     this.productsService.updateProductOrder(productId, newOrder).subscribe({
       next: () => {
         this.reorderingProduct = null;

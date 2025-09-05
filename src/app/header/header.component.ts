@@ -19,20 +19,20 @@ export class HeaderComponent implements OnInit, OnDestroy {
   // Propiedades para la búsqueda
   searchQuery: string = '';
   private searchSubject = new Subject<string>();
-  
+
   // Propiedades para categorías dinámicas
   categories: FrontCategory[] = [];
   isLoadingCategories = false;
   categoriesError = false;
-  
+
   // Propiedades para configuración dinámica
   logoHeader: string = 'assets/images/logo.png';
   isLoadingConfig = false;
   configError = false;
-  
+
   // Propiedades para el carrito
   cartItemCount = 0;
-  
+
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -58,7 +58,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
    * Cargar configuración del header desde la BBDD
    */
   private loadHeaderConfiguration(): void {
-    console.log('🏠 [HEADER] === CARGANDO CONFIGURACIÓN ===');
+    //console.log('🏠 [HEADER] === CARGANDO CONFIGURACIÓN ===');
     this.isLoadingConfig = true;
     this.configError = false;
 
@@ -66,13 +66,13 @@ export class HeaderComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (config: ConfiguracionCompleta) => {
-          console.log('🏠 [HEADER] Configuración recibida:', config);
-          
+          //console.log('🏠 [HEADER] Configuración recibida:', config);
+
           if (config && config.general && config.general.logoHeader) {
             this.logoHeader = config.general.logoHeader;
-            console.log('🏠 [HEADER] Logo del header actualizado:', this.logoHeader);
+            //console.log('🏠 [HEADER] Logo del header actualizado:', this.logoHeader);
           }
-          
+
           this.isLoadingConfig = false;
         },
         error: (error: any) => {
@@ -95,7 +95,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
       next: (categories) => {
         this.categories = categories;
         this.isLoadingCategories = false;
-        console.log('✅ Categorías cargadas en header desktop:', categories);
+        //console.log('✅ Categorías cargadas en header desktop:', categories);
       },
       error: (error) => {
         console.error('❌ Error cargando categorías en header desktop:', error);
@@ -145,7 +145,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
       .subscribe(searchTerm => {
         if (searchTerm.trim().length >= 2) {
           // Navegar a /productos con el término de búsqueda
-          this.router.navigate(['/productos'], { 
+          this.router.navigate(['/productos'], {
             queryParams: { search: searchTerm.trim() },
             queryParamsHandling: 'merge' // Mantener otros query params si existen
           });
@@ -203,7 +203,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe(items => {
         this.cartItemCount = items.length;
-        console.log('🛒 [HEADER] Contador de carrito actualizado:', this.cartItemCount);
+        //console.log('🛒 [HEADER] Contador de carrito actualizado:', this.cartItemCount);
       });
   }
 

@@ -32,12 +32,12 @@ export class BannerComponent implements OnInit, OnDestroy {
   currentSlide: number = 0;
   offset: number = 0;
   intervalId: any;
-  
+
   // Banners dinámicos del backend
   banners: BannerData[] = [];
   isLoading = true;
   totalSlides = 0;
-  
+
   constructor(private configurationService: ConfigurationService) {}
 
   ngOnInit() {
@@ -52,61 +52,61 @@ export class BannerComponent implements OnInit, OnDestroy {
    * Cargar banners dinámicos del backend
    */
   loadBanners(): void {
-    console.log('🎨 [BANNER] Cargando banners dinámicos del backend...');
+    //console.log('🎨 [BANNER] Cargando banners dinámicos del backend...');
     this.isLoading = true;
-    
+
     this.configurationService.getConfigurationSection('banners').subscribe({
       next: (response: any) => {
-        console.log('✅ [BANNER] Respuesta completa del backend:', response);
-        console.log('🔍 [BANNER] Tipo de respuesta:', typeof response);
-        console.log('🔍 [BANNER] Keys de la respuesta:', Object.keys(response || {}));
-        
+        //console.log('✅ [BANNER] Respuesta completa del backend:', response);
+        //console.log('🔍 [BANNER] Tipo de respuesta:', typeof response);
+        //console.log('🔍 [BANNER] Keys de la respuesta:', Object.keys(response || {}));
+
         // Extraer banners de la respuesta con múltiples intentos
         let bannersData = [];
-        
+
         if (Array.isArray(response)) {
-          console.log('📋 [BANNER] Respuesta es un array directo');
+          //console.log('📋 [BANNER] Respuesta es un array directo');
           bannersData = response;
         } else if (response?.banners) {
-          console.log('📋 [BANNER] Banners encontrados en response.banners');
+          //console.log('📋 [BANNER] Banners encontrados en response.banners');
           bannersData = response.banners;
         } else if (response?.banner?.banners) {
-          console.log('📋 [BANNER] Banners encontrados en response.banner.banners');
+          //console.log('📋 [BANNER] Banners encontrados en response.banner.banners');
           bannersData = response.banner.banners;
         } else if (response?.data) {
-          console.log('📋 [BANNER] Banners encontrados en response.data');
+          //console.log('📋 [BANNER] Banners encontrados en response.data');
           bannersData = response.data;
         } else {
-          console.log('📋 [BANNER] Estructura de respuesta no reconocida, usando respuesta completa');
+          //console.log('📋 [BANNER] Estructura de respuesta no reconocida, usando respuesta completa');
           bannersData = response || [];
         }
-        
-        console.log('📊 [BANNER] Banners extraídos:', bannersData);
-        console.log('📊 [BANNER] Número de banners:', bannersData.length);
-        
+
+        //console.log('📊 [BANNER] Banners extraídos:', bannersData);
+        //console.log('📊 [BANNER] Número de banners:', bannersData.length);
+
         // Mostrar cada banner individual para debugging
         bannersData.forEach((banner: any, index: number) => {
-          console.log(`🎨 [BANNER] Banner ${index + 1}:`, {
-            id: banner.id,
-            titulo: banner.titulo,
-            subtitulo: banner.subtitulo,
-            nombreBoton: banner.nombreBoton,
-            colorTitulos: banner.colorTitulos,
-            colorBoton: banner.colorBoton,
-            activo: banner.activo,
-            orden: banner.orden,
-            'TODAS_LAS_PROPIEDADES': Object.keys(banner),
-            'OBJETO_COMPLETO': banner
-          });
+          // console.log(`🎨 [BANNER] Banner ${index + 1}:`, {
+          //   id: banner.id,
+          //   titulo: banner.titulo,
+          //   subtitulo: banner.subtitulo,
+          //   nombreBoton: banner.nombreBoton,
+          //   colorTitulos: banner.colorTitulos,
+          //   colorBoton: banner.colorBoton,
+          //   activo: banner.activo,
+          //   orden: banner.orden,
+          //   'TODAS_LAS_PROPIEDADES': Object.keys(banner),
+          //   'OBJETO_COMPLETO': banner
+          // });
         });
-        
+
         // Mapear y filtrar banners activos
         this.banners = bannersData
           .filter((banner: any) => this.isBannerActive(banner.datos?.activo))
           .map((bannerConfig: any, index: number) => {
-            console.log(`🎨 [BANNER] Procesando banner ${index + 1}:`, bannerConfig);
-            console.log(`🔍 [BANNER] Datos del banner:`, bannerConfig.datos);
-            
+            //console.log(`🎨 [BANNER] Procesando banner ${index + 1}:`, bannerConfig);
+            //console.log(`🔍 [BANNER] Datos del banner:`, bannerConfig.datos);
+
             const mappedBanner: BannerData = {
               id: bannerConfig._id || `banner-${index}`,
               titulo: bannerConfig.datos?.titulo || '',
@@ -124,37 +124,37 @@ export class BannerComponent implements OnInit, OnDestroy {
               nombreButton2: bannerConfig.datos?.nombreButton2 || '',
               colorBoton2: bannerConfig.datos?.colorBoton2 || ''
             };
-            
-            console.log(`✅ [BANNER] Banner ${index + 1} mapeado COMPLETO:`, mappedBanner);
-            console.log(`🔍 [BANNER] Segundo botón debug:`, {
-              enlaceButton2_original: bannerConfig.datos?.enlaceButton2,
-              nombreButton2_original: bannerConfig.datos?.nombreButton2,
-              colorBoton2_original: bannerConfig.datos?.colorBoton2,
-              enlaceButton2_mapeado: mappedBanner.enlaceButton2,
-              nombreButton2_mapeado: mappedBanner.nombreButton2,
-              colorBoton2_mapeado: mappedBanner.colorBoton2,
-              condicion_mostrar: !!(mappedBanner.enlaceButton2 && mappedBanner.nombreButton2)
-            });
-            console.log(`🖼️ [BANNER] Imágenes debug Banner ${index + 1}:`, {
-              imagenDesktop_original: bannerConfig.datos?.imagenDesktop,
-              imagenMobile_original: bannerConfig.datos?.imagenMobile,
-              imagen_mapeada_desktop: mappedBanner.imagen,
-              imagen_mapeada_mobile: mappedBanner.imagenMobile,
-              bannerConfig_completo: bannerConfig
-            });
+
+            //console.log(`✅ [BANNER] Banner ${index + 1} mapeado COMPLETO:`, mappedBanner);
+            // console.log(`🔍 [BANNER] Segundo botón debug:`, {
+            //   enlaceButton2_original: bannerConfig.datos?.enlaceButton2,
+            //   nombreButton2_original: bannerConfig.datos?.nombreButton2,
+            //   colorBoton2_original: bannerConfig.datos?.colorBoton2,
+            //   enlaceButton2_mapeado: mappedBanner.enlaceButton2,
+            //   nombreButton2_mapeado: mappedBanner.nombreButton2,
+            //   colorBoton2_mapeado: mappedBanner.colorBoton2,
+            //   condicion_mostrar: !!(mappedBanner.enlaceButton2 && mappedBanner.nombreButton2)
+            // });
+            // console.log(`🖼️ [BANNER] Imágenes debug Banner ${index + 1}:`, {
+            //   imagenDesktop_original: bannerConfig.datos?.imagenDesktop,
+            //   imagenMobile_original: bannerConfig.datos?.imagenMobile,
+            //   imagen_mapeada_desktop: mappedBanner.imagen,
+            //   imagen_mapeada_mobile: mappedBanner.imagenMobile,
+            //   bannerConfig_completo: bannerConfig
+            // });
             return mappedBanner;
           })
           .sort((a: BannerData, b: BannerData) => a.orden - b.orden);
-        
-        console.log('🚀 [BANNER] Banners activos filtrados y ordenados:', this.banners);
-        
+
+        //console.log('🚀 [BANNER] Banners activos filtrados y ordenados:', this.banners);
+
         this.totalSlides = this.banners.length;
         this.isLoading = false;
-        
+
         // Resetear posición del carousel
         this.currentSlide = 0;
         this.offset = 0;
-        
+
         // Iniciar auto-slide si hay banners
         if (this.totalSlides > 1) {
           this.startAutoSlide();
@@ -178,7 +178,7 @@ export class BannerComponent implements OnInit, OnDestroy {
 
   nextSlide() {
     if (this.totalSlides === 0) return;
-    
+
     this.currentSlide += 1;
 
     // Cuando llegamos al final, regresamos al primer slide
@@ -192,7 +192,7 @@ export class BannerComponent implements OnInit, OnDestroy {
 
   prevSlide() {
     if (this.totalSlides === 0) return;
-    
+
     this.currentSlide -= 1;
 
     // Cuando llegamos al primer slide, volvemos al último
@@ -211,24 +211,24 @@ export class BannerComponent implements OnInit, OnDestroy {
    */
   getDesktopImageUrl(bannerData: any): string {
     const imagenDesktop = bannerData?.imagenDesktop;
-    
+
     if (!imagenDesktop) return 'assets/images/ChocoBanner.jpg'; // Fallback
-    
+
     // Si ya es una URL completa, usarla tal como está
     if (imagenDesktop.startsWith('http')) {
       return imagenDesktop;
     }
-    
+
     // Si empieza con /uploads, construir URL completa del backend
     if (imagenDesktop.startsWith('/uploads')) {
       return `http://localhost:3000${imagenDesktop}`;
     }
-    
+
     // Si es una ruta relativa, asumir que está en assets
     if (imagenDesktop.startsWith('assets/')) {
       return imagenDesktop;
     }
-    
+
     // Fallback: construir URL del backend
     return `http://localhost:3000/uploads/banners/${imagenDesktop}`;
   }
@@ -238,24 +238,24 @@ export class BannerComponent implements OnInit, OnDestroy {
    */
   getMobileImageUrl(bannerData: any): string {
     const imagenMobile = bannerData?.imagenMobile;
-    
+
     if (!imagenMobile) return this.getDesktopImageUrl(bannerData); // Usar desktop como fallback
-    
+
     // Si ya es una URL completa, usarla tal como está
     if (imagenMobile.startsWith('http')) {
       return imagenMobile;
     }
-    
+
     // Si empieza con /uploads, construir URL completa del backend
     if (imagenMobile.startsWith('/uploads')) {
       return `http://localhost:3000${imagenMobile}`;
     }
-    
+
     // Si es una ruta relativa, asumir que está en assets
     if (imagenMobile.startsWith('assets/')) {
       return imagenMobile;
     }
-    
+
     // Fallback: construir URL del backend
     return `http://localhost:3000/uploads/banners/${imagenMobile}`;
   }

@@ -20,17 +20,17 @@ export class PresupuestoDetalleComponent implements OnInit {
   // Estado del componente
   isLoading = false;
   presupuesto: Presupuesto | null = null;
-  
+
   // Estado de edición de apuntes
   editingNotes = false;
   tempNotes = '';
-  
+
   // Estado de edición del presupuesto
   isEditMode = false;
   originalPresupuesto: Presupuesto | null = null;
   editingProduct: { [key: string]: boolean } = {};
   isSaving = false;
-  
+
   // Usuario actual
   currentUser: any = null;
 
@@ -53,57 +53,57 @@ export class PresupuestoDetalleComponent implements OnInit {
     if (numeroPresupuestoStr) {
       this.isLoading = true;
       const numeroPresupuesto = parseInt(numeroPresupuestoStr);
-      
-      console.log('🔍 DEBUG: Cargando presupuesto ENRIQUECIDO con numeroPresupuesto:', numeroPresupuesto);
-      
+
+      //console.log('🔍 DEBUG: Cargando presupuesto ENRIQUECIDO con numeroPresupuesto:', numeroPresupuesto);
+
       // Usar endpoint enriquecido para obtener datos completos de productos
       this.budgetsService.getBudgetByNumberEnriched(numeroPresupuesto).subscribe({
         next: (budget) => {
-          console.log('✅ DEBUG: Presupuesto ENRIQUECIDO obtenido:', budget);
-          console.log('🔍 DEBUG: Productos en presupuesto enriquecido:', budget.productos);
+          //console.log('✅ DEBUG: Presupuesto ENRIQUECIDO obtenido:', budget);
+          //console.log('🔍 DEBUG: Productos en presupuesto enriquecido:', budget.productos);
           budget.productos?.forEach((prod, i) => {
-            console.log(`📦 DEBUG: Producto ${i+1}:`, {
-              productoId: prod.productoId,
-              cantidad: prod.cantidad,
-              precioUnitario: prod.precioUnitario,
-              producto: prod.producto,
-              imagen: prod.producto?.imagen
-            });
+            // console.log(`📦 DEBUG: Producto ${i+1}:`, {
+            //   productoId: prod.productoId,
+            //   cantidad: prod.cantidad,
+            //   precioUnitario: prod.precioUnitario,
+            //   producto: prod.producto,
+            //   imagen: prod.producto?.imagen
+            // });
           });
           this.presupuesto = this.convertEnrichedBudgetToPresupuesto(budget);
-          console.log('🎯 DEBUG: Presupuesto convertido para frontend:', this.presupuesto);
-          console.log('🖼️ DEBUG: Imágenes de productos en frontend:', 
-            this.presupuesto.productos.map(p => ({ nombre: p.nombre, imagen: p.imagen })));
+          //console.log('🎯 DEBUG: Presupuesto convertido para frontend:', this.presupuesto);
+          // console.log('🖼️ DEBUG: Imágenes de productos en frontend:',
+          //   this.presupuesto.productos.map(p => ({ nombre: p.nombre, imagen: p.imagen })));
           this.isLoading = false;
         },
         error: (error) => {
           console.error('❌ DEBUG: Error cargando presupuesto enriquecido:', error);
           console.error('❌ DEBUG: Status del error:', error.status);
           console.error('❌ DEBUG: Mensaje del error:', error.message);
-          console.log('🔄 DEBUG: FALLBACK - Intentando con método tradicional...');
-          
+          //console.log('🔄 DEBUG: FALLBACK - Intentando con método tradicional...');
+
           // Fallback: usar método tradicional si el enriquecido falla
           this.budgetsService.getBudgets({ limit: 100 }).subscribe({
             next: (response) => {
               const budgets = response.budgets || response;
               const budget = budgets.find((b: any) => b.numeroPresupuesto === numeroPresupuesto);
-              
+
               if (budget) {
-                console.log('✅ DEBUG: Presupuesto encontrado (fallback):', budget);
-                console.log('📦 DEBUG: Productos en fallback:', budget.productos);
+                //console.log('✅ DEBUG: Presupuesto encontrado (fallback):', budget);
+                //console.log('📦 DEBUG: Productos en fallback:', budget.productos);
                 budget.productos?.forEach((prod, i) => {
-                  console.log(`📦 DEBUG: Producto ${i+1} (fallback):`, {
-                    productoId: prod.productoId,
-                    cantidad: prod.cantidad,
-                    precioUnitario: prod.precioUnitario,
-                    tieneProductoEnriquecido: !!prod.producto,
-                    imagenProducto: prod.producto?.imagen || 'SIN IMAGEN EN PRODUCTO ENRIQUECIDO'
-                  });
+                  // console.log(`📦 DEBUG: Producto ${i+1} (fallback):`, {
+                  //   productoId: prod.productoId,
+                  //   cantidad: prod.cantidad,
+                  //   precioUnitario: prod.precioUnitario,
+                  //   tieneProductoEnriquecido: !!prod.producto,
+                  //   imagenProducto: prod.producto?.imagen || 'SIN IMAGEN EN PRODUCTO ENRIQUECIDO'
+                  // });
                 });
                 this.presupuesto = this.convertBudgetToPresupuesto(budget);
-                console.log('🎯 DEBUG: Presupuesto convertido (fallback):', this.presupuesto);
-                console.log('🖼️ DEBUG: Imágenes finales (fallback):', 
-                  this.presupuesto.productos.map(p => ({ nombre: p.nombre, imagen: p.imagen })));
+                //console.log('🎯 DEBUG: Presupuesto convertido (fallback):', this.presupuesto);
+                // console.log('🖼️ DEBUG: Imágenes finales (fallback):',
+                //   this.presupuesto.productos.map(p => ({ nombre: p.nombre, imagen: p.imagen })));
               } else {
                 console.error('❌ DEBUG: Presupuesto no encontrado:', numeroPresupuesto);
                 this.presupuesto = null;
@@ -219,7 +219,7 @@ export class PresupuestoDetalleComponent implements OnInit {
   // Acciones de edición
   editarPresupuesto(): void {
     if (this.presupuesto) {
-      console.log('🔧 Activando modo edición para presupuesto:', this.presupuesto.numeroPresupuesto);
+      //console.log('🔧 Activando modo edición para presupuesto:', this.presupuesto.numeroPresupuesto);
       this.isEditMode = true;
       // Crear copia de seguridad para poder cancelar
       this.originalPresupuesto = JSON.parse(JSON.stringify(this.presupuesto));
@@ -229,11 +229,11 @@ export class PresupuestoDetalleComponent implements OnInit {
 
   guardarPresupuesto(): void {
     if (!this.presupuesto || this.isSaving) return;
-    
+
     this.isSaving = true;
-    console.log('💾 Guardando cambios del presupuesto:', this.presupuesto.numeroPresupuesto);
-    console.log('🔍 Productos originales:', this.presupuesto.productos);
-    
+    //console.log('💾 Guardando cambios del presupuesto:', this.presupuesto.numeroPresupuesto);
+    //console.log('🔍 Productos originales:', this.presupuesto.productos);
+
     // Preparar datos para enviar al backend con la estructura correcta del DTO
     const updateData: any = {
       productos: this.presupuesto.productos.map(prod => ({
@@ -255,26 +255,26 @@ export class PresupuestoDetalleComponent implements OnInit {
       estado: this.presupuesto.estado, // Usar estado literal directamente
       precioTotal: this.presupuesto.precioTotal || this.calculateTotal() // Corregido: usar precioTotal
     };
-    
-    console.log('📤 Datos enviados al backend:', updateData);
-    
+
+    //console.log('📤 Datos enviados al backend:', updateData);
+
     // Llamar al backend para actualizar
     this.budgetsService.updateBudget(this.presupuesto.id, updateData).subscribe({
       next: (response) => {
-        console.log('✅ Presupuesto actualizado exitosamente:', response);
+        //console.log('✅ Presupuesto actualizado exitosamente:', response);
         this.isEditMode = false;
         this.originalPresupuesto = null;
         this.editingProduct = {};
         this.isSaving = false;
-        
+
         // Recargar datos enriquecidos directamente por ID para asegurar sincronización
         if (this.presupuesto?.id) {
-          console.log('🔄 Recargando presupuesto enriquecido por ID:', this.presupuesto.id);
+          //console.log('🔄 Recargando presupuesto enriquecido por ID:', this.presupuesto.id);
           this.budgetsService.getBudgetEnriched(this.presupuesto.id).subscribe({
             next: (enrichedBudget: any) => {
-              console.log('✅ Presupuesto enriquecido recargado:', enrichedBudget);
+              //console.log('✅ Presupuesto enriquecido recargado:', enrichedBudget);
               this.presupuesto = this.convertEnrichedBudgetToPresupuesto(enrichedBudget);
-              console.log('🎯 Presupuesto convertido tras guardar:', this.presupuesto);
+              //console.log('🎯 Presupuesto convertido tras guardar:', this.presupuesto);
             },
             error: (reloadError: any) => {
               console.error('❌ Error recargando presupuesto enriquecido:', reloadError);
@@ -294,7 +294,7 @@ export class PresupuestoDetalleComponent implements OnInit {
         console.error('📋 Error.message:', error.message);
         console.error('📋 Error status:', error.status);
         this.isSaving = false;
-        
+
         // Mensaje de error más específico
         let errorMessage = 'Error al guardar los cambios. Por favor, intenta de nuevo.';
         if (error.error) {
@@ -315,7 +315,7 @@ export class PresupuestoDetalleComponent implements OnInit {
 
   cancelarEdicion(): void {
     if (this.originalPresupuesto) {
-      console.log('🚫 Cancelando edición, restaurando datos originales');
+      //console.log('🚫 Cancelando edición, restaurando datos originales');
       this.presupuesto = JSON.parse(JSON.stringify(this.originalPresupuesto));
     }
     this.isEditMode = false;
@@ -334,11 +334,11 @@ export class PresupuestoDetalleComponent implements OnInit {
       if (producto) {
         // Recalcular total del producto
         producto.precioTotal = producto.cantidad * producto.precioUnitario;
-        
+
         // Recalcular totales generales
         this.recalcularTotales();
-        
-        console.log('✅ Producto actualizado:', producto);
+
+        //console.log('✅ Producto actualizado:', producto);
       }
     }
     this.editingProduct[productoId] = false;
@@ -348,7 +348,7 @@ export class PresupuestoDetalleComponent implements OnInit {
     if (this.originalPresupuesto) {
       const productoOriginal = this.originalPresupuesto.productos.find(p => p.id === productoId);
       const productoActual = this.presupuesto?.productos.find(p => p.id === productoId);
-      
+
       if (productoOriginal && productoActual) {
         productoActual.cantidad = productoOriginal.cantidad;
         productoActual.precioUnitario = productoOriginal.precioUnitario;
@@ -363,7 +363,7 @@ export class PresupuestoDetalleComponent implements OnInit {
     if (this.presupuesto && confirm('¿Estás seguro de que quieres eliminar este producto del presupuesto?')) {
       this.presupuesto.productos = this.presupuesto.productos.filter(p => p.id !== productoId);
       this.recalcularTotales();
-      console.log('🗑️ Producto eliminado del presupuesto');
+      //console.log('🗑️ Producto eliminado del presupuesto');
     }
   }
 
@@ -405,68 +405,68 @@ export class PresupuestoDetalleComponent implements OnInit {
   cambiarEstado(nuevoEstado: 'pendiente' | 'aprobado' | 'rechazado' | 'enviado'): void {
     if (this.presupuesto) {
       this.presupuesto.estado = nuevoEstado;
-      console.log('Estado cambiado a:', nuevoEstado);
+      //console.log('Estado cambiado a:', nuevoEstado);
       // Implementar lógica de guardado
     }
   }
 
   exportarPDF(): void {
-    console.log('🔥 [NUEVO] Método exportarPDF ejecutándose...');
-    
+    //console.log('🔥 [NUEVO] Método exportarPDF ejecutándose...');
+
     if (!this.presupuesto) {
       console.error('❌ [NUEVO] No hay presupuesto disponible');
       alert('No hay datos de presupuesto disponibles');
       return;
     }
 
-    console.log('🔥 [NUEVO] Presupuesto encontrado:', {
-      numero: this.presupuesto.numeroPresupuesto,
-      empresa: this.presupuesto.nombreEmpresa,
-      productos: this.presupuesto.productos?.length || 0
-    });
+    // console.log('🔥 [NUEVO] Presupuesto encontrado:', {
+    //   numero: this.presupuesto.numeroPresupuesto,
+    //   empresa: this.presupuesto.nombreEmpresa,
+    //   productos: this.presupuesto.productos?.length || 0
+    // });
 
     try {
-      console.log('🔥 [NUEVO] Creando PDF simple...');
-      
+      //console.log('🔥 [NUEVO] Creando PDF simple...');
+
       // Crear PDF simple con jsPDF
       const pdf = new jsPDF('p', 'mm', 'a4');
-      console.log('🔥 [NUEVO] jsPDF creado exitosamente');
-      
+      //console.log('🔥 [NUEVO] jsPDF creado exitosamente');
+
       // Añadir contenido de texto simple
       pdf.setFontSize(20);
       pdf.text('PRESUPUESTO', 20, 30);
-      
+
       pdf.setFontSize(14);
       pdf.text(`Número: ${this.presupuesto.numeroPresupuesto}`, 20, 50);
       pdf.text(`Empresa: ${this.presupuesto.nombreEmpresa}`, 20, 65);
       pdf.text(`Email: ${this.presupuesto.email}`, 20, 80);
       pdf.text(`Teléfono: ${this.presupuesto.telefono}`, 20, 95);
-      
+
       let yPos = 120;
-      
+
       if (this.presupuesto.productos && this.presupuesto.productos.length > 0) {
         pdf.text('PRODUCTOS:', 20, yPos);
         yPos += 15;
-        
+
         this.presupuesto.productos.forEach((producto, index) => {
           pdf.text(`${index + 1}. ${producto.nombre} - Cantidad: ${producto.cantidad}`, 25, yPos);
           yPos += 15;
         });
       }
-      
+
       pdf.text(`TOTAL: ${this.formatCurrency(this.presupuesto.precioTotal || 0)}`, 20, yPos + 20);
-      
-      console.log('🔥 [NUEVO] Contenido añadido al PDF');
-      
+
+      //console.log('🔥 [NUEVO] Contenido añadido al PDF');
+
       // Descargar
       const fileName = `Presupuesto_${this.presupuesto.numeroPresupuesto}_Test.pdf`;
-      console.log('🔥 [NUEVO] Descargando:', fileName);
-      
+      //console.log('🔥 [NUEVO] Descargando:', fileName);
+
       pdf.save(fileName);
-      console.log('✅ [NUEVO] PDF descargado exitosamente!');
-      
+      //console.log('✅ [NUEVO] PDF descargado exitosamente!');
+
       alert('PDF de prueba generado: ' + fileName);
-      
+
     } catch (error: any) {
       console.error('❌ [NUEVO] Error:', error);
       alert('Error: ' + (error?.message || 'Error desconocido'));
@@ -475,8 +475,8 @@ export class PresupuestoDetalleComponent implements OnInit {
 
   // MÉTODO PROFESIONAL PARA GENERAR PDF CON DISEÑO ELEGANTE
   descargarPDFNuevo(): void {
-    console.log('🎨 [PDF PROFESIONAL] Generando PDF con diseño elegante...');
-    
+    //console.log('🎨 [PDF PROFESIONAL] Generando PDF con diseño elegante...');
+
     if (!this.presupuesto) {
       console.error('❌ [PDF PROFESIONAL] No hay presupuesto disponible');
       alert('No hay datos de presupuesto disponibles');
@@ -489,237 +489,237 @@ export class PresupuestoDetalleComponent implements OnInit {
       const pageHeight = 297; // A4 height
       const margin = 20;
       const contentWidth = pageWidth - (margin * 2);
-      
-      console.log('🎨 [PDF PROFESIONAL] Configurando diseño...');
-      
+
+      //console.log('🎨 [PDF PROFESIONAL] Configurando diseño...');
+
       // COLORES CORPORATIVOS
       const primaryColor: [number, number, number] = [139, 69, 19]; // Marrón chocolate #8B4513
       const secondaryColor: [number, number, number] = [245, 245, 220]; // Beige claro #F5F5DC
       const textColor: [number, number, number] = [51, 51, 51]; // Gris oscuro #333333
       const accentColor: [number, number, number] = [255, 140, 0]; // Naranja #FF8C00
-      
+
       let yPosition = margin;
-      
+
       // ===== HEADER ELEGANTE =====
       // Fondo del header
       pdf.setFillColor(...primaryColor);
       pdf.rect(0, 0, pageWidth, 60, 'F');
-      
+
       // Logo y título principal
       pdf.setTextColor(255, 255, 255); // Blanco
       pdf.setFontSize(28);
       pdf.setFont('helvetica', 'bold');
       pdf.text('LOGOLATE', margin, 30);
-      
+
       // Número de presupuesto en el header
       pdf.setFontSize(20);
       pdf.setFont('helvetica', 'bold');
       const presupuestoText = `PRESUPUESTO #${this.presupuesto.numeroPresupuesto}`;
       const textWidth = pdf.getTextWidth(presupuestoText);
       pdf.text(presupuestoText, pageWidth - margin - textWidth, 30);
-      
+
       // Fecha
       pdf.setFontSize(12);
       pdf.setFont('helvetica', 'normal');
       const fechaText = `Fecha: ${this.formatDate(this.presupuesto.fecha)}`;
       const fechaWidth = pdf.getTextWidth(fechaText);
       pdf.text(fechaText, pageWidth - margin - fechaWidth, 45);
-      
+
       yPosition = 80;
-      
+
       // ===== INFORMACIÓN DEL CLIENTE =====
       pdf.setTextColor(...textColor);
       pdf.setFontSize(16);
       pdf.setFont('helvetica', 'bold');
       pdf.text('DATOS DEL CLIENTE', margin, yPosition);
-      
+
       // Línea decorativa bajo el título
       pdf.setDrawColor(...primaryColor);
       pdf.setLineWidth(1);
       pdf.line(margin, yPosition + 3, margin + 60, yPosition + 3);
-      
+
       yPosition += 15;
-      
+
       // Crear caja con fondo para los datos del cliente
       pdf.setFillColor(...secondaryColor);
       pdf.roundedRect(margin, yPosition - 5, contentWidth, 35, 3, 3, 'F');
-      
+
       pdf.setFontSize(11);
       pdf.setFont('helvetica', 'normal');
       pdf.setTextColor(...textColor);
-      
+
       // Datos del cliente en dos columnas
       pdf.text(`Empresa: ${this.presupuesto.nombreEmpresa}`, margin + 5, yPosition + 5);
       pdf.text(`Email: ${this.presupuesto.email}`, margin + 5, yPosition + 15);
       pdf.text(`Teléfono: ${this.presupuesto.telefono}`, margin + 5, yPosition + 25);
-      
+
       if (this.presupuesto.direccion) {
         pdf.text(`Dirección: ${this.presupuesto.direccion}`, margin + 90, yPosition + 5);
       }
-      
+
       // Estado del presupuesto
       const estadoText = `Estado: ${this.presupuesto.estado.toUpperCase()}`;
       pdf.setFont('helvetica', 'bold');
       pdf.setTextColor(...accentColor);
       pdf.text(estadoText, margin + 90, yPosition + 15);
-      
+
       yPosition += 50;
-      
+
       // ===== TABLA DE PRODUCTOS =====
       pdf.setTextColor(...textColor);
       pdf.setFontSize(16);
       pdf.setFont('helvetica', 'bold');
       pdf.text('PRODUCTOS SOLICITADOS', margin, yPosition);
-      
+
       // Línea decorativa
       pdf.setDrawColor(...primaryColor);
       pdf.line(margin, yPosition + 3, margin + 80, yPosition + 3);
-      
+
       yPosition += 15;
-      
+
       if (this.presupuesto.productos && this.presupuesto.productos.length > 0) {
         // Header de la tabla
         pdf.setFillColor(...primaryColor);
         pdf.rect(margin, yPosition, contentWidth, 12, 'F');
-        
+
         pdf.setTextColor(255, 255, 255);
         pdf.setFontSize(10);
         pdf.setFont('helvetica', 'bold');
-        
+
         pdf.text('PRODUCTO', margin + 3, yPosition + 8);
         pdf.text('CATEGORÍA', margin + 70, yPosition + 8);
         pdf.text('CANT.', margin + 110, yPosition + 8);
         pdf.text('PRECIO UNIT.', margin + 130, yPosition + 8);
         pdf.text('TOTAL', margin + 160, yPosition + 8);
-        
+
         yPosition += 12;
-        
+
         // Filas de productos
         pdf.setTextColor(...textColor);
         pdf.setFont('helvetica', 'normal');
-        
+
         this.presupuesto.productos.forEach((producto, index) => {
           // Alternar colores de fila
           if (index % 2 === 0) {
             pdf.setFillColor(250, 250, 250);
             pdf.rect(margin, yPosition, contentWidth, 10, 'F');
           }
-          
+
           pdf.setFontSize(9);
-          
+
           // Truncar texto si es muy largo
-          const nombreTruncado = producto.nombre.length > 25 ? 
+          const nombreTruncado = producto.nombre.length > 25 ?
             producto.nombre.substring(0, 25) + '...' : producto.nombre;
-          const categoriaTruncada = producto.categoria.length > 15 ? 
+          const categoriaTruncada = producto.categoria.length > 15 ?
             producto.categoria.substring(0, 15) + '...' : producto.categoria;
-          
+
           pdf.text(nombreTruncado, margin + 3, yPosition + 7);
           pdf.text(categoriaTruncada, margin + 70, yPosition + 7);
           pdf.text(producto.cantidad.toString(), margin + 115, yPosition + 7);
           pdf.text(this.formatCurrency(producto.precioUnitario), margin + 130, yPosition + 7);
           pdf.text(this.formatCurrency(producto.precioTotal), margin + 160, yPosition + 7);
-          
+
           yPosition += 10;
-          
+
           // Verificar si necesitamos nueva página
           if (yPosition > pageHeight - 60) {
             pdf.addPage();
             yPosition = margin;
           }
         });
-        
+
         yPosition += 10;
       }
-      
+
       // ===== RESUMEN FINANCIERO =====
       // Caja para el resumen (más alta para acomodar el total)
       pdf.setFillColor(...secondaryColor);
       pdf.roundedRect(margin + contentWidth - 90, yPosition, 90, 50, 3, 3, 'F');
-      
+
       pdf.setDrawColor(...primaryColor);
       pdf.setLineWidth(1);
       pdf.roundedRect(margin + contentWidth - 90, yPosition, 90, 50, 3, 3, 'S');
-      
+
       pdf.setTextColor(...textColor);
       pdf.setFontSize(12);
       pdf.setFont('helvetica', 'bold');
       pdf.text('RESUMEN', margin + contentWidth - 85, yPosition + 10);
-      
+
       pdf.setFontSize(10);
       pdf.setFont('helvetica', 'normal');
       pdf.text(`Productos: ${this.presupuesto.productos?.length || 0}`, margin + contentWidth - 85, yPosition + 20);
       pdf.text(`Cantidad total: ${this.presupuesto.cantidadTotal || 0}`, margin + contentWidth - 85, yPosition + 28);
-      
+
       // Línea separadora antes del total
       pdf.setDrawColor(...primaryColor);
       pdf.setLineWidth(0.5);
       pdf.line(margin + contentWidth - 85, yPosition + 32, margin + contentWidth - 10, yPosition + 32);
-      
+
       // Total destacado dentro de la caja
       pdf.setFontSize(11);
       pdf.setFont('helvetica', 'bold');
       pdf.setTextColor(...accentColor);
       pdf.text('TOTAL:', margin + contentWidth - 85, yPosition + 40);
-      
+
       pdf.setFontSize(14);
       pdf.setFont('helvetica', 'bold');
       const totalText = this.formatCurrency(this.presupuesto.precioTotal || 0);
       pdf.text(totalText, margin + contentWidth - 85, yPosition + 47);
-      
+
       yPosition += 50;
-      
+
       // ===== NOTAS Y APUNTES =====
       if (this.presupuesto.apuntes && this.presupuesto.apuntes.trim()) {
         pdf.setTextColor(...textColor);
         pdf.setFontSize(12);
         pdf.setFont('helvetica', 'bold');
         pdf.text('NOTAS ADICIONALES', margin, yPosition);
-        
+
         pdf.setDrawColor(...primaryColor);
         pdf.line(margin, yPosition + 3, margin + 60, yPosition + 3);
-        
+
         yPosition += 10;
-        
+
         pdf.setFillColor(...secondaryColor);
         pdf.roundedRect(margin, yPosition, contentWidth, 20, 3, 3, 'F');
-        
+
         pdf.setFontSize(10);
         pdf.setFont('helvetica', 'normal');
-        
+
         // Dividir texto en líneas
         const lines = pdf.splitTextToSize(this.presupuesto.apuntes, contentWidth - 10);
         pdf.text(lines, margin + 5, yPosition + 8);
-        
+
         yPosition += 25;
       }
-      
+
       // ===== FOOTER ELEGANTE =====
       const footerY = pageHeight - 30;
-      
+
       // Línea decorativa
       pdf.setDrawColor(...primaryColor);
       pdf.setLineWidth(0.5);
       pdf.line(margin, footerY, pageWidth - margin, footerY);
-      
+
       pdf.setTextColor(...primaryColor);
       pdf.setFontSize(8);
       pdf.setFont('helvetica', 'italic');
-      
+
       const footerText = 'Logolate - Dulces Artesanales | www.logolate.com | info@logolate.com';
       const footerWidth = pdf.getTextWidth(footerText);
       pdf.text(footerText, (pageWidth - footerWidth) / 2, footerY + 8);
-      
+
       // Generar nombre de archivo
       const fileName = `Presupuesto_${this.presupuesto.numeroPresupuesto}_${this.presupuesto.nombreEmpresa.replace(/[^a-zA-Z0-9]/g, '_')}.pdf`;
-      
-      console.log('🎨 [PDF PROFESIONAL] PDF generado exitosamente');
-      
+
+      //console.log('🎨 [PDF PROFESIONAL] PDF generado exitosamente');
+
       // Descargar el PDF
       pdf.save(fileName);
-      
+
       // Mostrar mensaje de éxito
       alert(`✅ PDF profesional generado exitosamente:\n${fileName}`);
-      
+
     } catch (error: any) {
       console.error('❌ [PDF PROFESIONAL] Error:', error);
       alert('Error al generar el PDF profesional: ' + (error?.message || 'Error desconocido'));
@@ -859,7 +859,7 @@ export class PresupuestoDetalleComponent implements OnInit {
   private getPDFEstadoStyle(estado: string): string {
     const normalizedEstado = estado.toLowerCase();
     const baseStyle = 'padding: 8px 16px; border-radius: 20px; font-weight: 600; font-size: 14px; display: inline-block;';
-    
+
     switch (normalizedEstado) {
       case 'aprobado':
       case 'aceptado':
@@ -909,20 +909,20 @@ export class PresupuestoDetalleComponent implements OnInit {
     if (!date) {
       return 'Fecha no disponible';
     }
-    
+
     let dateObj: Date;
-    
+
     if (typeof date === 'string') {
       dateObj = new Date(date);
     } else {
       dateObj = date;
     }
-    
+
     // Verificar si la fecha es válida
     if (isNaN(dateObj.getTime())) {
       return 'Fecha inválida';
     }
-    
+
     return new Intl.DateTimeFormat('es-ES', {
       year: 'numeric',
       month: '2-digit',
@@ -944,7 +944,7 @@ export class PresupuestoDetalleComponent implements OnInit {
     if (this.presupuesto) {
       this.presupuesto.apuntes = this.tempNotes;
       this.editingNotes = false;
-      console.log('Apuntes guardados:', this.tempNotes);
+      //console.log('Apuntes guardados:', this.tempNotes);
       // Implementar lógica de guardado en el backend
     }
   }
@@ -984,7 +984,7 @@ export class PresupuestoDetalleComponent implements OnInit {
    * Manejar carga exitosa de imágenes (para debugging)
    */
   onImageLoad(event: Event, productName: string): void {
-    console.log('✅ Imagen cargada exitosamente:', productName, event);
+    //console.log('✅ Imagen cargada exitosamente:', productName, event);
   }
 
   /**
@@ -995,7 +995,7 @@ export class PresupuestoDetalleComponent implements OnInit {
     if (target && !target.dataset['fallbackApplied']) {
       // Marcar que ya se aplicó el fallback para evitar bucles
       target.dataset['fallbackApplied'] = 'true';
-      
+
       // Usar SVG inline como fallback
       if (fallbackType === 'logo') {
         target.src = 'data:image/svg+xml;base64,' + btoa(`
@@ -1024,21 +1024,21 @@ export class PresupuestoDetalleComponent implements OnInit {
     if (!relativeUrl) {
       return this.getPlaceholderImage();
     }
-    
+
     // Si ya es una URL absoluta, devolverla tal como está
     if (relativeUrl.startsWith('http://') || relativeUrl.startsWith('https://') || relativeUrl.startsWith('data:')) {
       return relativeUrl;
     }
-    
+
     // Convertir URL relativa a absoluta del backend
     const backendUrl = 'http://localhost:3000';
     const cleanUrl = relativeUrl.startsWith('/') ? relativeUrl : '/' + relativeUrl;
     const absoluteUrl = backendUrl + cleanUrl;
-    
-    console.log('🖼️ DEBUG: Convirtiendo URL:', { relativeUrl, absoluteUrl });
+
+    //console.log('🖼️ DEBUG: Convirtiendo URL:', { relativeUrl, absoluteUrl });
     return absoluteUrl;
   }
-  
+
   /**
    * Obtener imagen placeholder por defecto
    */
@@ -1056,14 +1056,14 @@ export class PresupuestoDetalleComponent implements OnInit {
    * Convertir datos ENRIQUECIDOS del backend (Budget con productos reales) al formato del frontend
    */
   private convertEnrichedBudgetToPresupuesto(budget: any): Presupuesto {
-  console.log('🔄 DEBUG: Convirtiendo budget ENRIQUECIDO del backend:', budget);
-  console.log('🎨 DEBUG: Logotipo en budget - logoEmpresa:', budget.logoEmpresa);
-  console.log('🎨 DEBUG: Logotipo en budget - logotipoEmpresa:', budget.logotipoEmpresa);
-    
+  //console.log('🔄 DEBUG: Convirtiendo budget ENRIQUECIDO del backend:', budget);
+  //console.log('🎨 DEBUG: Logotipo en budget - logoEmpresa:', budget.logoEmpresa);
+  //console.log('🎨 DEBUG: Logotipo en budget - logotipoEmpresa:', budget.logotipoEmpresa);
+
     // Convertir productos enriquecidos del backend al formato del frontend
     const productos: ProductoPresupuesto[] = (budget.productos || []).map((prod: any, index: number) => {
-      console.log(`📦 DEBUG: Producto ${index + 1} enriquecido:`, prod);
-      
+      //console.log(`📦 DEBUG: Producto ${index + 1} enriquecido:`, prod);
+
       return {
         id: prod.productoId || prod.productId || (index + 1).toString(), // ✅ CORREGIDO: Preservar productId real
         // Usar datos del producto real si están disponibles
@@ -1105,7 +1105,7 @@ export class PresupuestoDetalleComponent implements OnInit {
       observaciones: budget.observaciones || ''
     };
 
-    console.log('✅ DEBUG: Presupuesto ENRIQUECIDO convertido:', presupuesto);
+    //console.log('✅ DEBUG: Presupuesto ENRIQUECIDO convertido:', presupuesto);
     return presupuesto;
   }
 
@@ -1113,8 +1113,8 @@ export class PresupuestoDetalleComponent implements OnInit {
    * Convertir datos del backend (Budget) al formato del frontend (Presupuesto) - MÉTODO TRADICIONAL
    */
   private convertBudgetToPresupuesto(budget: any): Presupuesto {
-    console.log('🔄 DEBUG: Convirtiendo budget del backend:', budget);
-    
+    //console.log('🔄 DEBUG: Convirtiendo budget del backend:', budget);
+
     // Convertir productos del backend al formato del frontend
     const productos: ProductoPresupuesto[] = (budget.productos || []).map((prod: any, index: number) => ({
       id: (index + 1).toString(),
@@ -1151,7 +1151,7 @@ export class PresupuestoDetalleComponent implements OnInit {
       observaciones: budget.observaciones || ''
     };
 
-    console.log('✅ DEBUG: Presupuesto convertido:', presupuesto);
+    //console.log('✅ DEBUG: Presupuesto convertido:', presupuesto);
     return presupuesto;
   }
 
@@ -1159,35 +1159,35 @@ export class PresupuestoDetalleComponent implements OnInit {
    * Procesar URL del logotipo de empresa
    */
   private getLogoUrl(logoPath: string | undefined): string {
-    console.log('🎨 [PRESUPUESTO-DETALLE] Procesando URL del logotipo:', logoPath);
-    
+    //console.log('🎨 [PRESUPUESTO-DETALLE] Procesando URL del logotipo:', logoPath);
+
     if (!logoPath) {
-      console.log('🎨 [PRESUPUESTO-DETALLE] No hay logotipo, usando placeholder');
+      //console.log('🎨 [PRESUPUESTO-DETALLE] No hay logotipo, usando placeholder');
       return '/assets/images/logo-placeholder.jpg';
     }
-    
+
     // Si ya es una URL completa, usarla tal como está
     if (logoPath.startsWith('http')) {
-      console.log('🎨 [PRESUPUESTO-DETALLE] URL completa del logotipo:', logoPath);
+      //console.log('🎨 [PRESUPUESTO-DETALLE] URL completa del logotipo:', logoPath);
       return logoPath;
     }
-    
+
     // Si empieza con /uploads, construir URL completa del backend
     if (logoPath.startsWith('/uploads')) {
       const fullUrl = `http://localhost:3000${logoPath}`;
-      console.log('🎨 [PRESUPUESTO-DETALLE] URL construida del backend:', fullUrl);
+      //console.log('🎨 [PRESUPUESTO-DETALLE] URL construida del backend:', fullUrl);
       return fullUrl;
     }
-    
+
     // Si es una referencia base64, manejarla apropiadamente
     if (logoPath.startsWith('base64-logo-')) {
-      console.log('🎨 [PRESUPUESTO-DETALLE] Logotipo base64 detectado, usando placeholder temporalmente');
+      //console.log('🎨 [PRESUPUESTO-DETALLE] Logotipo base64 detectado, usando placeholder temporalmente');
       return '/assets/images/logo-placeholder.jpg';
     }
-    
+
     // Fallback: asumir que es una ruta relativa y construir URL completa
     const fallbackUrl = `http://localhost:3000/uploads/logos/${logoPath}`;
-    console.log('🎨 [PRESUPUESTO-DETALLE] URL fallback construida:', fallbackUrl);
+    //console.log('🎨 [PRESUPUESTO-DETALLE] URL fallback construida:', fallbackUrl);
     return fallbackUrl;
   }
 }

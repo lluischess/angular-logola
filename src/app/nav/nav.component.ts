@@ -25,7 +25,7 @@ export class NavComponent implements OnInit {
    * Cargar categorías publicadas del backend
    */
   private loadCategories(): void {
-    console.log('🔄 [NAV] Cargando categorías del backend...');
+    //console.log('🔄 [NAV] Cargando categorías del backend...');
     this.isLoadingCategories = true;
     this.categoriesError = false;
 
@@ -33,7 +33,7 @@ export class NavComponent implements OnInit {
     this.categoriesService.getPublishedCategories()
       .subscribe({
         next: (categories) => {
-          console.log('✅ [NAV] Categorías obtenidas:', categories);
+          //console.log('✅ [NAV] Categorías obtenidas:', categories);
           this.categories = categories;
           this.isLoadingCategories = false;
         },

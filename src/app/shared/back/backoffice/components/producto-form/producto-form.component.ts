@@ -92,11 +92,11 @@ export class ProductoFormComponent implements OnInit {
    * Cargar categorías disponibles desde el backend
    */
   private loadCategorias(): void {
-    console.log('🔄 Cargando categorías disponibles...');
+    //console.log('🔄 Cargando categorías disponibles...');
 
     this.categoriesService.getCategories().subscribe({
       next: (response) => {
-        console.log('✅ Respuesta del backend para categorías:', response);
+        //console.log('✅ Respuesta del backend para categorías:', response);
 
         // Adaptar la respuesta del backend (puede venir como {categories: [...]} o directamente [...])
         let categorias: any[] = [];
@@ -120,7 +120,7 @@ export class ProductoFormComponent implements OnInit {
           };
         });
 
-        console.log('📋 Categorías disponibles cargadas:', this.categoriasDisponibles);
+        //console.log('📋 Categorías disponibles cargadas:', this.categoriasDisponibles);
       },
       error: (error) => {
         console.error('❌ Error cargando categorías:', error);
@@ -138,7 +138,7 @@ export class ProductoFormComponent implements OnInit {
           { value: 'minibar', label: 'Minibar' }
         ];
 
-        console.log('⚠️ Usando categorías de fallback:', this.categoriasDisponibles);
+        //console.log('⚠️ Usando categorías de fallback:', this.categoriasDisponibles);
       }
     });
   }
@@ -165,7 +165,7 @@ export class ProductoFormComponent implements OnInit {
   private loadProducto(id: string): void {
     this.productsService.getProduct(id).subscribe({
       next: (producto: any) => {
-        console.log('✅ Producto cargado para edición:', producto);
+        //console.log('✅ Producto cargado para edición:', producto);
         // Rellenar el formulario con los datos del producto
         this.productoForm.patchValue({
           nombre: producto.nombre || '',
@@ -308,10 +308,10 @@ export class ProductoFormComponent implements OnInit {
         }
 
         // Actualizar producto existente
-        console.log('Actualizando producto con ID:', this.productoId, 'Datos:', formData);
+        //console.log('Actualizando producto con ID:', this.productoId, 'Datos:', formData);
         this.productsService.updateProduct(this.productoId.toString(), formData).subscribe({
           next: (response) => {
-            console.log('✅ Producto actualizado correctamente:', response);
+            //console.log('✅ Producto actualizado correctamente:', response);
             alert('Producto actualizado correctamente');
             this.router.navigate(['/logoadmin/productos']);
           },
@@ -322,10 +322,10 @@ export class ProductoFormComponent implements OnInit {
         });
       } else {
         // Crear nuevo producto
-        console.log('Creando nuevo producto:', formData);
+        //console.log('Creando nuevo producto:', formData);
         this.productsService.createProduct(formData).subscribe({
           next: (response) => {
-            console.log('✅ Producto creado correctamente:', response);
+            //console.log('✅ Producto creado correctamente:', response);
             alert('Producto creado correctamente');
             this.router.navigate(['/logoadmin/productos']);
           },
@@ -374,12 +374,12 @@ export class ProductoFormComponent implements OnInit {
    * Calcular automáticamente el orden para la categoría seleccionada
    */
   private calculateOrderForCategory(categoria: string): void {
-    console.log(`📊 Calculando orden para categoría: ${categoria}`);
+    //console.log(`📊 Calculando orden para categoría: ${categoria}`);
 
     this.productsService.getNextOrderForCategory(categoria).subscribe({
       next: (response) => {
         const nextOrder = response.nextOrder;
-        console.log(`✅ Orden calculado: ${nextOrder}`);
+        //console.log(`✅ Orden calculado: ${nextOrder}`);
 
         // Actualizar el campo orden en el formulario
         this.productoForm.patchValue({
@@ -424,12 +424,12 @@ export class ProductoFormComponent implements OnInit {
       return;
     }
 
-    console.log(`📷 Subiendo imagen ${index + 1}:`, file.name);
+    //console.log(`📷 Subiendo imagen ${index + 1}:`, file.name);
 
     // Subir imagen al servidor
     this.productsService.uploadProductImage(file).subscribe({
       next: (response) => {
-        console.log('✅ Imagen subida correctamente:', response.imagePath);
+        //console.log('✅ Imagen subida correctamente:', response.imagePath);
 
         // Actualizar el array de imágenes en el formulario
         const imagenes = this.getImagenes();
@@ -464,7 +464,7 @@ export class ProductoFormComponent implements OnInit {
       // Si es una imagen del servidor (no un preview), eliminarla del servidor
       this.productsService.deleteProductImage(imagePath).subscribe({
         next: () => {
-          console.log('✅ Imagen eliminada del servidor');
+          //console.log('✅ Imagen eliminada del servidor');
         },
         error: (error) => {
           console.error('❌ Error eliminando imagen del servidor:', error);

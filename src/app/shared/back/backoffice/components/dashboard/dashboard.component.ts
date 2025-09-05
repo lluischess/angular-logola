@@ -52,19 +52,19 @@ export class DashboardComponent implements OnInit {
    * Cargar estadísticas reales del backend
    */
   private loadRealStats(): void {
-    console.log('🔄 [DASHBOARD] Cargando estadísticas reales del backend...');
+    //console.log('🔄 [DASHBOARD] Cargando estadísticas reales del backend...');
     this.isLoadingStats = true;
     this.statsError = false;
 
     // Cargar estadísticas de presupuestos
     this.budgetsService.getStats().subscribe({
       next: (budgetStats) => {
-        console.log('✅ [DASHBOARD] Estadísticas de presupuestos obtenidas:', budgetStats);
-        
+        //console.log('✅ [DASHBOARD] Estadísticas de presupuestos obtenidas:', budgetStats);
+
         // Mapear estadísticas de presupuestos
         this.stats.totalPresupuestos = budgetStats.total || 0;
         this.stats.presupuestosEnviados = budgetStats.byStatus?.['enviado'] || 0;
-        
+
         // Cargar productos y categorías por separado
         this.loadProductsAndCategories();
       },
@@ -90,7 +90,7 @@ export class DashboardComponent implements OnInit {
       next: (response: any) => {
         const products = response.products || response.data || response;
         this.stats.totalProductos = Array.isArray(products) ? products.length : 0;
-        console.log('📦 [DASHBOARD] Productos cargados:', this.stats.totalProductos);
+        //console.log('📦 [DASHBOARD] Productos cargados:', this.stats.totalProductos);
       },
       error: (error: any) => {
         console.error('❌ [DASHBOARD] Error cargando productos:', error);
@@ -103,11 +103,11 @@ export class DashboardComponent implements OnInit {
       next: (response: any) => {
         const categories = response.categories || response.data || response;
         this.stats.totalCategorias = Array.isArray(categories) ? categories.length : 0;
-        console.log('📂 [DASHBOARD] Categorías cargadas:', this.stats.totalCategorias);
-        
+        //console.log('📂 [DASHBOARD] Categorías cargadas:', this.stats.totalCategorias);
+
         // Terminar carga
         this.isLoadingStats = false;
-        console.log('📊 [DASHBOARD] Estadísticas finales:', this.stats);
+        //console.log('📊 [DASHBOARD] Estadísticas finales:', this.stats);
       },
       error: (error: any) => {
         console.error('❌ [DASHBOARD] Error cargando categorías:', error);
@@ -121,40 +121,40 @@ export class DashboardComponent implements OnInit {
    * Cargar estadísticas individualmente como fallback
    */
   private loadStatsIndividually(): void {
-    console.log('🔄 [DASHBOARD] Cargando estadísticas individualmente como fallback...');
-    
+    //console.log('🔄 [DASHBOARD] Cargando estadísticas individualmente como fallback...');
+
     const token = localStorage.getItem('authToken');
     const headers = {
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json'
     };
-    
+
     // Cargar productos
     this.http.get('http://localhost:3000/products', { headers }).subscribe({
       next: (response: any) => {
         const products = response.products || response.data || response;
         this.stats.totalProductos = Array.isArray(products) ? products.length : 0;
-        console.log('📦 [DASHBOARD] Productos cargados (fallback):', this.stats.totalProductos);
+        //console.log('📦 [DASHBOARD] Productos cargados (fallback):', this.stats.totalProductos);
       },
       error: (error: any) => {
         console.error('❌ Error cargando productos (fallback):', error);
         this.stats.totalProductos = 0;
       }
     });
-    
+
     // Cargar categorías
     this.http.get('http://localhost:3000/categories', { headers }).subscribe({
       next: (response: any) => {
         const categories = response.categories || response.data || response;
         this.stats.totalCategorias = Array.isArray(categories) ? categories.length : 0;
-        console.log('📂 [DASHBOARD] Categorías cargadas (fallback):', this.stats.totalCategorias);
+        //console.log('📂 [DASHBOARD] Categorías cargadas (fallback):', this.stats.totalCategorias);
       },
       error: (error: any) => {
         console.error('❌ Error cargando categorías (fallback):', error);
         this.stats.totalCategorias = 0;
       }
     });
-    
+
     // Cargar presupuestos
     this.budgetsService.getBudgets({ limit: 100 }).subscribe({
       next: (response: any) => {
@@ -163,10 +163,10 @@ export class DashboardComponent implements OnInit {
           this.stats.totalPresupuestos = budgets.length;
           this.stats.presupuestosEnviados = budgets.filter((b: any) => b.estado === 'enviado').length;
         }
-        console.log('📋 [DASHBOARD] Presupuestos cargados (fallback):', {
-          total: this.stats.totalPresupuestos,
-          enviados: this.stats.presupuestosEnviados
-        });
+        //console.log('📋 [DASHBOARD] Presupuestos cargados (fallback):', {
+        //   total: this.stats.totalPresupuestos,
+        //   enviados: this.stats.presupuestosEnviados
+        // });
         this.isLoadingStats = false;
       },
       error: (error: any) => {

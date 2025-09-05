@@ -46,7 +46,7 @@ export class AppComponent implements OnInit, OnDestroy {
         // Hide header and footer for /logoadmin routes
         this.showHeaderFooter = !event.url.startsWith('/logoadmin');
       });
-    
+
     // Check initial route
     this.showHeaderFooter = !this.router.url.startsWith('/logoadmin');
 
@@ -60,17 +60,17 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   private loadFavicon() {
-    console.log('🔧 [APP] Cargando favicon desde configuración...');
-    
+    //console.log('🔧 [APP] Cargando favicon desde configuración...');
+
     this.configuracionService.getConfiguracion()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (config) => {
           if (config?.general?.favicon) {
-            console.log('🔧 [APP] Favicon encontrado:', config.general.favicon);
+            //console.log('🔧 [APP] Favicon encontrado:', config.general.favicon);
             this.updateFavicon(config.general.favicon);
           } else {
-            console.log('🔧 [APP] No se encontró favicon en configuración, usando por defecto');
+            //console.log('🔧 [APP] No se encontró favicon en configuración, usando por defecto');
           }
         },
         error: (error) => {
@@ -92,11 +92,11 @@ export class AppComponent implements OnInit, OnDestroy {
       link.rel = 'icon';
       link.type = 'image/x-icon';
       link.href = faviconUrl;
-      
+
       // Add to head
       this.document.head.appendChild(link);
-      
-      console.log('✅ [APP] Favicon actualizado correctamente:', faviconUrl);
+
+      //console.log('✅ [APP] Favicon actualizado correctamente:', faviconUrl);
     } catch (error) {
       console.error('❌ [APP] Error actualizando favicon:', error);
     }

@@ -33,11 +33,11 @@ export class PageProductComponent implements OnInit, OnDestroy, AfterViewInit {
   public hasError: boolean = false;
   public errorMessage: string = '';
   public isProductUnpublished: boolean = false;
-  
+
   // Propiedades para el modal de imagen
   public modalImageSrc: string = '';
   public modalImageTitle: string = '';
-  
+
   // Subscripciones para limpieza
   private subscriptions: Subscription[] = [];
 
@@ -72,16 +72,16 @@ export class PageProductComponent implements OnInit, OnDestroy, AfterViewInit {
    * Aplicar metadatos SEO del producto
    */
   private applyProductSeoMetadata(product: FrontProduct): void {
-    console.log('📱 [PAGE-PRODUCT] === APLICANDO METADATOS SEO DE PRODUCTO ===');
-    console.log('📱 [PAGE-PRODUCT] Producto:', product.nombre);
-    console.log('📱 [PAGE-PRODUCT] Campos SEO directos:');
-    console.log('  - metaTitulo:', product.metaTitulo);
-    console.log('  - metaDescripcion:', product.metaDescripcion);
-    console.log('  - palabrasClave:', product.palabrasClave);
-    console.log('  - ogTitulo:', product.ogTitulo);
-    console.log('  - ogDescripcion:', product.ogDescripcion);
-    console.log('  - ogImagen:', product.ogImagen);
-    
+    //console.log('📱 [PAGE-PRODUCT] === APLICANDO METADATOS SEO DE PRODUCTO ===');
+    //console.log('📱 [PAGE-PRODUCT] Producto:', product.nombre);
+    //console.log('📱 [PAGE-PRODUCT] Campos SEO directos:');
+    //console.log('  - metaTitulo:', product.metaTitulo);
+    //console.log('  - metaDescripcion:', product.metaDescripcion);
+    //console.log('  - palabrasClave:', product.palabrasClave);
+    //console.log('  - ogTitulo:', product.ogTitulo);
+    //console.log('  - ogDescripcion:', product.ogDescripcion);
+    //console.log('  - ogImagen:', product.ogImagen);
+
     const seoMetadata: SeoMetadata = {
       title: product.metaTitulo || `${product.nombre} - Logolate`,
       description: product.metaDescripcion || `${product.nombre}. Producto artesanal de calidad premium. Medidas: ${product.medidas || 'Consultar'}. Referencia: ${product.referencia}`,
@@ -91,12 +91,12 @@ export class PageProductComponent implements OnInit, OnDestroy, AfterViewInit {
       ogImage: product.ogImagen || (product.imagenes && product.imagenes.length > 0 ? this.productsService.getAbsoluteImageUrl(product.imagenes[0]) : ''),
       canonical: `http://localhost:4200/producto/${product.urlSlug}`
     };
-    
-    console.log('📱 [PAGE-PRODUCT] Metadatos SEO preparados:', seoMetadata);
+
+    //console.log('📱 [PAGE-PRODUCT] Metadatos SEO preparados:', seoMetadata);
 
     // Aplicar metadatos SEO
     this.seoService.updateSeoMetadata(seoMetadata);
-    console.log('📱 [PAGE-PRODUCT] Metadatos SEO aplicados para producto:', product.nombre);
+    //console.log('📱 [PAGE-PRODUCT] Metadatos SEO aplicados para producto:', product.nombre);
   }
 
   /**
@@ -107,30 +107,30 @@ export class PageProductComponent implements OnInit, OnDestroy, AfterViewInit {
     this.hasError = false;
     this.isProductUnpublished = false;
     this.producto = null;
-    
-    console.log(`🔍 [PAGE-PRODUCT] Cargando producto con Slug: ${productSlug}`);
-    
+
+    //console.log(`🔍 [PAGE-PRODUCT] Cargando producto con Slug: ${productSlug}`);
+
     this.productsService.getProductBySlug(productSlug).subscribe({
       next: (product: FrontProduct) => {
         this.isLoadingProduct = false;
-        
+
         if (product) {
           this.producto = product;
-          console.log(`✅ [PAGE-PRODUCT] Producto cargado:`, product.nombre);
-          console.log(`✅ [PAGE-PRODUCT] URL Slug:`, product.urlSlug);
-          console.log(`✅ [PAGE-PRODUCT] Publicado:`, product.publicado);
-          
+          //console.log(`✅ [PAGE-PRODUCT] Producto cargado:`, product.nombre);
+          //console.log(`✅ [PAGE-PRODUCT] URL Slug:`, product.urlSlug);
+          //console.log(`✅ [PAGE-PRODUCT] Publicado:`, product.publicado);
+
           // Verificar si el producto está despublicado
           if (!product.publicado) {
             this.isProductUnpublished = true;
-            console.log(`⚠️ [PAGE-PRODUCT] Producto despublicado, mostrando mensaje informativo`);
+            //console.log(`⚠️ [PAGE-PRODUCT] Producto despublicado, mostrando mensaje informativo`);
             // No cargar productos relacionados para productos despublicados
             return;
           }
-          
+
           // Aplicar metadatos SEO del producto
           this.applyProductSeoMetadata(product);
-          
+
           // Solo cargar productos relacionados si el producto está publicado
           this.loadRelatedProducts(product.categoria);
         } else {
@@ -144,34 +144,34 @@ export class PageProductComponent implements OnInit, OnDestroy, AfterViewInit {
       }
     });
   }
-  
+
   /**
    * Cargar productos relacionados de la misma categoría
    */
   private loadRelatedProducts(categoria: string): void {
     this.isLoadingRelated = true;
-    
-    console.log(`🔍 [PAGE-PRODUCT] Cargando productos relacionados de categoría: ${categoria}`);
-    
+
+    //console.log(`🔍 [PAGE-PRODUCT] Cargando productos relacionados de categoría: ${categoria}`);
+
     this.productsService.getProductsByCategory(categoria).subscribe({
       next: (products: FrontProduct[]) => {
         this.isLoadingRelated = false;
-        
+
         if (products && products.length > 0) {
           // Filtrar el producto actual y limitar a 8 productos relacionados
           this.relatedProducts = products
             .filter(p => p._id !== this.producto?._id)
             .slice(0, 8);
-          
-          console.log(`✅ [PAGE-PRODUCT] ${this.relatedProducts.length} productos relacionados cargados`);
-          
+
+          //console.log(`✅ [PAGE-PRODUCT] ${this.relatedProducts.length} productos relacionados cargados`);
+
           // Reinicializar Swiper después de cargar productos relacionados
           setTimeout(() => {
             this.initializeSwiper();
           }, 100);
         } else {
           this.relatedProducts = [];
-          console.log('⚠️ [PAGE-PRODUCT] No hay productos relacionados');
+          //console.log('⚠️ [PAGE-PRODUCT] No hay productos relacionados');
         }
       },
       error: (error: any) => {
@@ -181,7 +181,7 @@ export class PageProductComponent implements OnInit, OnDestroy, AfterViewInit {
       }
     });
   }
-  
+
   /**
    * Mostrar mensaje de error
    */
@@ -197,23 +197,23 @@ export class PageProductComponent implements OnInit, OnDestroy, AfterViewInit {
     // Inicializar Swiper al montar el componente
     this.initializeSwiper();
   }
-  
+
   /**
    * Inicializar o reinicializar el Swiper
    */
   private initializeSwiper(): void {
     if (!this.swiper) {
-      console.log('⚠️ [PAGE-PRODUCT] Swiper ViewChild no disponible aún');
+      //console.log('⚠️ [PAGE-PRODUCT] Swiper ViewChild no disponible aún');
       return;
     }
-    
+
     const swiperEl = this.swiper.nativeElement;
-    
+
     // Si ya está inicializado, destruirlo primero
     if (swiperEl.swiper) {
       swiperEl.swiper.destroy(true, true);
     }
-    
+
     // Configurar Swiper
     Object.assign(swiperEl, {
       slidesPerView: 1,
@@ -254,8 +254,8 @@ export class PageProductComponent implements OnInit, OnDestroy, AfterViewInit {
         nextButton.setAttribute('aria-disabled', swiperEl.swiper.isEnd.toString());
       });
     }
-    
-    console.log('✅ [PAGE-PRODUCT] Swiper inicializado/reinicializado');
+
+    //console.log('✅ [PAGE-PRODUCT] Swiper inicializado/reinicializado');
   }
 
   /**
@@ -273,7 +273,7 @@ export class PageProductComponent implements OnInit, OnDestroy, AfterViewInit {
     if (!producto.imagenes || producto.imagenes.length === 0) {
       return this.productsService.getAbsoluteImageUrl('');
     }
-    
+
     const imageIndex = Math.min(index, producto.imagenes.length - 1);
     return this.productsService.getAbsoluteImageUrl(producto.imagenes[imageIndex]);
   }
@@ -292,25 +292,25 @@ export class PageProductComponent implements OnInit, OnDestroy, AfterViewInit {
     if (!producto.imagenes || producto.imagenes.length <= 1) {
       return [];
     }
-    
+
     return producto.imagenes.slice(1, 3); // Máximo 2 imágenes secundarias
   }
-  
+
   /**
    * Manejar error de imagen
    */
   onImageError(event: any): void {
     // Evitar bucle infinito: si ya es el placeholder, no hacer nada más
     if (event.target.src.includes('placeholder-product.jpg')) {
-      console.log('⚠️ [PAGE-PRODUCT] Error cargando placeholder, ocultando imagen');
+      //console.log('⚠️ [PAGE-PRODUCT] Error cargando placeholder, ocultando imagen');
       event.target.style.display = 'none';
       return;
     }
-    
-    console.log('⚠️ [PAGE-PRODUCT] Error cargando imagen, usando fallback');
+
+    //console.log('⚠️ [PAGE-PRODUCT] Error cargando imagen, usando fallback');
     event.target.src = 'assets/images/placeholder-product.jpg';
   }
-  
+
   /**
    * TrackBy function para optimizar el rendering de productos relacionados
    */
@@ -320,8 +320,8 @@ export class PageProductComponent implements OnInit, OnDestroy, AfterViewInit {
 
   addToCart(product: FrontProduct) {
     this.cartService.addToCart(product);
-    console.log(`${product.nombre} añadido al carrito`);
-    
+    //console.log(`${product.nombre} añadido al carrito`);
+
     // Abrir el offcanvas del carrito automáticamente
     const offcanvasElement = document.getElementById('offcanvasCart');
     if (offcanvasElement) {
@@ -330,7 +330,7 @@ export class PageProductComponent implements OnInit, OnDestroy, AfterViewInit {
       if (!offcanvas) {
         offcanvas = new bootstrap.Offcanvas(offcanvasElement);
       }
-      
+
       // Añadir event listener para limpiar el backdrop cuando se cierre
       offcanvasElement.addEventListener('hidden.bs.offcanvas', () => {
         // Limpiar cualquier backdrop que pueda quedar
@@ -343,7 +343,7 @@ export class PageProductComponent implements OnInit, OnDestroy, AfterViewInit {
         document.body.style.overflow = '';
         document.body.style.paddingRight = '';
       }, { once: true });
-      
+
       offcanvas.show();
     }
   }
@@ -352,7 +352,7 @@ export class PageProductComponent implements OnInit, OnDestroy, AfterViewInit {
   openImageModal(imageSrc: string, imageTitle: string) {
     this.modalImageSrc = imageSrc;
     this.modalImageTitle = imageTitle;
-    
+
     const modalElement = document.getElementById('imageModal');
     if (modalElement) {
       const modal = new bootstrap.Modal(modalElement);

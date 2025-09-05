@@ -217,7 +217,7 @@ export class ConfiguracionComponent implements OnInit {
             defaultImage: seoData.datos.imagenPorDefecto || ''
           };
           this.seoForm.patchValue(seoFormData);
-          console.log('Configuración SEO cargada:', seoFormData);
+          //console.log('Configuración SEO cargada:', seoFormData);
         }
       },
       error: (error) => {
@@ -241,7 +241,7 @@ export class ConfiguracionComponent implements OnInit {
             instagram: footerData.datos.instagram || ''
           };
           this.footerForm.patchValue(footerFormData);
-          console.log('Configuración Footer cargada:', footerFormData);
+          //console.log('Configuración Footer cargada:', footerFormData);
         }
       },
       error: (error) => {
@@ -258,7 +258,7 @@ export class ConfiguracionComponent implements OnInit {
       next: (generalData) => {
         if (generalData && generalData.datos) {
           this.generalForm.patchValue(generalData.datos);
-          console.log('Configuración General cargada:', generalData.datos);
+          //console.log('Configuración General cargada:', generalData.datos);
         }
       },
       error: (error) => {
@@ -270,32 +270,32 @@ export class ConfiguracionComponent implements OnInit {
     // Cargar configuración Banners
     this.configurationService.getConfigurationSection('banners').subscribe({
       next: (bannersResponse) => {
-        console.log('Respuesta del backend para banners:', bannersResponse);
+        //console.log('Respuesta del backend para banners:', bannersResponse);
 
         if (bannersResponse && Array.isArray(bannersResponse) && bannersResponse.length > 0) {
           // Mapear los banners del backend al formato del frontend
           this.configuracionData.banner.banners = bannersResponse.map((bannerConfig, index) => {
-            console.log(`💾 [BACKOFFICE] Procesando banner ${index + 1} del backend:`, bannerConfig);
-            console.log(`🔍 [BACKOFFICE] Datos del banner:`, bannerConfig.datos);
+            //console.log(`💾 [BACKOFFICE] Procesando banner ${index + 1} del backend:`, bannerConfig);
+            //console.log(`🔍 [BACKOFFICE] Datos del banner:`, bannerConfig.datos);
 
             // Extraer campos específicos para debugging
             const enlaceValue = bannerConfig.datos?.enlaceButton || bannerConfig.datos?.enlace || '';
             const nombreBotonValue = bannerConfig.datos?.nombreButton || bannerConfig.datos?.nombreBoton || '';
             const colorBotonValue = bannerConfig.datos?.colorBoton || '';
             const colorTitulosValue = bannerConfig.datos?.colorTitulos || '';
-            
-            console.log(`🔍 [BACKOFFICE] Campos específicos del banner ${index + 1}:`, {
-              enlaceButton: bannerConfig.datos?.enlaceButton,
-              enlace: bannerConfig.datos?.enlace,
-              enlaceValue: enlaceValue,
-              nombreButton: bannerConfig.datos?.nombreButton,
-              nombreBoton: bannerConfig.datos?.nombreBoton,
-              nombreBotonValue: nombreBotonValue,
-              colorBoton: bannerConfig.datos?.colorBoton,
-              colorBotonValue: colorBotonValue,
-              colorTitulos: bannerConfig.datos?.colorTitulos,
-              colorTitulosValue: colorTitulosValue
-            });
+
+            // console.log(`🔍 [BACKOFFICE] Campos específicos del banner ${index + 1}:`, {
+            //   enlaceButton: bannerConfig.datos?.enlaceButton,
+            //   enlace: bannerConfig.datos?.enlace,
+            //   enlaceValue: enlaceValue,
+            //   nombreButton: bannerConfig.datos?.nombreButton,
+            //   nombreBoton: bannerConfig.datos?.nombreBoton,
+            //   nombreBotonValue: nombreBotonValue,
+            //   colorBoton: bannerConfig.datos?.colorBoton,
+            //   colorBotonValue: colorBotonValue,
+            //   colorTitulos: bannerConfig.datos?.colorTitulos,
+            //   colorTitulosValue: colorTitulosValue
+            // });
 
             const mappedBanner = {
               id: index + 1,
@@ -315,14 +315,14 @@ export class ConfiguracionComponent implements OnInit {
               nombreButton2: bannerConfig.datos?.nombreButton2 || '',
               colorBoton2: bannerConfig.datos?.colorBoton2 || ''
             };
-            
-            console.log(`🔄 [BACKOFFICE] Banner ${index + 1} mapeado para frontend:`, mappedBanner);
+
+            //console.log(`🔄 [BACKOFFICE] Banner ${index + 1} mapeado para frontend:`, mappedBanner);
             return mappedBanner;
           });
 
-          console.log('Banners mapeados para el frontend:', this.configuracionData.banner.banners);
+          //console.log('Banners mapeados para el frontend:', this.configuracionData.banner.banners);
         } else {
-          console.log('No se encontraron banners guardados, usando valores por defecto');
+          //console.log('No se encontraron banners guardados, usando valores por defecto');
           // Mantener los banners por defecto si no hay datos guardados
         }
       },
@@ -401,22 +401,22 @@ export class ConfiguracionComponent implements OnInit {
 
       case 'banner':
         // Para banners, guardamos los datos directamente del objeto configuracionData
-        console.log('💾 [BACKOFFICE] Datos de banners antes del mapeo:', this.configuracionData.banner.banners);
-        
+        //console.log('💾 [BACKOFFICE] Datos de banners antes del mapeo:', this.configuracionData.banner.banners);
+
         // Mapear nombres de campos del frontend al formato esperado por el backend
         const mappedBanners = this.configuracionData.banner.banners.map(banner => {
-          console.log(`💾 [BACKOFFICE] Banner ${banner.id} antes del mapeo para guardado:`, {
-            enlace: banner.enlace,
-            nombreBoton: banner.nombreBoton,
-            colorBoton: banner.colorBoton,
-            colorTitulos: banner.colorTitulos,
-            // Segundo botón
-            enlaceButton2: banner.enlaceButton2,
-            nombreButton2: banner.nombreButton2,
-            colorBoton2: banner.colorBoton2,
-            bannerCompleto: banner
-          });
-          
+          // console.log(`💾 [BACKOFFICE] Banner ${banner.id} antes del mapeo para guardado:`, {
+          //   enlace: banner.enlace,
+          //   nombreBoton: banner.nombreBoton,
+          //   colorBoton: banner.colorBoton,
+          //   colorTitulos: banner.colorTitulos,
+             // Segundo botón
+          //   enlaceButton2: banner.enlaceButton2,
+          //   nombreButton2: banner.nombreButton2,
+          //   colorBoton2: banner.colorBoton2,
+          //   bannerCompleto: banner
+          // });
+
           const mappedBanner = {
             titulo: banner.titulo || '',
             subtitulo: banner.subtitulo || '',
@@ -433,22 +433,22 @@ export class ConfiguracionComponent implements OnInit {
             nombreButton2: banner.nombreButton2 || '',
             colorBoton2: banner.colorBoton2 || ''
           };
-          
-          console.log(`🔄 [BACKOFFICE] Banner ${banner.id} mapeado para backend:`, {
-            enlaceButton: mappedBanner.enlaceButton,
-            nombreButton: mappedBanner.nombreButton,
-            colorBoton: mappedBanner.colorBoton,
-            colorTitulos: mappedBanner.colorTitulos,
-            // Segundo botón
-            enlaceButton2: mappedBanner.enlaceButton2,
-            nombreButton2: mappedBanner.nombreButton2,
-            colorBoton2: mappedBanner.colorBoton2,
-            bannerCompleto: mappedBanner
-          });
-          
+
+          // console.log(`🔄 [BACKOFFICE] Banner ${banner.id} mapeado para backend:`, {
+          //   enlaceButton: mappedBanner.enlaceButton,
+          //   nombreButton: mappedBanner.nombreButton,
+          //   colorBoton: mappedBanner.colorBoton,
+          //   colorTitulos: mappedBanner.colorTitulos,
+          //   // Segundo botón
+          //   enlaceButton2: mappedBanner.enlaceButton2,
+          //   nombreButton2: mappedBanner.nombreButton2,
+          //   colorBoton2: mappedBanner.colorBoton2,
+          //   bannerCompleto: mappedBanner
+          // });
+
           return mappedBanner;
         });
-        
+
         dataToSave = {
           banners: mappedBanners
         };
@@ -468,19 +468,19 @@ export class ConfiguracionComponent implements OnInit {
 
     // Mostrar estado de carga
     this.isSaving = true;
-    console.log(`Guardando configuración de ${sectionName}:`, dataToSave);
+    //console.log(`Guardando configuración de ${sectionName}:`, dataToSave);
 
     // Llamar al servicio del backend
     this.configurationService.updateConfigurationSection(sectionName, dataToSave)
       .subscribe({
         next: (response) => {
           this.isSaving = false;
-          console.log(`Configuración de ${sectionName} guardada correctamente:`, response);
+          //console.log(`Configuración de ${sectionName} guardada correctamente:`, response);
           alert(`Configuración de ${sectionName.toUpperCase()} guardada correctamente`);
 
           // Para banners, recargar los datos desde el backend para asegurar sincronización
           if (sectionName === 'banners') {
-            console.log('🔄 [BACKOFFICE] Recargando banners desde el backend tras guardado exitoso...');
+            //console.log('🔄 [BACKOFFICE] Recargando banners desde el backend tras guardado exitoso...');
             this.reloadBannersFromBackend();
           } else if (response && response.data) {
             this.updateLocalData(sectionName, response.data);
@@ -532,31 +532,31 @@ export class ConfiguracionComponent implements OnInit {
    * Recarga los banners desde el backend para asegurar sincronización tras el guardado
    */
   private reloadBannersFromBackend(): void {
-    console.log('🔄 [BACKOFFICE] Iniciando recarga de banners desde backend...');
-    
+    //console.log('🔄 [BACKOFFICE] Iniciando recarga de banners desde backend...');
+
     this.configurationService.getConfigurationSection('banners')
       .subscribe({
         next: (bannersResponse) => {
-          console.log('💾 [BACKOFFICE] Banners recargados desde backend:', bannersResponse);
-          
+          //console.log('💾 [BACKOFFICE] Banners recargados desde backend:', bannersResponse);
+
           if (bannersResponse && Array.isArray(bannersResponse) && bannersResponse.length > 0) {
             // Mapear los banners del backend al formato del frontend (mismo código que en loadConfiguracion)
             this.configuracionData.banner.banners = bannersResponse.map((bannerConfig, index) => {
-              console.log(`💾 [BACKOFFICE] Procesando banner recargado ${index + 1}:`, bannerConfig);
-              console.log(`🔍 [BACKOFFICE] Estructura completa de datos del banner ${index + 1}:`, {
-                _id: bannerConfig._id,
-                tipo: bannerConfig.tipo,
-                nombre: bannerConfig.nombre,
-                datos: bannerConfig.datos,
-                datosCompletos: JSON.stringify(bannerConfig.datos, null, 2)
-              });
-              
+              //console.log(`💾 [BACKOFFICE] Procesando banner recargado ${index + 1}:`, bannerConfig);
+              //console.log(`🔍 [BACKOFFICE] Estructura completa de datos del banner ${index + 1}:`, {
+              //   _id: bannerConfig._id,
+              //   tipo: bannerConfig.tipo,
+              //   nombre: bannerConfig.nombre,
+              //   datos: bannerConfig.datos,
+              //   datosCompletos: JSON.stringify(bannerConfig.datos, null, 2)
+              // });
+
               // Extraer campos específicos para debugging
               const enlaceValue = bannerConfig.datos?.enlaceButton || bannerConfig.datos?.enlace || '';
               const nombreBotonValue = bannerConfig.datos?.nombreButton || bannerConfig.datos?.nombreBoton || '';
               const colorBotonValue = bannerConfig.datos?.colorBoton || '';
               const colorTitulosValue = bannerConfig.datos?.colorTitulos || '';
-              
+
               const mappedBanner = {
                 id: index + 1,
                 titulo: bannerConfig.datos?.titulo || '',
@@ -574,20 +574,20 @@ export class ConfiguracionComponent implements OnInit {
                 nombreButton2: bannerConfig.datos?.nombreButton2 || '',
                 colorBoton2: bannerConfig.datos?.colorBoton2 || ''
               };
-              
-              console.log(`🔄 [BACKOFFICE] Banner ${index + 1} recargado y mapeado:`, {
-                ...mappedBanner,
+
+              // console.log(`🔄 [BACKOFFICE] Banner ${index + 1} recargado y mapeado:`, {
+              //   ...mappedBanner,
                 // Debug específico segundo botón
-                enlaceButton2_original: bannerConfig.datos?.enlaceButton2,
-                nombreButton2_original: bannerConfig.datos?.nombreButton2,
-                colorBoton2_original: bannerConfig.datos?.colorBoton2
-              });
+              //   enlaceButton2_original: bannerConfig.datos?.enlaceButton2,
+              //   nombreButton2_original: bannerConfig.datos?.nombreButton2,
+              //   colorBoton2_original: bannerConfig.datos?.colorBoton2
+              // });
               return mappedBanner;
             });
-            
-            console.log('✅ [BACKOFFICE] Banners recargados correctamente:', this.configuracionData.banner.banners);
+
+            //console.log('✅ [BACKOFFICE] Banners recargados correctamente:', this.configuracionData.banner.banners);
           } else {
-            console.log('⚠️ [BACKOFFICE] No se encontraron banners en la respuesta del backend tras recarga');
+            //console.log('⚠️ [BACKOFFICE] No se encontraron banners en la respuesta del backend tras recarga');
             this.configuracionData.banner.banners = [];
           }
         },
@@ -636,7 +636,7 @@ export class ConfiguracionComponent implements OnInit {
 
     // Simular guardado
     setTimeout(() => {
-      console.log('Guardando configuración...');
+      //console.log('Guardando configuración...');
       this.isSaving = false;
 
       // Mostrar mensaje de éxito
@@ -680,7 +680,7 @@ export class ConfiguracionComponent implements OnInit {
           this.recentUploads = this.recentUploads.slice(0, 10);
         }
 
-        console.log(`Imagen ${file.name} subida correctamente a /assets/images/`);
+        //console.log(`Imagen ${file.name} subida correctamente a /assets/images/`);
       }
 
       // Limpiar input
@@ -714,7 +714,7 @@ export class ConfiguracionComponent implements OnInit {
    */
   copyToClipboard(text: string): void {
     navigator.clipboard.writeText(text).then(() => {
-      console.log('URL copiada al portapapeles');
+      //console.log('URL copiada al portapapeles');
       // Aquí podrías mostrar una notificación de éxito
     }).catch(err => {
       console.error('Error al copiar al portapapeles:', err);
@@ -758,7 +758,7 @@ export class ConfiguracionComponent implements OnInit {
       return;
     }
 
-    console.log(`Subiendo imagen ${file.name} para ${section}.${field}`);
+    //console.log(`Subiendo imagen ${file.name} para ${section}.${field}`);
 
     // Determinar categoría para el backend
     let category = section;
@@ -770,7 +770,7 @@ export class ConfiguracionComponent implements OnInit {
     this.configurationService.uploadImage(file, category)
       .subscribe({
         next: (response) => {
-          console.log(`Imagen ${file.name} subida correctamente:`, response);
+          //console.log(`Imagen ${file.name} subida correctamente:`, response);
 
           if (response.success && response.url) {
             // Actualizar formulario correspondiente con la URL real del servidor

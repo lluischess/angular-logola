@@ -35,7 +35,7 @@ export interface ProductoPresupuesto {
   precioUnitario: number;
   precioTotal: number;
   imagen: string;
-  
+
   // Campos adicionales para productos enriquecidos
   referencia?: string;
   precioOriginal?: number;  // Precio actual del catálogo
@@ -53,22 +53,22 @@ export class PresupuestosComponent implements OnInit {
   presupuestos: Presupuesto[] = [];
   filteredPresupuestos: Presupuesto[] = [];
   stats: BudgetStats | null = null;
-  
+
   // Estados de carga y error
   loading = false;
   error: string | null = null;
-  
+
   // Filtros
   filtroEmpresa: string = '';
   filtroCantidad: string = '';
   filtroTelefono: string = '';
   filtroEmail: string = '';
   filtroEstado: string = '';
-  
+
   // Ordenamiento
   sortColumn: string = 'numeroPresupuesto';
   sortDirection: 'asc' | 'desc' = 'desc';
-  
+
   // Paginación
   currentPage = 1;
   itemsPerPage = 10;
@@ -86,13 +86,13 @@ export class PresupuestosComponent implements OnInit {
     this.loadBudgets();
     this.loadStats();
   }
-  
+
   // Método de prueba para diagnosticar conectividad
   testConnectivity() {
-    console.log('🧪 CONNECTIVITY TEST: Starting diagnostic test');
-    console.log('🧪 CONNECTIVITY TEST: Token in localStorage:', localStorage.getItem('authToken'));
-    console.log('🧪 CONNECTIVITY TEST: API URL:', `http://localhost:3000/budgets`);
-    
+    //console.log('🧪 CONNECTIVITY TEST: Starting diagnostic test');
+    //console.log('🧪 CONNECTIVITY TEST: Token in localStorage:', localStorage.getItem('authToken'));
+    //console.log('🧪 CONNECTIVITY TEST: API URL:', `http://localhost:3000/budgets`);
+
     // Test directo con fetch para ver qué pasa
     const token = localStorage.getItem('authToken');
     if (!token) {
@@ -100,7 +100,7 @@ export class PresupuestosComponent implements OnInit {
       this.error = 'No hay token de autenticación. Por favor, inicia sesión.';
       return;
     }
-    
+
     fetch('http://localhost:3000/budgets', {
       method: 'GET',
       headers: {
@@ -109,12 +109,12 @@ export class PresupuestosComponent implements OnInit {
       }
     })
     .then(response => {
-      console.log('🧪 CONNECTIVITY TEST: Response status:', response.status);
-      console.log('🧪 CONNECTIVITY TEST: Response headers:', response.headers);
+      //console.log('🧪 CONNECTIVITY TEST: Response status:', response.status);
+      //console.log('🧪 CONNECTIVITY TEST: Response headers:', response.headers);
       return response.json();
     })
     .then(data => {
-      console.log('🧪 CONNECTIVITY TEST: Response data:', data);
+      //console.log('🧪 CONNECTIVITY TEST: Response data:', data);
     })
     .catch(error => {
       console.error('🧪 CONNECTIVITY TEST: Fetch error:', error);
@@ -124,50 +124,50 @@ export class PresupuestosComponent implements OnInit {
   loadBudgets() {
     this.loading = true;
     this.error = null;
-    
-    console.log('🔍 DEBUG: Starting loadBudgets method');
-    console.log('🔍 DEBUG: Current user token:', localStorage.getItem('authToken'));
-    
+
+    //console.log('🔍 DEBUG: Starting loadBudgets method');
+    //console.log('🔍 DEBUG: Current user token:', localStorage.getItem('authToken'));
+
     const queryParams = {
       page: this.currentPage,
       limit: this.itemsPerPage,
       sortBy: this.sortColumn,
       sortOrder: this.sortDirection
     };
-    
-    console.log('🔍 DEBUG: Query params:', queryParams);
-    console.log('🔍 DEBUG: API URL will be:', `http://localhost:3000/budgets`);
-    
+
+    //console.log('🔍 DEBUG: Query params:', queryParams);
+    //console.log('🔍 DEBUG: API URL will be:', `http://localhost:3000/budgets`);
+
     this.budgetsService.getBudgets(queryParams).subscribe({
       next: (response) => {
-        console.log('✅ DEBUG: Budgets loaded successfully!');
-        console.log('✅ DEBUG: Raw response from backend:', response);
-        console.log('✅ DEBUG: Response type:', typeof response);
-        console.log('✅ DEBUG: Response.budgets:', response.budgets);
-        console.log('✅ DEBUG: Response.budgets length:', response.budgets?.length);
-        
+        //console.log('✅ DEBUG: Budgets loaded successfully!');
+        //console.log('✅ DEBUG: Raw response from backend:', response);
+        //console.log('✅ DEBUG: Response type:', typeof response);
+        //console.log('✅ DEBUG: Response.budgets:', response.budgets);
+        //console.log('✅ DEBUG: Response.budgets length:', response.budgets?.length);
+
         // Convertir los datos del backend al formato esperado por el template
         if (response.budgets && Array.isArray(response.budgets)) {
           this.presupuestos = response.budgets.map(budget => {
-            console.log('🔄 DEBUG: Converting budget:', budget);
+            //console.log('🔄 DEBUG: Converting budget:', budget);
             const converted = this.convertBudgetToPresupuesto(budget);
-            console.log('🔄 DEBUG: Converted to presupuesto:', converted);
+            //console.log('🔄 DEBUG: Converted to presupuesto:', converted);
             return converted;
           });
-          console.log('✅ DEBUG: Final presupuestos array:', this.presupuestos);
+          //console.log('✅ DEBUG: Final presupuestos array:', this.presupuestos);
         } else {
           console.warn('⚠️ DEBUG: No budgets array in response or not an array');
           this.presupuestos = [];
         }
-        
+
         this.totalItems = response.total || 0;
         this.totalPages = response.totalPages || 1;
         this.currentPage = response.page || 1;
-        
-        console.log('🔍 DEBUG: Before applyFilters - presupuestos length:', this.presupuestos.length);
+
+        //console.log('🔍 DEBUG: Before applyFilters - presupuestos length:', this.presupuestos.length);
         this.applyFilters();
-        console.log('🔍 DEBUG: After applyFilters - filteredPresupuestos length:', this.filteredPresupuestos.length);
-        
+        //console.log('🔍 DEBUG: After applyFilters - filteredPresupuestos length:', this.filteredPresupuestos.length);
+
         this.loading = false;
       },
       error: (error) => {
@@ -176,7 +176,7 @@ export class PresupuestosComponent implements OnInit {
         console.error('❌ DEBUG: Error status:', error.status);
         console.error('❌ DEBUG: Error message:', error.message);
         console.error('❌ DEBUG: Error body:', error.error);
-        
+
         this.error = error.message || 'Error al cargar los presupuestos';
         this.loading = false;
         this.presupuestos = [];
@@ -184,11 +184,11 @@ export class PresupuestosComponent implements OnInit {
       }
     });
   }
-  
+
   loadStats() {
     this.budgetsService.getStats().subscribe({
       next: (stats) => {
-        console.log('Budget stats loaded:', stats);
+        //console.log('Budget stats loaded:', stats);
         this.stats = stats;
       },
       error: (error) => {
@@ -197,13 +197,13 @@ export class PresupuestosComponent implements OnInit {
       }
     });
   }
-  
+
   convertBudgetToPresupuesto(budget: Budget): Presupuesto {
     // Debug del mapeo de estados
     const originalEstado = budget.estado;
     const mappedEstado = this.mapBudgetStatus(budget.estado);
-    console.log(`🔄 Estado mapping: '${originalEstado}' → '${mappedEstado}'`);
-    
+    //console.log(`🔄 Estado mapping: '${originalEstado}' → '${mappedEstado}'`);
+
     return {
       id: (budget as any)._id || '',
       numeroPresupuesto: (budget as any).numeroPresupuesto || 0,
@@ -234,16 +234,16 @@ export class PresupuestosComponent implements OnInit {
       apuntes: budget.notas
     };
   }
-  
+
   mapBudgetStatus(status: string | BudgetStatus): string {
     // Si ya es un string válido de la BBDD, normalizarlo
     if (typeof status === 'string') {
       const normalizedStatus = status.toLowerCase();
-      
+
       // Mapear estados de la BBDD a estados del frontend
       const dbStatusMap: { [key: string]: string } = {
         'pendiente': 'pendiente',
-        'en_proceso': 'en_proceso', 
+        'en_proceso': 'en_proceso',
         'enviado': 'enviado',
         'aprobado': 'aprobado',
         'aceptado': 'aprobado',  // Alias para aprobado
@@ -252,10 +252,10 @@ export class PresupuestosComponent implements OnInit {
         'completado': 'completado',
         'cancelado': 'cancelado'
       };
-      
+
       return dbStatusMap[normalizedStatus] || 'pendiente';
     }
-    
+
     // Si es un enum, usar el mapeo original
     const statusMap: { [key in BudgetStatus]: string } = {
       [BudgetStatus.PENDIENTE]: 'pendiente',
@@ -432,13 +432,13 @@ export class PresupuestosComponent implements OnInit {
         return 'estado-cancelado';
       case 'vencido':
         return 'estado-vencido';
-      default: 
+      default:
         return 'estado-default';
     }
   }
 
   viewPresupuesto(id: string) {
-    console.log('Ver presupuesto:', id);
+    //console.log('Ver presupuesto:', id);
     // Navegar a la ficha de detalle del presupuesto
     this.router.navigate(['/logoadmin/presupuestos', id]);
   }
@@ -448,7 +448,7 @@ export class PresupuestosComponent implements OnInit {
   trackByFn(index: number, item: Presupuesto): string {
     return item.id;
   }
-  
+
   // Métodos auxiliares para el template
   getEstadoLabel(estado: string): string {
     const labels: { [key: string]: string } = {
@@ -464,7 +464,7 @@ export class PresupuestosComponent implements OnInit {
     };
     return labels[estado.toLowerCase()] || estado;
   }
-  
+
   formatCurrency(amount: number | undefined): string {
     if (!amount) return '0,00 €';
     return new Intl.NumberFormat('es-ES', {
@@ -472,7 +472,7 @@ export class PresupuestosComponent implements OnInit {
       currency: 'EUR'
     }).format(amount);
   }
-  
+
   formatDate(date: Date): string {
     return new Intl.DateTimeFormat('es-ES', {
       year: 'numeric',
@@ -480,11 +480,11 @@ export class PresupuestosComponent implements OnInit {
       day: '2-digit'
     }).format(date);
   }
-  
+
   // Método loadUserData eliminado - el layout reutilizable maneja la información del usuario
-  
+
   // Métodos de navegación y sidebar eliminados - el layout reutilizable maneja todo esto
-  
+
   logout(): void {
     this.authService.logout();
     this.router.navigate(['/logoadmin/login']);

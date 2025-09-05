@@ -23,7 +23,7 @@ export class BackofficeLayoutComponent {
 
   constructor() {
     // Inicialización del componente de layout
-    console.log('BackofficeLayoutComponent inicializado');
+    //console.log('BackofficeLayoutComponent inicializado');
   }
 
   // Método para toggle del sidebar - estructura exacta del dashboard

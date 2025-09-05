@@ -27,7 +27,7 @@ export class SCaramelosComponent implements OnInit, AfterViewInit {
   caramelosCategory: FrontCategory | null = null;
   categoryTitle: string = 'Caramelos';
   categorySlug: string = '';
-  
+
   // Propiedades para los productos
   productos: FrontProduct[] = [];
   isLoadingCategory: boolean = false;
@@ -49,23 +49,23 @@ export class SCaramelosComponent implements OnInit, AfterViewInit {
     // Inicializar Swiper al montar el componente
     this.initializeSwiper();
   }
-  
+
   /**
    * Inicializar o reinicializar el Swiper
    */
   private initializeSwiper(): void {
     if (!this.swiper) {
-      console.log('⚠️ [S-CARAMELOS] Swiper ViewChild no disponible aún');
+      //console.log('⚠️ [S-CARAMELOS] Swiper ViewChild no disponible aún');
       return;
     }
-    
+
     const swiperEl = this.swiper.nativeElement;
-    
+
     // Si ya está inicializado, destruirlo primero
     if (swiperEl.swiper) {
       swiperEl.swiper.destroy(true, true);
     }
-    
+
     const swiperParams = {
       slidesPerView: 4,
       spaceBetween: 30,
@@ -91,8 +91,8 @@ export class SCaramelosComponent implements OnInit, AfterViewInit {
 
     Object.assign(swiperEl, swiperParams);
     swiperEl.initialize();
-    
-    console.log('✅ [S-CARAMELOS] Swiper inicializado/reinicializado');
+
+    //console.log('✅ [S-CARAMELOS] Swiper inicializado/reinicializado');
   }
 
   /**
@@ -101,19 +101,19 @@ export class SCaramelosComponent implements OnInit, AfterViewInit {
   private loadCaramelosCategory(): void {
     this.isLoadingCategory = true;
     this.hasError = false;
-    
+
     this.categoriesService.getCategoryByOrder(2).subscribe({
       next: (category: FrontCategory | null) => {
         this.isLoadingCategory = false;
-        
+
         if (category) {
           this.caramelosCategory = category;
           this.categoryTitle = category.metaTitulo || category.nombre;
           this.categorySlug = category.urlSlug || category.slug || '';
-          
-          console.log('✅ [S-CARAMELOS] Categoría encontrada:', category.nombre);
-          console.log('✅ [S-CARAMELOS] Slug:', this.categorySlug);
-          
+
+          //console.log('✅ [S-CARAMELOS] Categoría encontrada:', category.nombre);
+          //console.log('✅ [S-CARAMELOS] Slug:', this.categorySlug);
+
           // Cargar productos de la categoría de caramelos
           this.loadCaramelosProducts(this.categorySlug);
         } else {
@@ -127,33 +127,33 @@ export class SCaramelosComponent implements OnInit, AfterViewInit {
       }
     });
   }
-  
+
   /**
    * Cargar hasta 20 productos de la categoría de caramelos
    */
   private loadCaramelosProducts(categorySlug: string): void {
     this.isLoadingProducts = true;
-    
+
     this.productsService.getProductsByCategory(categorySlug).subscribe({
       next: (products: FrontProduct[]) => {
         this.isLoadingProducts = false;
-        
+
         if (products && products.length > 0) {
           // Limitar a máximo 20 productos y ordenar por ordenCategoria
           const sortedProducts = products
             .sort((a, b) => (a.ordenCategoria || 0) - (b.ordenCategoria || 0))
             .slice(0, 20);
-          
+
           this.productos = sortedProducts;
-          console.log(`✅ [S-CARAMELOS] ${this.productos.length} productos cargados`);
-          
+          //console.log(`✅ [S-CARAMELOS] ${this.productos.length} productos cargados`);
+
           // Reinicializar Swiper después de cargar productos
           setTimeout(() => {
             this.initializeSwiper();
           }, 100);
         } else {
           this.productos = [];
-          console.log('⚠️ [S-CARAMELOS] No hay productos en la categoría');
+          //console.log('⚠️ [S-CARAMELOS] No hay productos en la categoría');
         }
       },
       error: (error: any) => {
@@ -163,7 +163,7 @@ export class SCaramelosComponent implements OnInit, AfterViewInit {
       }
     });
   }
-  
+
   /**
    * Mostrar mensaje de error
    */
@@ -172,7 +172,7 @@ export class SCaramelosComponent implements OnInit, AfterViewInit {
     this.errorMessage = message;
     console.error(`❌ [S-CARAMELOS] ${message}`);
   }
-  
+
   /**
    * Obtener URL de imagen del producto
    */
@@ -180,21 +180,21 @@ export class SCaramelosComponent implements OnInit, AfterViewInit {
     const firstImage = producto.imagenes && producto.imagenes.length > 0 ? producto.imagenes[0] : '';
     return this.productsService.getAbsoluteImageUrl(firstImage);
   }
-  
+
   /**
    * Manejar error de imagen
    */
   onImageError(event: any): void {
     // Evitar bucle infinito: si ya es el placeholder, no hacer nada más
     if (event.target.src.includes('placeholder-product.jpg')) {
-      console.log('⚠️ [S-CARAMELOS] Error cargando placeholder, ocultando imagen');
+      //console.log('⚠️ [S-CARAMELOS] Error cargando placeholder, ocultando imagen');
       event.target.style.display = 'none';
       return;
     }
-    
+
     event.target.src = this.productsService.getAbsoluteImageUrl('');
   }
-  
+
   /**
    * TrackBy function para optimizar el renderizado
    */
@@ -205,8 +205,8 @@ export class SCaramelosComponent implements OnInit, AfterViewInit {
   // Función para añadir productos al carrito
   addToCart(product: any) {
     this.cartService.addToCart(product);
-    console.log(`${product.nombre} añadido al carrito`);
-    
+    //console.log(`${product.nombre} añadido al carrito`);
+
     // Abrir el offcanvas del carrito automáticamente
     const offcanvasElement = document.getElementById('offcanvasCart');
     if (offcanvasElement) {
@@ -215,7 +215,7 @@ export class SCaramelosComponent implements OnInit, AfterViewInit {
       if (!offcanvas) {
         offcanvas = new bootstrap.Offcanvas(offcanvasElement);
       }
-      
+
       // Añadir event listener para limpiar el backdrop cuando se cierre
       offcanvasElement.addEventListener('hidden.bs.offcanvas', () => {
         // Limpiar cualquier backdrop que pueda quedar
@@ -228,7 +228,7 @@ export class SCaramelosComponent implements OnInit, AfterViewInit {
         document.body.style.overflow = '';
         document.body.style.paddingRight = '';
       }, { once: true });
-      
+
       offcanvas.show();
     }
   }

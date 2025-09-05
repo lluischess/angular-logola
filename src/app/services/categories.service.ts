@@ -35,18 +35,18 @@ export class CategoriesService {
    * Obtener todas las categorías publicadas para el FrontOffice
    */
   getPublishedCategories(): Observable<FrontCategory[]> {
-    console.log('🔄 [CATEGORIES-SERVICE] Cargando categorías publicadas...');
-    
+    //console.log('🔄 [CATEGORIES-SERVICE] Cargando categorías publicadas...');
+
     return this.http.get<any>(`${this.apiUrl}?publicado=true&sortBy=orden&sortOrder=asc`)
       .pipe(
         map(response => {
-          console.log('✅ [CATEGORIES-SERVICE] Respuesta del backend:', response);
-          
+          //console.log('✅ [CATEGORIES-SERVICE] Respuesta del backend:', response);
+
           // Extraer las categorías de la respuesta
           const categories = response.categories || response.data || response;
-          
-          console.log('🔍 [CATEGORIES-SERVICE] Datos crudos del backend:', categories);
-          
+
+          //console.log('🔍 [CATEGORIES-SERVICE] Datos crudos del backend:', categories);
+
           if (Array.isArray(categories)) {
             // Filtrar solo categorías publicadas, generar slug si no existe, y ordenar por campo orden
             const publishedCategories = categories
@@ -55,13 +55,13 @@ export class CategoriesService {
                 // Generar slug automáticamente si no existe
                 if (!cat.slug || cat.slug.trim() === '') {
                   cat.slug = this.generateSlug(cat.nombre);
-                  console.log(`🔧 [CATEGORIES-SERVICE] Slug generado para "${cat.nombre}": ${cat.slug}`);
+                  //console.log(`🔧 [CATEGORIES-SERVICE] Slug generado para "${cat.nombre}": ${cat.slug}`);
                 }
                 return cat;
               })
               .sort((a, b) => (a.orden || 0) - (b.orden || 0));
-            
-            console.log('📂 [CATEGORIES-SERVICE] Categorías procesadas:', publishedCategories);
+
+            //console.log('📂 [CATEGORIES-SERVICE] Categorías procesadas:', publishedCategories);
             return publishedCategories;
           } else {
             console.warn('⚠️ [CATEGORIES-SERVICE] Respuesta no es un array:', categories);
@@ -70,7 +70,7 @@ export class CategoriesService {
         }),
         catchError(error => {
           console.error('❌ [CATEGORIES-SERVICE] Error cargando categorías:', error);
-          
+
           // Fallback: devolver categorías por defecto
           return of(this.getDefaultCategories());
         })
@@ -81,12 +81,12 @@ export class CategoriesService {
    * Obtener una categoría por slug
    */
   getCategoryBySlug(slug: string): Observable<FrontCategory | null> {
-    console.log(`🔍 [CATEGORIES-SERVICE] Buscando categoría por slug: ${slug}`);
-    
+    //console.log(`🔍 [CATEGORIES-SERVICE] Buscando categoría por slug: ${slug}`);
+
     return this.http.get<any>(`${this.apiUrl}/slug/${slug}`)
       .pipe(
         map(response => {
-          console.log('🔍 [CATEGORIES-SERVICE] Respuesta del backend:', response);
+          //console.log('🔍 [CATEGORIES-SERVICE] Respuesta del backend:', response);
           // El endpoint /slug/:slug devuelve directamente la categoría, no un array
           return response || null;
         }),
@@ -101,53 +101,53 @@ export class CategoriesService {
    * Obtener la categoría marcada como "Configuración Especial"
    */
   getSpecialCategory(): Observable<FrontCategory | null> {
-    console.log('🎯 [CATEGORIES-SERVICE] Buscando categoría especial...');
-    
+    //console.log('🎯 [CATEGORIES-SERVICE] Buscando categoría especial...');
+
     // Usar HttpParams para construir correctamente los parámetros de query
     const params = {
       configuracionEspecial: 'true',
       publicado: 'true',
       limit: '1' // Solo necesitamos una categoría especial
     };
-    
-    console.log('🎯 [CATEGORIES-SERVICE] Parámetros de consulta:', params);
-    
+
+    //console.log('🎯 [CATEGORIES-SERVICE] Parámetros de consulta:', params);
+
     return this.http.get<any>(this.apiUrl, { params })
       .pipe(
         map(response => {
-          console.log('🎯 [CATEGORIES-SERVICE] Respuesta completa:', response);
-          
+          //console.log('🎯 [CATEGORIES-SERVICE] Respuesta completa:', response);
+
           // El backend devuelve { categories: [...], pagination: {...} }
           const categories = response.categories || [];
-          
-          console.log('🎯 [CATEGORIES-SERVICE] Categorías encontradas:', categories.length);
-          
+
+          //console.log('🎯 [CATEGORIES-SERVICE] Categorías encontradas:', categories.length);
+
           if (Array.isArray(categories) && categories.length > 0) {
             const specialCategory = categories[0]; // Solo debería haber una categoría especial
-            
-            console.log('✅ [CATEGORIES-SERVICE] === CATEGORÍA ESPECIAL ENCONTRADA ===');
-            console.log('✅ [CATEGORIES-SERVICE] Categoría completa:', specialCategory);
-            console.log('✅ [CATEGORIES-SERVICE] Campos importantes:', {
-              _id: specialCategory._id,
-              nombre: specialCategory.nombre,
-              slug: specialCategory.slug,
-              urlSlug: specialCategory.urlSlug,
-              configuracionEspecial: specialCategory.configuracionEspecial,
-              publicado: specialCategory.publicado,
-              metaTitulo: specialCategory.metaTitulo,
-              metaDescripcion: specialCategory.metaDescripcion,
-              palabrasClave: specialCategory.palabrasClave,
-              ogTitulo: specialCategory.ogTitulo,
-              ogDescripcion: specialCategory.ogDescripcion,
-              ogImagen: specialCategory.ogImagen
-            });
-            
+
+            //console.log('✅ [CATEGORIES-SERVICE] === CATEGORÍA ESPECIAL ENCONTRADA ===');
+            //console.log('✅ [CATEGORIES-SERVICE] Categoría completa:', specialCategory);
+            //console.log('✅ [CATEGORIES-SERVICE] Campos importantes:', {
+            //   _id: specialCategory._id,
+            //   nombre: specialCategory.nombre,
+            //   slug: specialCategory.slug,
+            //   urlSlug: specialCategory.urlSlug,
+            //   configuracionEspecial: specialCategory.configuracionEspecial,
+            //   publicado: specialCategory.publicado,
+            //   metaTitulo: specialCategory.metaTitulo,
+            //   metaDescripcion: specialCategory.metaDescripcion,
+            //   palabrasClave: specialCategory.palabrasClave,
+            //   ogTitulo: specialCategory.ogTitulo,
+            //   ogDescripcion: specialCategory.ogDescripcion,
+            //   ogImagen: specialCategory.ogImagen
+            // });
+
             // Verificar que el slug existe
             if (!specialCategory.slug) {
               console.error('❌ [CATEGORIES-SERVICE] SLUG FALTANTE en categoría especial!');
               console.error('❌ [CATEGORIES-SERVICE] Todos los campos:', Object.keys(specialCategory));
             }
-            
+
             return specialCategory;
           } else {
             console.warn('⚠️ [CATEGORIES-SERVICE] No se encontró categoría especial');
@@ -203,23 +203,23 @@ export class CategoriesService {
    * Obtener categoría por orden específico
    */
   getCategoryByOrder(orden: number): Observable<FrontCategory | null> {
-    console.log(`🔍 [CATEGORIES-SERVICE] Buscando categoría con orden: ${orden}`);
-    
+    //console.log(`🔍 [CATEGORIES-SERVICE] Buscando categoría con orden: ${orden}`);
+
     const params = {
       publicado: 'true',
       orden: orden.toString(),
       limit: '1'
     };
-    
+
     return this.http.get<any>(this.apiUrl, { params })
       .pipe(
         map(response => {
-          console.log(`🔍 [CATEGORIES-SERVICE] Respuesta para orden ${orden}:`, response);
+          //console.log(`🔍 [CATEGORIES-SERVICE] Respuesta para orden ${orden}:`, response);
           const categories = response.categories || response;
-          
+
           if (Array.isArray(categories) && categories.length > 0) {
             const category = categories[0];
-            console.log(`✅ [CATEGORIES-SERVICE] Categoría encontrada para orden ${orden}:`, category);
+            //console.log(`✅ [CATEGORIES-SERVICE] Categoría encontrada para orden ${orden}:`, category);
             return category;
           } else {
             console.warn(`⚠️ [CATEGORIES-SERVICE] No se encontró categoría con orden ${orden}`);

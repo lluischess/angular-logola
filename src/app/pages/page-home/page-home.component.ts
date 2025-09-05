@@ -37,22 +37,22 @@ export class PageHomeComponent implements OnInit, OnDestroy {
    * Cargar metadatos SEO desde la configuración
    */
   private loadSeoMetadata(): void {
-    console.log('🏠 [HOME] Cargando metadatos SEO desde configuración...');
-    
+    //console.log('🏠 [HOME] Cargando metadatos SEO desde configuración...');
+
     const sub = this.configurationService.getConfiguration().subscribe({
       next: (config: ConfigurationData) => {
-        console.log('🏠 [HOME] Configuración recibida:', config);
-        console.log('🏠 [HOME] config.seo existe:', !!config?.seo);
-        console.log('🏠 [HOME] config.seo completo:', config?.seo);
-        
+        //console.log('🏠 [HOME] Configuración recibida:', config);
+        //console.log('🏠 [HOME] config.seo existe:', !!config?.seo);
+        //console.log('🏠 [HOME] config.seo completo:', config?.seo);
+
         if (config && config.seo) {
-          console.log('🏠 [HOME] Campos SEO individuales:');
-          console.log('  - homeTitle:', config.seo.homeTitle);
-          console.log('  - homeDescription:', config.seo.homeDescription);
-          console.log('  - homeKeywords:', config.seo.homeKeywords);
-          console.log('  - siteName:', config.seo.siteName);
-          console.log('  - defaultImage:', config.seo.defaultImage);
-          
+          //console.log('🏠 [HOME] Campos SEO individuales:');
+          //console.log('  - homeTitle:', config.seo.homeTitle);
+          //console.log('  - homeDescription:', config.seo.homeDescription);
+          //console.log('  - homeKeywords:', config.seo.homeKeywords);
+          //console.log('  - siteName:', config.seo.siteName);
+          //console.log('  - defaultImage:', config.seo.defaultImage);
+
           const seoMetadata: SeoMetadata = {
             title: config.seo.homeTitle || 'Logolate - Chocolates y Caramelos Artesanales',
             description: config.seo.homeDescription || 'Descubre los mejores chocolates y caramelos artesanales. Productos únicos y de calidad premium.',
@@ -65,9 +65,9 @@ export class PageHomeComponent implements OnInit, OnDestroy {
 
           // Aplicar metadatos SEO
           this.seoService.updateSeoMetadata(seoMetadata);
-          console.log('🏠 [HOME] Metadatos SEO aplicados:', seoMetadata);
+          //console.log('🏠 [HOME] Metadatos SEO aplicados:', seoMetadata);
         } else {
-          console.log('🏠 [HOME] No hay configuración SEO, usando metadatos por defecto');
+          //console.log('🏠 [HOME] No hay configuración SEO, usando metadatos por defecto');
           this.seoService.setDefaultMetadata();
         }
       },
@@ -76,13 +76,13 @@ export class PageHomeComponent implements OnInit, OnDestroy {
         console.error('❌ [HOME] Error status:', error.status);
         console.error('❌ [HOME] Error message:', error.message);
         console.error('❌ [HOME] Error URL:', error.url);
-        
+
         if (error.status === 0) {
           console.error('❌ [HOME] Backend no está disponible o CORS error');
         } else if (error.status === 404) {
           console.error('❌ [HOME] Endpoint /configuration no encontrado');
         }
-        
+
         // En caso de error, usar metadatos por defecto
         this.seoService.setDefaultMetadata();
       }

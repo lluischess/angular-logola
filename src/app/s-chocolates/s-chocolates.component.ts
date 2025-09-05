@@ -26,7 +26,7 @@ export class SChocolatesComponent implements OnInit, AfterViewInit {
   chocolatesCategory: FrontCategory | null = null;
   categoryTitle: string = 'Chocolates';
   categorySlug: string = '';
-  
+
   // Propiedades para los productos
   productos: FrontProduct[] = [];
   isLoadingCategory: boolean = false;
@@ -48,23 +48,23 @@ export class SChocolatesComponent implements OnInit, AfterViewInit {
     // Inicializar Swiper al montar el componente
     this.initializeSwiper();
   }
-  
+
   /**
    * Inicializar o reinicializar el Swiper
    */
   private initializeSwiper(): void {
     if (!this.swiper) {
-      console.log('⚠️ [S-CHOCOLATES] Swiper ViewChild no disponible aún');
+      //console.log('⚠️ [S-CHOCOLATES] Swiper ViewChild no disponible aún');
       return;
     }
-    
+
     const swiperEl = this.swiper.nativeElement;
-    
+
     // Si ya está inicializado, destruirlo primero
     if (swiperEl.swiper) {
       swiperEl.swiper.destroy(true, true);
     }
-    
+
     const swiperParams = {
       slidesPerView: 4,
       spaceBetween: 30,
@@ -90,8 +90,8 @@ export class SChocolatesComponent implements OnInit, AfterViewInit {
 
     Object.assign(swiperEl, swiperParams);
     swiperEl.initialize();
-    
-    console.log('✅ [S-CHOCOLATES] Swiper inicializado/reinicializado');
+
+    //console.log('✅ [S-CHOCOLATES] Swiper inicializado/reinicializado');
   }
 
   /**
@@ -100,19 +100,19 @@ export class SChocolatesComponent implements OnInit, AfterViewInit {
   private loadChocolatesCategory(): void {
     this.isLoadingCategory = true;
     this.hasError = false;
-    
+
     this.categoriesService.getCategoryByOrder(1).subscribe({
       next: (category: FrontCategory | null) => {
         this.isLoadingCategory = false;
-        
+
         if (category) {
           this.chocolatesCategory = category;
           this.categoryTitle = category.metaTitulo || category.nombre;
           this.categorySlug = category.urlSlug || category.slug || '';
-          
-          console.log('✅ [S-CHOCOLATES] Categoría encontrada:', category.nombre);
-          console.log('✅ [S-CHOCOLATES] Slug:', this.categorySlug);
-          
+
+          //console.log('✅ [S-CHOCOLATES] Categoría encontrada:', category.nombre);
+          //console.log('✅ [S-CHOCOLATES] Slug:', this.categorySlug);
+
           // Cargar productos de la categoría de chocolates
           this.loadChocolatesProducts(this.categorySlug);
         } else {
@@ -126,33 +126,33 @@ export class SChocolatesComponent implements OnInit, AfterViewInit {
       }
     });
   }
-  
+
   /**
    * Cargar hasta 20 productos de la categoría de chocolates
    */
   private loadChocolatesProducts(categorySlug: string): void {
     this.isLoadingProducts = true;
-    
+
     this.productsService.getProductsByCategory(categorySlug).subscribe({
       next: (products: FrontProduct[]) => {
         this.isLoadingProducts = false;
-        
+
         if (products && products.length > 0) {
           // Limitar a máximo 20 productos y ordenar por ordenCategoria
           const sortedProducts = products
             .sort((a, b) => (a.ordenCategoria || 0) - (b.ordenCategoria || 0))
             .slice(0, 20);
-          
+
           this.productos = sortedProducts;
-          console.log(`✅ [S-CHOCOLATES] ${this.productos.length} productos cargados`);
-          
+          //console.log(`✅ [S-CHOCOLATES] ${this.productos.length} productos cargados`);
+
           // Reinicializar Swiper después de cargar productos
           setTimeout(() => {
             this.initializeSwiper();
           }, 100);
         } else {
           this.productos = [];
-          console.log('⚠️ [S-CHOCOLATES] No hay productos en la categoría');
+          //console.log('⚠️ [S-CHOCOLATES] No hay productos en la categoría');
         }
       },
       error: (error: any) => {
@@ -162,7 +162,7 @@ export class SChocolatesComponent implements OnInit, AfterViewInit {
       }
     });
   }
-  
+
   /**
    * Mostrar mensaje de error
    */
@@ -171,7 +171,7 @@ export class SChocolatesComponent implements OnInit, AfterViewInit {
     this.errorMessage = message;
     console.error(`❌ [S-CHOCOLATES] ${message}`);
   }
-  
+
   /**
    * Obtener URL de imagen del producto
    */
@@ -179,21 +179,21 @@ export class SChocolatesComponent implements OnInit, AfterViewInit {
     const firstImage = producto.imagenes && producto.imagenes.length > 0 ? producto.imagenes[0] : '';
     return this.productsService.getAbsoluteImageUrl(firstImage);
   }
-  
+
   /**
    * Manejar error de imagen
    */
   onImageError(event: any): void {
     // Evitar bucle infinito: si ya es el placeholder, no hacer nada más
     if (event.target.src.includes('placeholder-product.jpg')) {
-      console.log('⚠️ [S-CHOCOLATES] Error cargando placeholder, ocultando imagen');
+      //console.log('⚠️ [S-CHOCOLATES] Error cargando placeholder, ocultando imagen');
       event.target.style.display = 'none';
       return;
     }
-    
+
     event.target.src = this.productsService.getAbsoluteImageUrl('');
   }
-  
+
   /**
    * TrackBy function para optimizar el renderizado
    */
@@ -203,8 +203,8 @@ export class SChocolatesComponent implements OnInit, AfterViewInit {
 
   addToCart(producto: any) {
     this.cartService.addToCart(producto);
-    console.log(`${producto.nombre} añadido al carrito`);
-    
+    //console.log(`${producto.nombre} añadido al carrito`);
+
     // Abrir el offcanvas del carrito automáticamente
     const offcanvasElement = document.getElementById('offcanvasCart');
     if (offcanvasElement) {
@@ -213,7 +213,7 @@ export class SChocolatesComponent implements OnInit, AfterViewInit {
       if (!offcanvas) {
         offcanvas = new bootstrap.Offcanvas(offcanvasElement);
       }
-      
+
       // Añadir event listener para limpiar el backdrop cuando se cierre
       offcanvasElement.addEventListener('hidden.bs.offcanvas', () => {
         // Limpiar cualquier backdrop que pueda quedar
@@ -226,7 +226,7 @@ export class SChocolatesComponent implements OnInit, AfterViewInit {
         document.body.style.overflow = '';
         document.body.style.paddingRight = '';
       }, { once: true });
-      
+
       offcanvas.show();
     }
   }

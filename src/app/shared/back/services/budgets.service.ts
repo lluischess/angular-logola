@@ -8,7 +8,7 @@ export interface BudgetProduct {
   productoId: string;  // Referencia al producto real
   cantidad: number;
   precioUnitario: number;
-  
+
   // Datos enriquecidos del producto (obtenidos por JOIN)
   producto?: {
     _id: string;
@@ -23,7 +23,7 @@ export interface BudgetProduct {
     precio: number;  // Precio actual del producto
     publicado: boolean;
   };
-  
+
   // Campos calculados
   subtotal?: number;
 }
@@ -120,7 +120,7 @@ export class BudgetsService {
   private handleError(error: any): Observable<never> {
     console.error('BudgetsService Error:', error);
     let errorMessage = 'Error desconocido';
-    
+
     if (error.error?.message) {
       errorMessage = error.error.message;
     } else if (error.message) {
@@ -136,14 +136,14 @@ export class BudgetsService {
     } else if (error.status >= 500) {
       errorMessage = 'Error interno del servidor';
     }
-    
+
     return throwError(() => new Error(errorMessage));
   }
 
   // Obtener todos los presupuestos con filtros
   getBudgets(params?: BudgetQueryParams): Observable<{ budgets: Budget[], total: number, page: number, totalPages: number }> {
     let httpParams = new HttpParams();
-    
+
     if (params) {
       if (params.page) httpParams = httpParams.set('page', params.page.toString());
       if (params.limit) httpParams = httpParams.set('limit', params.limit.toString());
@@ -155,13 +155,13 @@ export class BudgetsService {
       if (params.fechaHasta) httpParams = httpParams.set('fechaHasta', params.fechaHasta);
     }
 
-    return this.http.get<any>(`${this.apiUrl}`, { 
+    return this.http.get<any>(`${this.apiUrl}`, {
       headers: this.getAuthHeaders(),
-      params: httpParams 
+      params: httpParams
     }).pipe(
       map(response => {
-        console.log('BudgetsService - Raw response:', response);
-        
+        //console.log('BudgetsService - Raw response:', response);
+
         // Parseo adaptativo de la respuesta del backend
         if (response.budgets) {
           return response;
@@ -269,7 +269,7 @@ export class BudgetsService {
     if (notas) {
       updateData.notasEstado = notas;
     }
-    
+
     return this.updateBudget(id, updateData);
   }
 
