@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
+import { environment } from '../../environments/environment';
 
 // Interfaz para las categorías del FrontOffice
 export interface FrontCategory {
@@ -27,7 +28,7 @@ export interface FrontCategory {
   providedIn: 'root'
 })
 export class CategoriesService {
-  private apiUrl = 'http://localhost:3000/categories';
+  private apiUrl = `${environment.apiUrl}/categories`;
 
   constructor(private http: HttpClient) {}
 

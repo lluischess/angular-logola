@@ -1,5 +1,8 @@
 import { Injectable } from '@angular/core';
-import { Meta, Title } from '@angular/platform-browser';
+import { Title, Meta } from '@angular/platform-browser';
+import { Router, NavigationEnd } from '@angular/router';
+import { filter } from 'rxjs/operators';
+import { environment } from '../../environments/environment';
 
 export interface SeoMetadata {
   title?: string;
@@ -126,7 +129,7 @@ export class SeoService {
 
     // Si empieza con /uploads, construir URL completa del backend
     if (imageUrl.startsWith('/uploads')) {
-      return `http://localhost:3000${imageUrl}`;
+      return `${environment.apiUrl}${imageUrl}`;
     }
 
     // Si es una ruta relativa, asumir que está en assets
@@ -135,7 +138,7 @@ export class SeoService {
     }
 
     // Fallback: construir URL del backend
-    return `http://localhost:3000/uploads/images/${imageUrl}`;
+    return `${environment.apiUrl}/uploads/images/${imageUrl}`;
   }
 
   /**

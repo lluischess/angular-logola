@@ -38,7 +38,7 @@ export interface PresupuestoEmailData {
   providedIn: 'root'
 })
 export class EmailService {
-  private apiUrl = environment.apiUrl || 'http://localhost:3000/api';
+  private apiUrl = `${environment.apiUrl}/api`;
 
   constructor(private http: HttpClient) {}
 

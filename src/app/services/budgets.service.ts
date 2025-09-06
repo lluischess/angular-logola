@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable, firstValueFrom } from 'rxjs';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable, throwError, firstValueFrom } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
+import { environment } from '../../environments/environment';
 import { EmailService } from './email.service';
 import { ConfigurationService } from '../shared/back/backoffice/services/configuration.service';
 
@@ -52,8 +54,8 @@ export interface BudgetResponse {
   providedIn: 'root'
 })
 export class BudgetsService {
-  private apiUrl = 'http://localhost:3000/budgets';
-  private baseUrl = 'http://localhost:3000';
+  private apiUrl = `${environment.apiUrl}/budgets`;
+  private baseUrl = environment.apiUrl;
 
   constructor(
     private http: HttpClient,

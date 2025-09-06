@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject, combineLatest } from 'rxjs';
 import { map, tap, catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 // Interfaces para la configuración
 export interface ConfiguracionGeneral {
@@ -38,7 +39,7 @@ export interface ConfiguracionCompleta {
   providedIn: 'root'
 })
 export class ConfiguracionService {
-  private readonly apiUrl = 'http://localhost:3000/configuration';
+  private readonly apiUrl = `${environment.apiUrl}/configuration`;
 
   // BehaviorSubject para mantener el estado de la configuración
   private configuracionSubject = new BehaviorSubject<ConfiguracionCompleta | null>(null);
@@ -211,8 +212,8 @@ export class ConfiguracionService {
     }
 
     // Si es una ruta del backend, asegurar que tenga el protocolo
-    if (relativePath.startsWith('/uploads/') || relativePath.includes('localhost:3000')) {
-      return relativePath.startsWith('http') ? relativePath : `http://localhost:3000${relativePath}`;
+    if (relativePath.startsWith('/uploads/') || relativePath.includes(environment.apiUrl)) {
+      return relativePath.startsWith('http') ? relativePath : `${environment.apiUrl}${relativePath}`;
     }
 
     return relativePath;

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
+import { environment } from '../../environments/environment';
 
 // Interfaz para los productos del FrontOffice
 export interface FrontProduct {
@@ -37,8 +38,8 @@ export interface FrontProduct {
   providedIn: 'root'
 })
 export class ProductsService {
-  private apiUrl = 'http://localhost:3000/products';
-  private baseUrl = 'http://localhost:3000';
+  private apiUrl = `${environment.apiUrl}/products`;
+  private baseUrl = environment.apiUrl;
 
   constructor(private http: HttpClient) { }
 
