@@ -70,7 +70,7 @@ export class CategoriesService {
           }
         }),
         catchError(error => {
-          console.error('❌ [CATEGORIES-SERVICE] Error cargando categorías:', error);
+          //console.error('❌ [CATEGORIES-SERVICE] Error cargando categorías:', error);
 
           // Fallback: devolver categorías por defecto
           return of(this.getDefaultCategories());
@@ -92,7 +92,7 @@ export class CategoriesService {
           return response || null;
         }),
         catchError(error => {
-          console.error('Error obteniendo categoría por slug:', error);
+          //console.error('Error obteniendo categoría por slug:', error);
           return of(null);
         })
       );
@@ -145,8 +145,8 @@ export class CategoriesService {
 
             // Verificar que el slug existe
             if (!specialCategory.slug) {
-              console.error('❌ [CATEGORIES-SERVICE] SLUG FALTANTE en categoría especial!');
-              console.error('❌ [CATEGORIES-SERVICE] Todos los campos:', Object.keys(specialCategory));
+              //console.error('❌ [CATEGORIES-SERVICE] SLUG FALTANTE en categoría especial!');
+              //console.error('❌ [CATEGORIES-SERVICE] Todos los campos:', Object.keys(specialCategory));
             }
 
             return specialCategory;
@@ -157,9 +157,9 @@ export class CategoriesService {
           }
         }),
         catchError(error => {
-          console.error('❌ [CATEGORIES-SERVICE] Error obteniendo categoría especial:', error);
-          console.error('❌ [CATEGORIES-SERVICE] URL:', this.apiUrl);
-          console.error('❌ [CATEGORIES-SERVICE] Params:', params);
+          //console.error('❌ [CATEGORIES-SERVICE] Error obteniendo categoría especial:', error);
+          //console.error('❌ [CATEGORIES-SERVICE] URL:', this.apiUrl);
+          //console.error('❌ [CATEGORIES-SERVICE] Params:', params);
           return of(null);
         })
       );
@@ -228,7 +228,7 @@ export class CategoriesService {
           }
         }),
         catchError(error => {
-          console.error(`❌ [CATEGORIES-SERVICE] Error obteniendo categoría con orden ${orden}:`, error);
+          //console.error(`❌ [CATEGORIES-SERVICE] Error obteniendo categoría con orden ${orden}:`, error);
           return of(null);
         })
       );

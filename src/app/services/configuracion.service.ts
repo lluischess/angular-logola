@@ -57,33 +57,33 @@ export class ConfiguracionService {
 
     // Hacer llamadas paralelas a todos los endpoints específicos con manejo de errores individual
     const footer$ = this.http.get<any>(`${this.apiUrl}/footer`).pipe(
-      tap(response => console.log('🔧 [CONFIGURACION-SERVICE] Footer endpoint response:', response)),
+      //tap(response => console.log('🔧 [CONFIGURACION-SERVICE] Footer endpoint response:', response)),
       catchError(error => {
-        console.error('❌ [CONFIGURACION-SERVICE] Error en endpoint footer:', error);
+        //console.error('❌ [CONFIGURACION-SERVICE] Error en endpoint footer:', error);
         return throwError(() => error);
       })
     );
 
     const general$ = this.http.get<any>(`${this.apiUrl}/general`).pipe(
-      tap(response => console.log('🔧 [CONFIGURACION-SERVICE] General endpoint response:', response)),
+      //tap(response => console.log('🔧 [CONFIGURACION-SERVICE] General endpoint response:', response)),
       catchError(error => {
-        console.error('❌ [CONFIGURACION-SERVICE] Error en endpoint general:', error);
+        //console.error('❌ [CONFIGURACION-SERVICE] Error en endpoint general:', error);
         return throwError(() => error);
       })
     );
 
     const seo$ = this.http.get<any>(`${this.apiUrl}/seo`).pipe(
-      tap(response => console.log('🔧 [CONFIGURACION-SERVICE] SEO endpoint response:', response)),
+      //tap(response => console.log('🔧 [CONFIGURACION-SERVICE] SEO endpoint response:', response)),
       catchError(error => {
-        console.error('❌ [CONFIGURACION-SERVICE] Error en endpoint seo:', error);
+        //console.error('❌ [CONFIGURACION-SERVICE] Error en endpoint seo:', error);
         return throwError(() => error);
       })
     );
 
     const banners$ = this.http.get<any>(`${this.apiUrl}/banners`).pipe(
-      tap(response => console.log('🔧 [CONFIGURACION-SERVICE] Banners endpoint response:', response)),
+      //tap(response => console.log('🔧 [CONFIGURACION-SERVICE] Banners endpoint response:', response)),
       catchError(error => {
-        console.error('❌ [CONFIGURACION-SERVICE] Error en endpoint banners:', error);
+        //console.error('❌ [CONFIGURACION-SERVICE] Error en endpoint banners:', error);
         return throwError(() => error);
       })
     );
@@ -137,8 +137,8 @@ export class ConfiguracionService {
         this.configuracionSubject.next(configuracion);
       }),
       catchError(error => {
-        console.error('❌ [CONFIGURACION-SERVICE] === ERROR OBTENIENDO CONFIGURACIÓN ===');
-        console.error('❌ [CONFIGURACION-SERVICE] Error:', error);
+        //console.error('❌ [CONFIGURACION-SERVICE] === ERROR OBTENIENDO CONFIGURACIÓN ===');
+        //console.error('❌ [CONFIGURACION-SERVICE] Error:', error);
 
         // Devolver configuración por defecto en caso de error
         const defaultConfig: ConfiguracionCompleta = {
