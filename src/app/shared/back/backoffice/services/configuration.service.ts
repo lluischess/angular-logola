@@ -85,14 +85,22 @@ export class ConfigurationService {
    */
   uploadImage(file: File, category: string): Observable<any> {
     const formData = new FormData();
-    formData.append('file', file);
-    formData.append('category', category);
+    formData.append('image', file);
+    formData.append('folder', 'configuration');
 
-    return this.http.post<any>(`${this.apiUrl}/images/upload`, formData).pipe(
+    return this.http.post<any>(`${this.apiUrl}/upload/configuration`, formData).pipe(
       map(response => {
-        // Transformar la respuesta del backend para que coincida with lo esperado por el frontend
+        // El nuevo endpoint devuelve {success: true, imageUrl: string}
+        if (response && response.success && response.imageUrl) {
+          return {
+            datos: {
+              ruta: response.imageUrl,
+              filename: response.imageUrl.split('/').pop()
+            }
+          };
+        }
+        // Fallback para el formato anterior
         if (response && response.datos) {
-          // Procesar URL para reemplazar localhost con environment.apiUrl
           let processedUrl = response.datos.ruta;
           if (processedUrl && processedUrl.includes('localhost:3000')) {
             processedUrl = processedUrl.replace('http://localhost:3000', environment.apiUrl);

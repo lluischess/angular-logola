@@ -149,12 +149,14 @@ export class ProductsService {
   uploadProductImage(file: File): Observable<{imagePath: string}> {
     const formData = new FormData();
     formData.append('image', file);
-    return this.http.post<{imagePath: string}>(`${this.apiUrl}/upload-image`, formData).pipe(
-      map((response: {imagePath: string}) => {
-        // Procesar URL para reemplazar localhost con environment.apiUrl
-        if (response && response.imagePath && response.imagePath.includes('localhost:3000')) {
-          response.imagePath = response.imagePath.replace('http://localhost:3000', environment.apiUrl);
+    formData.append('folder', 'products');
+    return this.http.post<{imagePath: string}>(`${this.apiUrl}/upload/image`, formData).pipe(
+      map((response: any) => {
+        // El nuevo endpoint devuelve {success: true, imageUrl: string}
+        if (response && response.success && response.imageUrl) {
+          return { imagePath: response.imageUrl };
         }
+        // Fallback para compatibilidad
         return response;
       })
     );

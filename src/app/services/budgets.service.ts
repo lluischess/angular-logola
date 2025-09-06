@@ -115,11 +115,16 @@ export class BudgetsService {
     //console.log('📤 [BUDGETS-SERVICE] Archivo:', file.name, file.size, 'bytes');
 
     const formData = new FormData();
-    formData.append('logo', file);
+    formData.append('image', file);
+    formData.append('folder', 'configuration');
 
-    return this.http.post<{ imagePath: string }>(`${this.baseUrl}/budgets/upload-logo`, formData).pipe(
-      map((response: { imagePath: string }) => {
-        // Procesar URL para reemplazar localhost con environment.apiUrl
+    return this.http.post<{ imagePath: string }>(`${this.baseUrl}/upload/configuration`, formData).pipe(
+      map((response: any) => {
+        // El nuevo endpoint devuelve {success: true, imageUrl: string}
+        if (response && response.success && response.imageUrl) {
+          return { imagePath: response.imageUrl };
+        }
+        // Fallback para compatibilidad
         if (response && response.imagePath && response.imagePath.includes('localhost:3000')) {
           response.imagePath = response.imagePath.replace('http://localhost:3000', environment.apiUrl);
         }
