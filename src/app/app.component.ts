@@ -11,6 +11,7 @@ import { filter, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { OnDestroy } from '@angular/core';
 import { ConfiguracionService } from './services/configuracion.service';
+import { ScrollService } from './services/scroll.service';
 
 @Component({
   selector: 'app-root',
@@ -36,6 +37,7 @@ export class AppComponent implements OnInit, OnDestroy {
   constructor(
     private router: Router,
     private configuracionService: ConfiguracionService,
+    private scrollService: ScrollService,
     @Inject(DOCUMENT) private document: Document
   ) {}
 

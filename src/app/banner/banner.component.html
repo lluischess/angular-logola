@@ -25,16 +25,16 @@
             <div class="d-flex gap-3">
               <a [href]="banner.enlace" class="btn text-uppercase fs-6 rounded-pill px-4 py-3 mt-3" [ngStyle]="getButtonStyles(banner)">{{ banner.nombreBoton }}</a>
               <!-- Segundo botón opcional -->
-              <a *ngIf="banner.enlaceButton2 && banner.nombreButton2" 
-                 [href]="banner.enlaceButton2" 
-                 class="btn text-uppercase fs-6 rounded-pill px-4 py-3 mt-3" 
+              <a *ngIf="banner.enlaceButton2 && banner.nombreButton2"
+                 [href]="banner.enlaceButton2"
+                 class="btn text-uppercase fs-6 rounded-pill px-4 py-3 mt-3"
                  [ngStyle]="getSecondButtonStyles(banner)">
                 {{ banner.nombreButton2 }}
               </a>
             </div>
-            
+
             <!-- Estadísticas del primer banner (solo en el primer slide) -->
-            <div *ngIf="i === 0" class="row my-5">
+            <!-- <div *ngIf="i === 0" class="row my-5">
               <div class="col">
                 <div class="text-dark">
                   <div class="col-auto"><p class="fs-1 fw-bold lh-sm mb-0">320+</p></div>
@@ -53,12 +53,12 @@
                   <div class="col"><p class="text-uppercase lh-sm mb-0">Presupuestos enviados</p></div>
                 </div>
               </div>
-            </div>
+            </div> -->
           </div>
         </div>
 
         <!-- Sección fija de las 3 tarjetas (solo en el primer slide) -->
-        <div *ngIf="i === 0" class="row row-cols-1 row-cols-sm-3 row-cols-lg-3 g-0 justify-content-center">
+        <!-- <div *ngIf="i === 0" class="row row-cols-1 row-cols-sm-3 row-cols-lg-3 g-0 justify-content-center">
           <div class="col">
             <div class="card border-0 bg-primary rounded-0 p-4 text-light">
               <div class="row">
@@ -104,7 +104,7 @@
               </div>
             </div>
           </div>
-        </div>
+        </div> -->
 
       </div>
     </div>
