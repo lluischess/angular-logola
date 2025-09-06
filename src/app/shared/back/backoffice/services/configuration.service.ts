@@ -88,7 +88,7 @@ export class ConfigurationService {
     formData.append('image', file);
     formData.append('folder', 'configuration');
 
-    return this.http.post<any>(`${this.apiUrl}/upload/configuration`, formData).pipe(
+    return this.http.post<any>(`${environment.apiUrl}/upload/configuration`, formData).pipe(
       map(response => {
         // El nuevo endpoint devuelve {success: true, imageUrl: string}
         if (response && response.success && response.imageUrl) {

@@ -150,7 +150,7 @@ export class ProductsService {
     const formData = new FormData();
     formData.append('image', file);
     formData.append('folder', 'products');
-    return this.http.post<{imagePath: string}>(`${this.apiUrl}/upload/image`, formData).pipe(
+    return this.http.post<{imagePath: string}>(`${environment.apiUrl}/upload/image`, formData).pipe(
       map((response: any) => {
         // El nuevo endpoint devuelve {success: true, imageUrl: string}
         if (response && response.success && response.imageUrl) {
