@@ -117,7 +117,15 @@ export class BudgetsService {
     const formData = new FormData();
     formData.append('logo', file);
 
-    return this.http.post<{ imagePath: string }>(`${this.baseUrl}/budgets/upload-logo`, formData);
+    return this.http.post<{ imagePath: string }>(`${this.baseUrl}/budgets/upload-logo`, formData).pipe(
+      map((response: { imagePath: string }) => {
+        // Procesar URL para reemplazar localhost con environment.apiUrl
+        if (response && response.imagePath && response.imagePath.includes('localhost:3000')) {
+          response.imagePath = response.imagePath.replace('http://localhost:3000', environment.apiUrl);
+        }
+        return response;
+      })
+    );
   }
 
   /**

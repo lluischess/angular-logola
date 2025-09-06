@@ -265,6 +265,11 @@ export class ProductsService {
       return this.getPlaceholderImage();
     }
 
+    // Procesar URL para reemplazar localhost con environment.apiUrl
+    if (imagePath.includes('localhost:3000')) {
+      return imagePath.replace('http://localhost:3000', this.baseUrl);
+    }
+
     // Si ya es una URL absoluta (http/https), devolverla tal como está
     if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
       return imagePath;

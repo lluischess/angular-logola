@@ -6,6 +6,7 @@ import { AuthService } from '../../../services/auth.service';
 import { BackofficeLayoutComponent } from '../backoffice-layout/backoffice-layout.component';
 import { Presupuesto, ProductoPresupuesto } from '../presupuestos/presupuestos.component';
 import { BudgetsService, Budget, BudgetStatus } from '../../../services/budgets.service';
+import { environment } from '../../../../../../environments/environment';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 
@@ -1031,7 +1032,7 @@ export class PresupuestoDetalleComponent implements OnInit {
     }
 
     // Convertir URL relativa a absoluta del backend
-    const backendUrl = 'http://localhost:3000';
+    const backendUrl = environment.apiUrl;
     const cleanUrl = relativeUrl.startsWith('/') ? relativeUrl : '/' + relativeUrl;
     const absoluteUrl = backendUrl + cleanUrl;
 
@@ -1174,7 +1175,7 @@ export class PresupuestoDetalleComponent implements OnInit {
 
     // Si empieza con /uploads, construir URL completa del backend
     if (logoPath.startsWith('/uploads')) {
-      const fullUrl = `http://localhost:3000${logoPath}`;
+      const fullUrl = `${environment.apiUrl}${logoPath}`;
       //console.log('🎨 [PRESUPUESTO-DETALLE] URL construida del backend:', fullUrl);
       return fullUrl;
     }
@@ -1186,7 +1187,7 @@ export class PresupuestoDetalleComponent implements OnInit {
     }
 
     // Fallback: asumir que es una ruta relativa y construir URL completa
-    const fallbackUrl = `http://localhost:3000/uploads/logos/${logoPath}`;
+    const fallbackUrl = `${environment.apiUrl}/uploads/logos/${logoPath}`;
     //console.log('🎨 [PRESUPUESTO-DETALLE] URL fallback construida:', fallbackUrl);
     return fallbackUrl;
   }

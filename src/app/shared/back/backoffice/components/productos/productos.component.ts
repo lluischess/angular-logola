@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
 import { ProductsService } from '../../services/products.service';
 import { BackofficeLayoutComponent } from '../backoffice-layout/backoffice-layout.component';
+import { environment } from '../../../../../../environments/environment';
 
 interface Producto {
   _id?: string;
@@ -260,9 +261,13 @@ export class ProductosComponent implements OnInit {
     if (this.hasProductImage(producto)) {
       let imageUrl = producto.imagenes![0];
 
+      // Procesar URL para reemplazar localhost con environment.apiUrl
+      if (imageUrl.includes('localhost:3000')) {
+        imageUrl = imageUrl.replace('http://localhost:3000', environment.apiUrl);
+      }
       // Convert relative URLs to absolute URLs with backend domain
-      if (imageUrl.startsWith('/')) {
-        imageUrl = `http://localhost:3000${imageUrl}`;
+      else if (imageUrl.startsWith('/')) {
+        imageUrl = `${environment.apiUrl}${imageUrl}`;
       }
 
       //console.log(`🔗 Image URL for ${producto.nombre}:`, imageUrl);

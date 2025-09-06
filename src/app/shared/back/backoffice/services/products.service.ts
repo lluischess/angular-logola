@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { environment } from '../../../../../environments/environment';
 
 export interface Product {
@@ -148,7 +149,15 @@ export class ProductsService {
   uploadProductImage(file: File): Observable<{imagePath: string}> {
     const formData = new FormData();
     formData.append('image', file);
-    return this.http.post<{imagePath: string}>(`${this.apiUrl}/upload-image`, formData);
+    return this.http.post<{imagePath: string}>(`${this.apiUrl}/upload-image`, formData).pipe(
+      map((response: {imagePath: string}) => {
+        // Procesar URL para reemplazar localhost con environment.apiUrl
+        if (response && response.imagePath && response.imagePath.includes('localhost:3000')) {
+          response.imagePath = response.imagePath.replace('http://localhost:3000', environment.apiUrl);
+        }
+        return response;
+      })
+    );
   }
 
   /**

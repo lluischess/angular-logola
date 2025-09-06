@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
+import { environment } from '../../../../../../environments/environment';
 import { AuthService } from '../../../services/auth.service';
 import { BackofficeLayoutComponent } from '../backoffice-layout/backoffice-layout.component';
 import { BudgetsService } from '../../../services/budgets.service';
-import { HttpClient } from '@angular/common/http';
 
 /**
  * Componente principal del dashboard del backoffice
@@ -86,7 +87,7 @@ export class DashboardComponent implements OnInit {
     };
 
     // Cargar productos
-    this.http.get('http://localhost:3000/products', { headers }).subscribe({
+    this.http.get(`${environment.apiUrl}/products`, { headers }).subscribe({
       next: (response: any) => {
         const products = response.products || response.data || response;
         this.stats.totalProductos = Array.isArray(products) ? products.length : 0;
@@ -99,7 +100,7 @@ export class DashboardComponent implements OnInit {
     });
 
     // Cargar categorías
-    this.http.get('http://localhost:3000/categories', { headers }).subscribe({
+    this.http.get(`${environment.apiUrl}/categories`, { headers }).subscribe({
       next: (response: any) => {
         const categories = response.categories || response.data || response;
         this.stats.totalCategorias = Array.isArray(categories) ? categories.length : 0;
@@ -130,7 +131,7 @@ export class DashboardComponent implements OnInit {
     };
 
     // Cargar productos
-    this.http.get('http://localhost:3000/products', { headers }).subscribe({
+    this.http.get(`${environment.apiUrl}/products`, { headers }).subscribe({
       next: (response: any) => {
         const products = response.products || response.data || response;
         this.stats.totalProductos = Array.isArray(products) ? products.length : 0;
@@ -143,7 +144,7 @@ export class DashboardComponent implements OnInit {
     });
 
     // Cargar categorías
-    this.http.get('http://localhost:3000/categories', { headers }).subscribe({
+    this.http.get(`${environment.apiUrl}/categories`, { headers }).subscribe({
       next: (response: any) => {
         const categories = response.categories || response.data || response;
         this.stats.totalCategorias = Array.isArray(categories) ? categories.length : 0;

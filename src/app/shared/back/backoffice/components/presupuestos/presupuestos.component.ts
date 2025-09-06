@@ -5,6 +5,7 @@ import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
 import { BackofficeLayoutComponent } from '../backoffice-layout/backoffice-layout.component';
 import { BudgetsService, Budget, BudgetStatus, BudgetStats } from '../../../services/budgets.service';
+import { environment } from '../../../../../../environments/environment';
 
 // Interfaces para compatibilidad con el template existente
 export interface Presupuesto {
@@ -91,7 +92,7 @@ export class PresupuestosComponent implements OnInit {
   testConnectivity() {
     //console.log('🧪 CONNECTIVITY TEST: Starting diagnostic test');
     //console.log('🧪 CONNECTIVITY TEST: Token in localStorage:', localStorage.getItem('authToken'));
-    //console.log('🧪 CONNECTIVITY TEST: API URL:', `http://localhost:3000/budgets`);
+    //console.log('🧪 CONNECTIVITY TEST: API URL:', `${environment.apiUrl}/budgets`);
 
     // Test directo con fetch para ver qué pasa
     const token = localStorage.getItem('authToken');
@@ -101,7 +102,7 @@ export class PresupuestosComponent implements OnInit {
       return;
     }
 
-    fetch('http://localhost:3000/budgets', {
+    fetch(`${environment.apiUrl}/budgets`, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -136,7 +137,7 @@ export class PresupuestosComponent implements OnInit {
     };
 
     //console.log('🔍 DEBUG: Query params:', queryParams);
-    //console.log('🔍 DEBUG: API URL will be:', `http://localhost:3000/budgets`);
+    //console.log('🔍 DEBUG: API URL will be:', `${environment.apiUrl}/budgets`);
 
     this.budgetsService.getBudgets(queryParams).subscribe({
       next: (response) => {

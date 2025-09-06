@@ -6,6 +6,7 @@ import { AuthService } from '../../../services/auth.service';
 import { BackofficeLayoutComponent } from '../backoffice-layout/backoffice-layout.component';
 import { ProductsService } from '../../services/products.service';
 import { CategoriesService } from '../../services/categories.service';
+import { environment } from '../../../../../../environments/environment';
 
 export interface ProductoCompleto {
   id?: number;
@@ -484,7 +485,7 @@ export class ProductoFormComponent implements OnInit {
     if (!imagePath) return '';
     if (imagePath.startsWith('data:')) return imagePath; // Base64 preview
     if (imagePath.startsWith('http')) return imagePath; // URL completa
-    return `http://localhost:3000${imagePath}`; // Ruta relativa del servidor
+    return `${environment.apiUrl}${imagePath}`; // Ruta relativa del servidor
   }
 
   /**

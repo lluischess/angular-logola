@@ -1,10 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, AfterViewInit, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
+import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { Subscription, firstValueFrom } from 'rxjs';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { CartServiceService } from '../shared/services/cart-service.service';
-import { BudgetsService, CreateBudgetRequest } from '../services/budgets.service';
 import { ProductsService } from '../services/products.service';
+import { BudgetsService, CreateBudgetRequest } from '../services/budgets.service';
+import { CartServiceService } from '../shared/services/cart-service.service';
+import { environment } from '../../environments/environment';
 
 // Declarar grecaptcha para TypeScript
 declare var grecaptcha: any;
@@ -574,13 +576,13 @@ export class CartComponent implements OnInit, AfterViewInit, OnDestroy {
 
       // Si la ruta empieza con /uploads, añadir el dominio del backend
       if (imagePath.startsWith('/uploads')) {
-        const fullPath = `http://localhost:3000${imagePath}`;
+        const fullPath = `${environment.apiUrl}${imagePath}`;
         //console.log('🖼️ [CART] Ruta construida:', fullPath);
         return fullPath;
       }
 
       // Si no tiene prefijo, asumir que es una ruta relativa
-      const fullPath = `http://localhost:3000/uploads/productos/${imagePath}`;
+      const fullPath = `${environment.apiUrl}/uploads/productos/${imagePath}`;
       //console.log('🖼️ [CART] Ruta relativa construida:', fullPath);
       return fullPath;
     }

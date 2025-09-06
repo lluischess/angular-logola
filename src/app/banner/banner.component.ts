@@ -1,6 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ConfigurationService } from '../shared/back/backoffice/services/configuration.service';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef, AfterViewInit, ChangeDetectorRef } from '@angular/core';
+import { ConfiguracionService } from '../services/configuracion.service';
+import { Subscription } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 // Interfaz para los banners dinámicos (mapeados desde el backend)
 interface BannerData {
@@ -38,7 +40,7 @@ export class BannerComponent implements OnInit, OnDestroy {
   isLoading = true;
   totalSlides = 0;
 
-  constructor(private configurationService: ConfigurationService) {}
+  constructor(private configurationService: ConfiguracionService) {}
 
   ngOnInit() {
     this.loadBanners();
@@ -55,7 +57,7 @@ export class BannerComponent implements OnInit, OnDestroy {
     //console.log('🎨 [BANNER] Cargando banners dinámicos del backend...');
     this.isLoading = true;
 
-    this.configurationService.getConfigurationSection('banners').subscribe({
+    this.configurationService.getConfiguracion().subscribe({
       next: (response: any) => {
         //console.log('✅ [BANNER] Respuesta completa del backend:', response);
         //console.log('🔍 [BANNER] Tipo de respuesta:', typeof response);
@@ -221,7 +223,7 @@ export class BannerComponent implements OnInit, OnDestroy {
 
     // Si empieza con /uploads, construir URL completa del backend
     if (imagenDesktop.startsWith('/uploads')) {
-      return `http://localhost:3000${imagenDesktop}`;
+      return `${environment.apiUrl}${imagenDesktop}`;
     }
 
     // Si es una ruta relativa, asumir que está en assets
@@ -230,7 +232,7 @@ export class BannerComponent implements OnInit, OnDestroy {
     }
 
     // Fallback: construir URL del backend
-    return `http://localhost:3000/uploads/banners/${imagenDesktop}`;
+    return `${environment.apiUrl}/uploads/banners/${imagenDesktop}`;
   }
 
   /**
@@ -248,7 +250,7 @@ export class BannerComponent implements OnInit, OnDestroy {
 
     // Si empieza con /uploads, construir URL completa del backend
     if (imagenMobile.startsWith('/uploads')) {
-      return `http://localhost:3000${imagenMobile}`;
+      return `${environment.apiUrl}${imagenMobile}`;
     }
 
     // Si es una ruta relativa, asumir que está en assets
@@ -257,7 +259,7 @@ export class BannerComponent implements OnInit, OnDestroy {
     }
 
     // Fallback: construir URL del backend
-    return `http://localhost:3000/uploads/banners/${imagenMobile}`;
+    return `${environment.apiUrl}/uploads/banners/${imagenMobile}`;
   }
 
   /**

@@ -122,6 +122,11 @@ export class SeoService {
   private getAbsoluteImageUrl(imageUrl: string): string {
     if (!imageUrl) return '';
 
+    // Procesar URL para reemplazar localhost con environment.apiUrl
+    if (imageUrl.includes('localhost:3000')) {
+      return imageUrl.replace('http://localhost:3000', environment.apiUrl);
+    }
+
     // Si ya es una URL completa, usarla tal como está
     if (imageUrl.startsWith('http')) {
       return imageUrl;
@@ -132,9 +137,9 @@ export class SeoService {
       return `${environment.apiUrl}${imageUrl}`;
     }
 
-    // Si es una ruta relativa, asumir que está en assets
+    // Si es una ruta relativa, asumir que está en assets (usar URL relativa)
     if (imageUrl.startsWith('assets/')) {
-      return `http://localhost:4200/${imageUrl}`;
+      return `/${imageUrl}`;
     }
 
     // Fallback: construir URL del backend

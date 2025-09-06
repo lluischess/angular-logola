@@ -92,9 +92,15 @@ export class ConfigurationService {
       map(response => {
         // Transformar la respuesta del backend para que coincida with lo esperado por el frontend
         if (response && response.datos) {
+          // Procesar URL para reemplazar localhost con environment.apiUrl
+          let processedUrl = response.datos.ruta;
+          if (processedUrl && processedUrl.includes('localhost:3000')) {
+            processedUrl = processedUrl.replace('http://localhost:3000', environment.apiUrl);
+          }
+          
           return {
             success: true,
-            url: response.datos.ruta,
+            url: processedUrl,
             filename: response.datos.nombreOriginal || response.datos.nombre,
             message: 'Imagen subida correctamente'
           };
