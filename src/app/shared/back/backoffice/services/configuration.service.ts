@@ -90,15 +90,18 @@ export class ConfigurationService {
 
     return this.http.post<any>(`${environment.apiUrl}/upload/configuration`, formData).pipe(
       map(response => {
+        console.log('Respuesta del servidor de configuración:', response);
+        
         // El nuevo endpoint devuelve {success: true, imageUrl: string}
         if (response && response.success && response.imageUrl) {
           return {
-            datos: {
-              ruta: response.imageUrl,
-              filename: response.imageUrl.split('/').pop()
-            }
+            success: true,
+            url: response.imageUrl,
+            filename: response.imageUrl.split('/').pop(),
+            message: response.message || 'Imagen subida correctamente'
           };
         }
+        
         // Fallback para el formato anterior
         if (response && response.datos) {
           let processedUrl = response.datos.ruta;
@@ -113,9 +116,13 @@ export class ConfigurationService {
             message: 'Imagen subida correctamente'
           };
         }
+        
+        // Si no hay formato reconocido, devolver error
+        console.error('Formato de respuesta no reconocido:', response);
         return {
           success: false,
-          message: 'Error al procesar la respuesta del servidor'
+          message: 'Formato de respuesta del servidor no válido',
+          response: response
         };
       }),
       catchError((error: any) => {

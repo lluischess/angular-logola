@@ -879,20 +879,18 @@ export class ConfiguracionComponent implements OnInit {
   }
 
   /**
-   * Manejar error de carga de imagen
+   * Manejar errores de carga de imágenes
    */
   onImageError(event: any): void {
     const target = event.target as HTMLImageElement;
 
-    // Evitar bucle infinito si el placeholder también falla
-    if (target.src.includes('placeholder.jpg') || target.src.includes('data:image')) {
-      // Si ya es el placeholder o una imagen data, usar un SVG inline como fallback
-      target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjEyMCIgdmlld0JveD0iMCAwIDIwMCAxMjAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMTIwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik04NSA0NUg5NVY1NUg4NVY0NVoiIGZpbGw9IiM5Q0E0QUYiLz4KPHA+CjxyZWN0IHg9IjcwIiB5PSI2NSIgd2lkdGg9IjYwIiBoZWlnaHQ9IjQiIGZpbGw9IiM5Q0E0QUYiLz4KPHA+CjxyZWN0IHg9IjgwIiB5PSI3NSIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQiIGZpbGw9IiM5Q0E0QUYiLz4KPHA+Cjx0ZXh0IHg9IjEwMCIgeT0iOTAiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxMiIgZmlsbD0iIzlDQTRBRiIgdGV4dC1hbmNob3I9Im1pZGRsZSI+SW1hZ2VuPC90ZXh0Pgo8L3N2Zz4=';
-      return;
+    // Evitar bucle infinito - usar directamente SVG inline como fallback
+    if (target.src.includes('data:image')) {
+      return; // Ya es un SVG inline, no hacer nada más
     }
 
-    // Intentar cargar placeholder solo si no es ya el placeholder
-    target.src = '/assets/images/placeholder.jpg';
+    // Usar SVG inline directamente sin intentar placeholder.jpg
+    target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjEyMCIgdmlld0JveD0iMCAwIDIwMCAxMjAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIxMjAiIGZpbGw9IiNmM2Y0ZjYiLz48cGF0aCBkPSJNNzUgNDVIMTI1VjU1SDc1VjQ1WiIgZmlsbD0iIzlDQTNBRiIvPjxwYXRoIGQ9Ik04NSA2NUgxMTVWNzVIODVWNjVaIiBmaWxsPSIjOUNBM0FGIi8+PC9zdmc+';
   }
 
 }
