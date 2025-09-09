@@ -207,4 +207,17 @@ export class HeaderComponent implements OnInit, OnDestroy {
       });
   }
 
+  /**
+   * Hacer scroll suave al footer (sección de contacto)
+   */
+  scrollToFooter(): void {
+    const footerElement = document.getElementById('contacto-footer');
+    if (footerElement) {
+      footerElement.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
+  }
+
 }

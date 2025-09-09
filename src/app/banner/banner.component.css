@@ -46,31 +46,63 @@
 
 /* Estilos específicos para móvil */
 @media (max-width: 768px) {
-  /* Aplicar a todos los banners excepto el primero (que tiene estadísticas y tarjetas) */
-  .carousel-slide:nth-child(n+2) {
-    align-items: flex-start;
-    padding-top: 2rem;
+  /* Ajustes generales para todos los banners en móvil */
+  .carousel-slide {
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 0;
   }
 
-  .carousel-slide:nth-child(n+2) .container-lg {
-    padding-top: 1rem;
+  .carousel-slide .container-lg {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
-  .carousel-slide:nth-child(n+2) .col-lg-6 {
-    padding-top: 1rem !important;
-    margin-top: 1rem !important;
+  .carousel-slide .row {
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    width: 100%;
   }
 
-  /* Asegurar que el texto y botones estén arriba en todos los banners móviles */
-  .carousel-slide:nth-child(n+2) .row {
-    align-items: flex-start;
-  }
-
-  .carousel-slide:nth-child(n+2) .col-lg-6 {
+  .carousel-slide .col-lg-6 {
+    padding-top: 0 !important;
+    margin-top: 0 !important;
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
-    align-items: flex-start;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+
+  /* Ajustar tamaño del título en móvil */
+  .carousel-slide h2.display-1 {
+    font-size: 2.5rem !important;
+    line-height: 1.2 !important;
+    margin-bottom: 1rem;
+  }
+
+  /* Ajustar tamaño del subtítulo en móvil */
+  .carousel-slide p.fs-4 {
+    font-size: 1.1rem !important;
+    margin-bottom: 1.5rem;
+    padding: 0 1rem;
+  }
+
+  /* Ajustar botones en móvil */
+  .carousel-slide .btn {
+    font-size: 0.85rem !important;
+    padding: 0.6rem 1.5rem !important;
+    margin-top: 0.5rem !important;
+  }
+
+  /* Contenedor de botones centrado */
+  .carousel-slide .d-flex.gap-3 {
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.8rem !important;
   }
 }
 

@@ -6,6 +6,7 @@ import { NavComponent } from './nav/nav.component';
 import { HeaderComponent } from './header/header.component';
 import { FooterComponent } from './footer/footer.component';
 import { EndComponent } from './end/end.component';
+import { CookiesBannerComponent } from './cookies-banner/cookies-banner.component';
 import { CommonModule } from '@angular/common';
 import { filter, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
@@ -24,6 +25,7 @@ import { ScrollService } from './services/scroll.service';
     HeaderComponent,
     FooterComponent,
     EndComponent,
+    CookiesBannerComponent,
     RouterModule
   ],
   templateUrl: './app.component.html',

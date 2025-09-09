@@ -751,10 +751,11 @@ export class ConfiguracionComponent implements OnInit {
       return;
     }
 
-    // Validar tamaño (máximo 5MB)
-    const maxSize = 5 * 1024 * 1024; // 5MB
+    // Validar tamaño (máximo 10MB para banners, 5MB para otros)
+    const maxSize = section === 'banner' ? 10 * 1024 * 1024 : 5 * 1024 * 1024; // 10MB para banners, 5MB para otros
     if (file.size > maxSize) {
-      alert(`El archivo es demasiado grande. Tamaño máximo: 5MB`);
+      const maxSizeMB = section === 'banner' ? '10MB' : '5MB';
+      alert(`El archivo es demasiado grande. Tamaño máximo: ${maxSizeMB}`);
       return;
     }
 
@@ -766,51 +767,137 @@ export class ConfiguracionComponent implements OnInit {
       category = field === 'imagenMobile' ? 'banner-mobile' : 'banner-desktop';
     }
 
-    // Subir imagen al servidor usando el servicio
-    this.configurationService.uploadImage(file, category)
-      .subscribe({
-        next: (response) => {
-          //console.log(`Imagen ${file.name} subida correctamente:`, response);
+    // Procesar imagen antes de subir (solo para banners para mantener calidad)
+    if (section === 'banner') {
+      this.processImageForBanner(file, category, section, field, bannerIndex);
+    } else {
+      // Subir imagen directamente para otros casos
+      this.configurationService.uploadImage(file, category)
+        .subscribe({
+          next: (response) => {
+            //console.log(`Imagen ${file.name} subida correctamente:`, response);
 
-          if (response.success && response.url) {
-            // Actualizar formulario correspondiente con la URL real del servidor
-            this.updateImageField(section, field, response.url, bannerIndex);
+            if (response.success && response.url) {
+              // Actualizar formulario correspondiente con la URL real del servidor
+              this.updateImageField(section, field, response.url, bannerIndex);
 
-            // Añadir a la lista de subidas recientes
-            this.recentUploads.unshift({
-              name: response.filename || file.name,
-              uploadDate: new Date()
+              // Añadir a la lista de subidas recientes
+              this.recentUploads.unshift({
+                name: response.filename || file.name,
+                uploadDate: new Date()
+              });
+
+              // Mantener solo las últimas 10 subidas
+              if (this.recentUploads.length > 10) {
+                this.recentUploads = this.recentUploads.slice(0, 10);
+              }
+
+              alert(`Imagen ${response.filename || file.name} subida correctamente`);
+            } else {
+              console.error('Error en la respuesta del servidor:', response);
+              alert('Error al subir la imagen. Inténtalo de nuevo.');
+            }
+          },
+          error: (error) => {
+            console.error('Error al subir imagen:', error);
+            alert('Error al subir la imagen. Inténtalo de nuevo.');
+          }
+        });
+    }
+  }
+
+  /**
+   * Procesar imagen para banners con mejor calidad
+   */
+  processImageForBanner(file: File, category: string, section: string, field: string, bannerIndex?: number): void {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    const img = new Image();
+
+    img.onload = () => {
+      // Determinar dimensiones óptimas según el tipo de banner
+      let targetWidth = 1920;
+      let targetHeight = 600;
+      
+      if (field === 'imagenMobile') {
+        targetWidth = 768;
+        targetHeight = 400;
+      }
+
+      // Calcular dimensiones manteniendo aspect ratio
+      const aspectRatio = img.width / img.height;
+      const targetAspectRatio = targetWidth / targetHeight;
+
+      let finalWidth = targetWidth;
+      let finalHeight = targetHeight;
+
+      if (aspectRatio > targetAspectRatio) {
+        // Imagen más ancha, ajustar por altura
+        finalHeight = targetHeight;
+        finalWidth = targetHeight * aspectRatio;
+      } else {
+        // Imagen más alta, ajustar por anchura
+        finalWidth = targetWidth;
+        finalHeight = targetWidth / aspectRatio;
+      }
+
+      canvas.width = finalWidth;
+      canvas.height = finalHeight;
+
+      // Configurar contexto para mejor calidad
+      if (ctx) {
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+        
+        // Dibujar imagen redimensionada
+        ctx.drawImage(img, 0, 0, finalWidth, finalHeight);
+
+        // Convertir a blob con alta calidad
+        canvas.toBlob((blob) => {
+          if (blob) {
+            const processedFile = new File([blob], file.name, {
+              type: 'image/jpeg',
+              lastModified: Date.now()
             });
 
-            // Mantener solo las últimas 10 subidas
-            if (this.recentUploads.length > 10) {
-              this.recentUploads = this.recentUploads.slice(0, 10);
-            }
+            // Subir imagen procesada
+            this.configurationService.uploadImage(processedFile, category)
+              .subscribe({
+                next: (response) => {
+                  if (response.success && response.url) {
+                    this.updateImageField(section, field, response.url, bannerIndex);
+                    
+                    this.recentUploads.unshift({
+                      name: response.filename || file.name,
+                      uploadDate: new Date()
+                    });
 
-            alert(`Imagen ${response.filename || file.name} subida correctamente`);
-          } else {
-            throw new Error(response.message || 'Error desconocido al subir la imagen');
+                    if (this.recentUploads.length > 10) {
+                      this.recentUploads = this.recentUploads.slice(0, 10);
+                    }
+
+                    alert(`Banner ${response.filename || file.name} subido con calidad optimizada`);
+                  } else {
+                    console.error('Error en la respuesta del servidor:', response);
+                    alert('Error al subir la imagen. Inténtalo de nuevo.');
+                  }
+                },
+                error: (error) => {
+                  console.error('Error al subir imagen:', error);
+                  alert('Error al subir la imagen. Inténtalo de nuevo.');
+                }
+              });
           }
-        },
-        error: (error) => {
-          console.error(`Error al subir imagen ${file.name}:`, error);
+        }, 'image/jpeg', 0.92); // 92% de calidad para mantener buena resolución
+      }
+    };
 
-          let errorMessage = `Error al subir la imagen ${file.name}`;
-          if (error.error && error.error.message) {
-            errorMessage += `: ${error.error.message}`;
-          } else if (error.status === 0) {
-            errorMessage += '. Verifique la conexión con el servidor.';
-          } else if (error.status === 413) {
-            errorMessage += '. El archivo es demasiado grande.';
-          } else if (error.status === 415) {
-            errorMessage += '. Tipo de archivo no soportado.';
-          } else {
-            errorMessage += '. Inténtelo de nuevo.';
-          }
+    img.onerror = () => {
+      console.error('Error al cargar la imagen para procesamiento');
+      alert('Error al procesar la imagen. Inténtalo de nuevo.');
+    };
 
-          alert(errorMessage);
-        }
-      });
+    img.src = URL.createObjectURL(file);
   }
 
   /**

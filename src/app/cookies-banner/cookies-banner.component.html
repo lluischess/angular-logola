@@ -1,0 +1,27 @@
+<!-- Banner de cookies -->
+<div *ngIf="showBanner" class="cookies-banner">
+  <div class="cookies-content">
+    <div class="cookies-text">
+      <div class="cookies-icon">
+        🍪
+      </div>
+      <div class="cookies-message">
+        <p class="mb-2">
+          <strong>Usamos cookies</strong>
+        </p>
+        <p class="mb-0">
+          Utilizamos cookies para mejorar tu experiencia de navegación y ofrecerte contenido personalizado.
+        </p>
+      </div>
+    </div>
+
+    <div class="cookies-actions">
+      <button (click)="rejectCookies()" class="btn btn-outline-secondary btn-sm me-2">
+        Rechazar
+      </button>
+      <button (click)="acceptCookies()" class="btn btn-primary btn-sm">
+        Aceptar
+      </button>
+    </div>
+  </div>
+</div>
