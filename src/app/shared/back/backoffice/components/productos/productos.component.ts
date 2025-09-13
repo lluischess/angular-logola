@@ -354,20 +354,36 @@ export class ProductosComponent implements OnInit {
   editProduct(producto: Producto | string): void {
     const id = typeof producto === 'string' ? producto : (producto._id || producto.id?.toString());
     if (id) {
-      this.router.navigate(['/logoadmin/productos/editar', id]);
     }
   }
 
-  deleteProduct(producto: Producto | string): void {
-    const id = typeof producto === 'string' ? producto : (producto._id || producto.id?.toString());
-    if (id && confirm('¿Estás seguro de que quieres eliminar este producto?')) {
-      this.productsService.deleteProduct(id).subscribe({
+  deleteProduct(producto: Producto): void {
+    if (confirm(`¿Estás seguro de que quieres eliminar el producto "${producto.nombre}"?`)) {
+      this.productsService.deleteProduct(producto._id!).subscribe({
         next: () => {
-          this.loadProducts();
-          this.loadStats();
+          console.log('✅ Producto eliminado correctamente');
+          this.loadProducts(); // Recargar la lista
         },
-        error: (error: any) => {
-          alert('Error al eliminar el producto.');
+        error: (error) => {
+          console.error('❌ Error eliminando producto:', error);
+          this.error = 'Error al eliminar el producto. Por favor, intenta de nuevo.';
+        }
+      });
+    }
+  }
+
+  duplicateProduct(producto: Producto): void {
+    if (confirm(`¿Duplicar el producto "${producto.nombre}"?\n\nSe creará una copia despublicada con referencia "${producto.referencia}-COPY"`)) {
+      this.productsService.duplicateProduct(producto._id!).subscribe({
+        next: (duplicatedProduct) => {
+          console.log('✅ Producto duplicado correctamente:', duplicatedProduct);
+          this.loadProducts(); // Recargar la lista para mostrar el nuevo producto
+          alert(`Producto duplicado exitosamente:\n- Nombre: ${duplicatedProduct.nombre}\n- Referencia: ${duplicatedProduct.referencia}\n- Estado: Despublicado`);
+        },
+        error: (error) => {
+          console.error('❌ Error duplicando producto:', error);
+          this.error = 'Error al duplicar el producto. Por favor, intenta de nuevo.';
+          alert('Error al duplicar el producto. Por favor, intenta de nuevo.');
         }
       });
     }

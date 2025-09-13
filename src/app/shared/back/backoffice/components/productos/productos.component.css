@@ -864,14 +864,24 @@
   color: white;
 }
 
-.btn-edit {
-  background: linear-gradient(135deg, #fdcb6e, #e17055);
+.btn-duplicate {
+  background: linear-gradient(135deg, #17a2b8, #138496);
   color: white;
 }
 
+.btn-duplicate:hover {
+  background: linear-gradient(135deg, #138496, #117a8b);
+  transform: translateY(-1px);
+}
+
 .btn-delete {
-  background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+  background: linear-gradient(135deg, #dc3545, #c82333);
   color: white;
+}
+
+.btn-delete:hover {
+  background: linear-gradient(135deg, #c82333, #bd2130);
+  transform: translateY(-1px);
 }
 
 .btn-action:hover {

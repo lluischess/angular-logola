@@ -220,4 +220,11 @@ export class ProductsService {
   getNextOrderInCategory(categoria: string): Observable<{ nextOrder: number }> {
     return this.http.get<{ nextOrder: number }>(`${this.apiUrl}/next-order/${categoria}`);
   }
+
+  /**
+   * Duplicar un producto
+   */
+  duplicateProduct(id: string): Observable<Product> {
+    return this.http.post<Product>(`${this.apiUrl}/${id}/duplicate`, {});
+  }
 }
