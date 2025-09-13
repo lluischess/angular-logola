@@ -351,9 +351,17 @@ export class ProductosComponent implements OnInit {
     this.router.navigate(['/logoadmin/productos/nuevo']);
   }
 
+  viewProduct(producto: Producto | string): void {
+    const id = typeof producto === 'string' ? producto : (producto._id || producto.id?.toString());
+    if (id) {
+      this.router.navigate(['/logoadmin/productos/editar', id], { queryParams: { mode: 'view' } });
+    }
+  }
+
   editProduct(producto: Producto | string): void {
     const id = typeof producto === 'string' ? producto : (producto._id || producto.id?.toString());
     if (id) {
+      this.router.navigate(['/logoadmin/productos/editar', id]);
     }
   }
 

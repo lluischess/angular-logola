@@ -23,38 +23,38 @@
     <div class="filters-grid">
       <div class="filter-group">
         <label>Referencia</label>
-        <input 
-          type="text" 
-          [(ngModel)]="filtroReferencia" 
+        <input
+          type="text"
+          [(ngModel)]="filtroReferencia"
           (input)="applyFilters()"
           placeholder="Buscar por referencia..."
           class="filter-input">
       </div>
-      
+
       <div class="filter-group">
         <label>Categoría</label>
-        <input 
-          type="text" 
-          [(ngModel)]="filtroCategoria" 
+        <input
+          type="text"
+          [(ngModel)]="filtroCategoria"
           (input)="applyFilters()"
           placeholder="Buscar por categoría..."
           class="filter-input">
       </div>
-      
+
       <div class="filter-group">
         <label>Cantidad Mínima</label>
-        <input 
-          type="text" 
-          [(ngModel)]="filtroCantidadMinima" 
+        <input
+          type="text"
+          [(ngModel)]="filtroCantidadMinima"
           (input)="applyFilters()"
           placeholder="Buscar por cantidad..."
           class="filter-input">
       </div>
-      
+
       <div class="filter-group">
         <label>Publicado</label>
-        <select 
-          [(ngModel)]="filtroPublicado" 
+        <select
+          [(ngModel)]="filtroPublicado"
           (change)="applyFilters()"
           class="filter-input">
           <option value="">Todos</option>
@@ -62,12 +62,12 @@
           <option value="no">No</option>
         </select>
       </div>
-      
+
       <div class="filter-group">
         <label>Orden</label>
-        <input 
-          type="text" 
-          [(ngModel)]="filtroOrden" 
+        <input
+          type="text"
+          [(ngModel)]="filtroOrden"
           (input)="applyFilters()"
           placeholder="Buscar por orden..."
           class="filter-input">
@@ -129,7 +129,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let producto of filteredProductos; let i = index; trackBy: trackByFn" 
+          <tr *ngFor="let producto of filteredProductos; let i = index; trackBy: trackByFn"
               [attr.data-category]="producto.categoria">
             <td class="id-cell">
               <span class="id-badge">#{{ producto.numeroProducto || 'N/A' }}</span>
@@ -163,10 +163,10 @@
             </td>
             <td class="foto-cell">
               <div class="producto-imagen">
-                <img 
+                <img
                   *ngIf="hasProductImage(producto); else noImagePlaceholder"
-                  [src]="getProductImageUrl(producto)" 
-                  [alt]="producto.nombre" 
+                  [src]="getProductImageUrl(producto)"
+                  [alt]="producto.nombre"
                   class="producto-img"
                   (error)="onImageError($event)">
                 <ng-template #noImagePlaceholder>
@@ -188,7 +188,7 @@
             <td class="orden-cell" [ngClass]="{ 'reordering': isBeingReordered(producto) }">
               <div class="orden-container">
                 <div class="arrow-buttons">
-                  <button 
+                  <button
                     *ngIf="canMoveUp(producto)"
                     class="arrow-btn arrow-up"
                     [ngClass]="getArrowColorClass(producto.categoria)"
@@ -196,7 +196,7 @@
                     title="Subir posición">
                     ↑
                   </button>
-                  <button 
+                  <button
                     *ngIf="canMoveDown(producto)"
                     class="arrow-btn arrow-down"
                     [ngClass]="getArrowColorClass(producto.categoria)"
@@ -212,26 +212,26 @@
             </td>
             <td class="acciones-cell">
               <div class="acciones-group">
-                <button 
-                  class="btn-action btn-view" 
-                  (click)="editProduct(producto)"
+                <button
+                  class="btn-action btn-view"
+                  (click)="viewProduct(producto)"
                   title="Ver producto">
                   👁️
                 </button>
-                <button 
-                  class="btn-action btn-edit" 
+                <button
+                  class="btn-action btn-edit"
                   (click)="editProduct(producto)"
                   title="Editar producto">
                   ✏️
                 </button>
-                <button 
-                  class="btn-action btn-duplicate" 
+                <button
+                  class="btn-action btn-duplicate"
                   (click)="duplicateProduct(producto)"
                   title="Duplicar producto">
                   📋
                 </button>
-                <button 
-                  class="btn-action btn-delete" 
+                <button
+                  class="btn-action btn-delete"
                   (click)="deleteProduct(producto)"
                   title="Eliminar producto">
                   🗑️
@@ -242,7 +242,7 @@
         </tbody>
       </table>
     </div>
-    
+
     <!-- Mensaje cuando no hay resultados -->
     <div *ngIf="filteredProductos.length === 0" class="no-results">
       <div class="no-results-content">
