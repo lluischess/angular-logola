@@ -46,8 +46,9 @@
 
 /* Estilos específicos para móvil */
 @media (max-width: 768px) {
-  /* Ajustes generales para todos los banners en móvil */
+  /* Usar imagen móvil cuando esté disponible */
   .carousel-slide {
+    background-image: var(--mobile-bg-image, var(--desktop-bg-image)) !important;
     align-items: center;
     justify-content: center;
     padding: 2rem 0;

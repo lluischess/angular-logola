@@ -263,14 +263,28 @@ export class BannerComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Obtener estilos dinámicos para el banner
+   * Obtener estilos dinámicos para el banner con responsive images
    */
   getBannerStyles(banner: BannerData): any {
-    return {
-      'background-image': `url('${banner.imagen}')`,
-      'background-repeat': 'no-repeat',
-      'background-size': 'cover'
-    };
+    // Si hay imagen mobile diferente, usar media queries CSS
+    if (banner.imagenMobile && banner.imagenMobile !== banner.imagen) {
+      return {
+        'background-image': `url('${banner.imagen}')`, // Desktop por defecto
+        'background-repeat': 'no-repeat',
+        'background-size': 'cover',
+        // CSS custom properties para responsive images
+        '--desktop-bg-image': `url('${banner.imagen}')`,
+        '--mobile-bg-image': `url('${banner.imagenMobile}')`
+      };
+    } else {
+      // Solo imagen desktop disponible
+      return {
+        'background-image': `url('${banner.imagen}')`,
+        'background-repeat': 'no-repeat',
+        'background-size': 'cover',
+        '--desktop-bg-image': `url('${banner.imagen}')`
+      };
+    }
   }
 
   /**
