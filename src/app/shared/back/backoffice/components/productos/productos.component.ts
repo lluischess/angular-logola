@@ -309,40 +309,68 @@ export class ProductosComponent implements OnInit {
 
   moveUp(producto: Producto): void {
     const productId = producto._id || producto.id?.toString();
-    if (!productId) return;
-
-    const currentOrder = producto.ordenCategoria || producto.orden || 1;
-    const newOrder = currentOrder - 1;
-
-    if (newOrder < 1) {
-      alert('No se puede mover el producto más arriba.');
+    if (!productId) {
+      console.error('ID de producto no válido');
       return;
     }
 
+    const currentOrder = Number(producto.ordenCategoria) || Number(producto.orden) || 1;
+    const newOrder = Math.max(1, currentOrder - 1);
+
+    if (newOrder === currentOrder) {
+      console.log('El producto ya está en la posición superior');
+      return;
+    }
+
+    console.log(`Moviendo producto ${producto.nombre} hacia arriba de ${currentOrder} a ${newOrder}`);
     this.reorderProduct(productId, newOrder, producto);
   }
 
   moveDown(producto: Producto): void {
     const productId = producto._id || producto.id?.toString();
-    if (!productId) return;
+    if (!productId) {
+      console.error('ID de producto no válido');
+      return;
+    }
 
-    const currentOrder = producto.ordenCategoria || producto.orden || 1;
+    const currentOrder = Number(producto.ordenCategoria) || Number(producto.orden) || 1;
     const newOrder = currentOrder + 1;
 
+    // No hay máximo superior, pero podríamos validar contra la cantidad de productos
+    console.log(`Moviendo producto ${producto.nombre} hacia abajo de ${currentOrder} a ${newOrder}`);
     this.reorderProduct(productId, newOrder, producto);
   }
 
   private reorderProduct(productId: string, newOrder: number, producto: Producto): void {
+    if (!producto) {
+      console.error('No se proporcionó el producto');
+      return;
+    }
+
+    // Asegurarse de que newOrder es un número entero positivo
+    const orderValue = Math.max(1, Math.abs(Math.floor(Number(newOrder) || 1)));
+    
+    console.log(`Reordenando producto ${producto.nombre} a posición ${orderValue}`);
     this.reorderingProduct = producto;
 
-    this.productsService.updateProductOrder(productId, newOrder).subscribe({
-      next: () => {
+    this.productsService.updateProductOrder(productId, orderValue).subscribe({
+      next: (updatedProduct) => {
+        console.log('✅ Orden actualizado correctamente:', updatedProduct);
+        // Update the local product order immediately for better UX
+        const productIndex = this.productos.findIndex(p => p._id === productId);
+        if (productIndex !== -1) {
+          this.productos[productIndex].orden = updatedProduct.orden || newOrder;
+          if ('ordenCategoria' in updatedProduct) {
+            (this.productos[productIndex] as any).ordenCategoria = (updatedProduct as any).ordenCategoria;
+          }
+        }
         this.reorderingProduct = null;
-        this.loadProducts();
+        this.loadProducts(); // Refresh the list to ensure consistency
       },
       error: (error: any) => {
+        console.error('❌ Error actualizando orden:', error);
         this.reorderingProduct = null;
-        alert('Error al reordenar. Por favor, intenta de nuevo.');
+        alert(`Error al reordenar: ${error?.error?.message || 'Error desconocido'}`);
       }
     });
   }

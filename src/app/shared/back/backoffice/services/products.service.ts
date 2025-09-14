@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, throwError } from 'rxjs';
+import { map, tap, catchError } from 'rxjs/operators';
 import { environment } from '../../../../../environments/environment';
 
 export interface Product {
@@ -133,7 +133,27 @@ export class ProductsService {
    * Actualizar orden de un producto específico
    */
   updateProductOrder(id: string, newOrder: number): Observable<Product> {
-    return this.http.patch<Product>(`${this.apiUrl}/${id}/order`, { orden: newOrder });
+    // Asegurarse de que newOrder sea un número entero positivo
+    const orderValue = Math.max(1, Math.abs(Math.floor(Number(newOrder) || 1)));
+    console.log('Enviando actualización de orden:', { id, newOrder: orderValue });
+    
+    // Enviar el orden como un objeto con la propiedad newOrder
+    return this.http.patch<Product>(
+      `${this.apiUrl}/${id}/order`, 
+      { newOrder: orderValue },
+      { 
+        withCredentials: true, // Incluir credenciales en la petición
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }
+    ).pipe(
+      tap(response => console.log('✅ Respuesta de actualización de orden:', response)),
+      catchError(error => {
+        console.error('❌ Error al actualizar orden:', error);
+        return throwError(() => error);
+      })
+    );
   }
 
   /**
