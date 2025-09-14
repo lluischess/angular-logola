@@ -382,7 +382,10 @@ export class ProductosComponent implements OnInit {
   viewProduct(producto: Producto | string): void {
     const id = typeof producto === 'string' ? producto : (producto._id || producto.id?.toString());
     if (id) {
-      this.router.navigate(['/logoadmin/productos/editar', id], { queryParams: { mode: 'view' } });
+      const url = this.router.createUrlTree(['/logoadmin/productos/editar', id], { 
+        queryParams: { mode: 'view' } 
+      }).toString();
+      window.open(url, '_blank');
     }
   }
 
