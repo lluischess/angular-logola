@@ -225,7 +225,7 @@ export class ProductsService {
   getAllPublishedProducts(): Observable<FrontProduct[]> {
     //console.log('📦 [PRODUCTS-SERVICE] Cargando todos los productos publicados');
 
-    return this.http.get<any>(`${this.apiUrl}?publicado=true`)
+    return this.http.get<any>(`${this.apiUrl}?publicado=true&limit=500`)
       .pipe(
         map(response => {
           //console.log('📦 [PRODUCTS-SERVICE] Respuesta cruda del backend:', response);
