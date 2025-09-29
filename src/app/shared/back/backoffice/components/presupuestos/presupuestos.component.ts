@@ -72,7 +72,7 @@ export class PresupuestosComponent implements OnInit {
 
   // Paginación
   currentPage = 1;
-  itemsPerPage = 10;
+  itemsPerPage = 1000;
   totalItems = 0;
   totalPages = 0;
 

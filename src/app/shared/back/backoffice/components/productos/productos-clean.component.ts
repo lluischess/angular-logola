@@ -82,7 +82,7 @@ export class ProductosComponent implements OnInit {
     this.productsService.getProducts({
       sortBy: 'categoria',
       sortOrder: 'asc',
-      limit: 100
+      limit: 1000
     }).subscribe({
       next: (response) => {
         //console.log('✅ Respuesta del backend para productos:', response);

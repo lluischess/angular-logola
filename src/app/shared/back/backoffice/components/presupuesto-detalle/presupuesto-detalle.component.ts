@@ -84,7 +84,7 @@ export class PresupuestoDetalleComponent implements OnInit {
           //console.log('🔄 DEBUG: FALLBACK - Intentando con método tradicional...');
 
           // Fallback: usar método tradicional si el enriquecido falla
-          this.budgetsService.getBudgets({ limit: 100 }).subscribe({
+          this.budgetsService.getBudgets({ limit: 1000 }).subscribe({
             next: (response) => {
               const budgets = response.budgets || response;
               const budget = budgets.find((b: any) => b.numeroPresupuesto === numeroPresupuesto);

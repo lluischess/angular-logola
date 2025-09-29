@@ -79,7 +79,7 @@ export class ProductosComponent implements OnInit {
     this.productsService.getProducts({
       sortBy: 'categoria',
       sortOrder: 'asc',
-      limit: 100
+      limit: 1000
     }).subscribe({
       next: (response: any) => {
         let productos: any[] = [];
