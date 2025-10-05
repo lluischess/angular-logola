@@ -49,12 +49,12 @@
           <a routerLink="/" class="nav-link">Home</a>
         </li>
         <li class="nav-item active">
-          <a (click)="scrollToFooter()" class="nav-link" style="cursor: pointer;">Contacto</a>
+          <a routerLink="/catalogos" class="nav-link">Catálogos</a>
         </li>
         <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle pe-3" role="button" id="pages" data-bs-toggle="dropdown" aria-expanded="false">Catálogos</a>
+          <a class="nav-link dropdown-toggle pe-3" role="button" id="pages" data-bs-toggle="dropdown" aria-expanded="false">Colecciones</a>
           <ul class="dropdown-menu border-0 p-3 rounded-0 shadow" aria-labelledby="pages">
-            
+
             <!-- Estado de carga -->
             <li *ngIf="isLoadingCategories">
               <div class="dropdown-item d-flex align-items-center gap-2 text-muted">
@@ -73,7 +73,7 @@
 
             <!-- Categorías dinámicas del backend -->
             <li *ngFor="let category of categories; trackBy: trackByCategory">
-              <a [routerLink]="['/productos', category.urlSlug || category.slug]" 
+              <a [routerLink]="['/productos', category.urlSlug || category.slug]"
                  class="dropdown-item"
                  [title]="category.metaDescripcion || 'Ver productos de ' + category.nombre">
                 {{ getCategoryMenuTitle(category) }}
@@ -87,7 +87,7 @@
                 <span>No hay categorías disponibles</span>
               </div>
             </li>
-            
+
           </ul>
         </li>
 
@@ -112,7 +112,7 @@
           </svg>
         </div>
       </div>
-      
+
 
     </div>
 

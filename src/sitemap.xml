@@ -2,21 +2,21 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <!-- Páginas principales -->
   <url>
-    <loc>https://new.logolate.com/</loc>
+    <loc>https://logolate.com/</loc>
     <lastmod>2025-01-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   
   <url>
-    <loc>https://new.logolate.com/productos</loc>
+    <loc>https://logolate.com/productos</loc>
     <lastmod>2025-01-06</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
   
   <url>
-    <loc>https://new.logolate.com/presupuesto</loc>
+    <loc>https://logolate.com/presupuesto</loc>
     <lastmod>2025-01-06</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
@@ -24,35 +24,35 @@
   
   <!-- Categorías -->
   <url>
-    <loc>https://new.logolate.com/productos/chocolates</loc>
+    <loc>https://logolate.com/productos/chocolates</loc>
     <lastmod>2025-01-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   
   <url>
-    <loc>https://new.logolate.com/productos/caramelos</loc>
+    <loc>https://logolate.com/productos/caramelos</loc>
     <lastmod>2025-01-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   
   <url>
-    <loc>https://new.logolate.com/productos/novedades</loc>
+    <loc>https://logolate.com/productos/novedades</loc>
     <lastmod>2025-01-06</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   
   <url>
-    <loc>https://new.logolate.com/productos/navidad</loc>
+    <loc>https://logolate.com/productos/navidad</loc>
     <lastmod>2025-01-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   
   <url>
-    <loc>https://new.logolate.com/productos/galletas</loc>
+    <loc>https://logolate.com/productos/galletas</loc>
     <lastmod>2025-01-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
@@ -60,35 +60,35 @@
   
   <!-- Productos individuales (ejemplos) -->
   <url>
-    <loc>https://new.logolate.com/producto/chocolate-premium-artesanal</loc>
+    <loc>https://logolate.com/producto/chocolate-premium-artesanal</loc>
     <lastmod>2025-01-06</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://new.logolate.com/producto/caramelos-tradicionales</loc>
+    <loc>https://logolate.com/producto/caramelos-tradicionales</loc>
     <lastmod>2025-01-06</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://new.logolate.com/producto/bombones-gourmet</loc>
+    <loc>https://logolate.com/producto/bombones-gourmet</loc>
     <lastmod>2025-01-06</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://new.logolate.com/producto/galletas-artesanas</loc>
+    <loc>https://logolate.com/producto/galletas-artesanas</loc>
     <lastmod>2025-01-06</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://new.logolate.com/producto/dulces-navidad</loc>
+    <loc>https://logolate.com/producto/dulces-navidad</loc>
     <lastmod>2025-01-06</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>

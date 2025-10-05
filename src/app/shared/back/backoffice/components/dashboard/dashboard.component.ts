@@ -86,12 +86,13 @@ export class DashboardComponent implements OnInit {
       'Content-Type': 'application/json'
     };
 
-    // Cargar productos
-    this.http.get(`${environment.apiUrl}/products`, { headers }).subscribe({
+    // Cargar productos - usar el campo 'total' de la respuesta paginada
+    this.http.get(`${environment.apiUrl}/products?limit=1`, { headers }).subscribe({
       next: (response: any) => {
-        const products = response.products || response.data || response;
-        this.stats.totalProductos = Array.isArray(products) ? products.length : 0;
-        //console.log('📦 [DASHBOARD] Productos cargados:', this.stats.totalProductos);
+        // La API devuelve { products: [], total: X, page: Y, totalPages: Z }
+        // Usamos el campo 'total' que contiene el conteo real de todos los productos
+        this.stats.totalProductos = response.total || 0;
+        //console.log('📦 [DASHBOARD] Total de productos:', this.stats.totalProductos);
       },
       error: (error: any) => {
         console.error('❌ [DASHBOARD] Error cargando productos:', error);
@@ -130,12 +131,13 @@ export class DashboardComponent implements OnInit {
       'Content-Type': 'application/json'
     };
 
-    // Cargar productos
-    this.http.get(`${environment.apiUrl}/products`, { headers }).subscribe({
+    // Cargar productos - usar el campo 'total' de la respuesta paginada
+    this.http.get(`${environment.apiUrl}/products?limit=1`, { headers }).subscribe({
       next: (response: any) => {
-        const products = response.products || response.data || response;
-        this.stats.totalProductos = Array.isArray(products) ? products.length : 0;
-        //console.log('📦 [DASHBOARD] Productos cargados (fallback):', this.stats.totalProductos);
+        // La API devuelve { products: [], total: X, page: Y, totalPages: Z }
+        // Usamos el campo 'total' que contiene el conteo real de todos los productos
+        this.stats.totalProductos = response.total || 0;
+        //console.log('📦 [DASHBOARD] Total de productos (fallback):', this.stats.totalProductos);
       },
       error: (error: any) => {
         console.error('❌ Error cargando productos (fallback):', error);

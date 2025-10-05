@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { PageCookiesComponent } from './shared/pages/page-cookies/page-cookies.component';
+import { PageCatalogeComponent } from './shared/pages/page-cataloge/page-cataloge.component';
 import { PageLegalComponent } from './shared/pages/page-legal/page-legal.component';
 import { PageTermsComponent } from './shared/pages/page-terms/page-terms.component';
 import { PageHomeComponent } from './pages/page-home/page-home.component';
@@ -14,6 +15,10 @@ export const routes: Routes = [
   {
     path: 'politica-de-cookies',
     component: PageCookiesComponent
+  },
+  {
+    path: 'catalogos',
+    component: PageCatalogeComponent
   },
   {
     path: 'aviso-legal',

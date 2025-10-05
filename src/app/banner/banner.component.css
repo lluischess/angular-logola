@@ -44,6 +44,14 @@
   padding: 0;
 }
 
+.carousel-slide h2.display-1 {
+  font-size: 3.7rem !important;
+}
+
+.carousel-slide .btn {
+  font-size: 0.85rem !important;
+}
+
 /* Estilos específicos para móvil */
 @media (max-width: 768px) {
   /* Usar imagen móvil cuando esté disponible */

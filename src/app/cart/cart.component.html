@@ -48,20 +48,30 @@
           <strong>{{ totalUnits }}</strong>
         </li>
       </ul>
+
+      <!-- Botón para añadir más productos -->
+      <div class="text-center mb-3">
+        <button type="button" class="btn btn-primary" (click)="navigateToProducts()" data-bs-dismiss="offcanvas">
+          <i class="bi bi-plus-circle me-2"></i>Añadir otro producto
+        </button>
+      </div>
     </div>
 
     <!-- Plantilla para mostrar cuando el carrito está vacío -->
     <ng-template #emptyCart>
-      <div class="alert alert-warning" role="alert">
+      <div class="alert alert-warning text-center" role="alert">
         <h5>Tu presupuesto está vacío</h5>
         <p>No has añadido productos a tu presupuesto. Por favor, añade productos para continuar.</p>
+        <button type="button" class="btn btn-primary mt-3" (click)="navigateToProducts()" data-bs-dismiss="offcanvas">
+          <i class="bi bi-cart-plus me-2"></i>Añadir productos
+        </button>
       </div>
     </ng-template>
 
     <!-- Checkbox para aceptar términos -->
     @if (cartItems.length > 0){
     <!-- Formulario de envío de presupuesto -->
-    <div class="form-container"> 
+    <div class="form-container">
       <form [formGroup]="termsForm" (ngSubmit)="onSubmit()">
         <!-- Fila 1: Nombre y Email (escritorio) -->
         <div class="form-row-desktop d-none d-lg-flex">
@@ -157,10 +167,10 @@
         <!-- Observaciones (opcional) -->
         <div class="mb-3">
           <label for="observaciones" class="form-label">Observaciones</label>
-          <textarea 
-            id="observaciones" 
-            class="form-control" 
-            formControlName="observaciones" 
+          <textarea
+            id="observaciones"
+            class="form-control"
+            formControlName="observaciones"
             rows="4"
             maxlength="600"
             placeholder="Añade cualquier observación o detalle adicional sobre tu presupuesto (máximo 600 caracteres)">
@@ -204,7 +214,7 @@
         </div>
 
         <!-- Botón de enviar -->
-        <button class="w-100 btn btn-primary btn-lg" type="submit" [disabled]="!termsForm.valid || isSubmitting">
+        <button class="w-100 btn btn-primary btn-lg" type="submit" [disabled]="!termsForm.valid || !isRecaptchaValid || isSubmitting">
           <span *ngIf="!isSubmitting">Enviar presupuesto</span>
           <span *ngIf="isSubmitting">
             <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>

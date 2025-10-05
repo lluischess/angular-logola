@@ -14,8 +14,8 @@
           </a>
       </li>
       <li class="nav-item border-dashed">
-        <a href="index.html" class="nav-link d-flex align-items-center gap-3 text-dark p-2">
-          <span>Contacto</span>
+        <a href="/catalogos" class="nav-link d-flex align-items-center gap-3 text-dark p-2">
+          <span>Catalogos</span>
           </a>
       </li>
       <!-- Mensaje de carga de categorías -->
@@ -36,8 +36,8 @@
 
       <!-- Categorías dinámicas del backend -->
       <li class="nav-item border-dashed" *ngFor="let category of categories; trackBy: trackByCategory">
-        <a [routerLink]="getCategoryUrl(category)" 
-           data-bs-dismiss="offcanvas" 
+        <a [routerLink]="getCategoryUrl(category)"
+           data-bs-dismiss="offcanvas"
            class="nav-link d-flex align-items-center gap-3 text-dark p-2"
            [title]="category.metaDescripcion || 'Ver productos de ' + category.nombre">
           <span class="arrow">→</span>

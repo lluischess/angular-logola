@@ -90,7 +90,8 @@ export class CartComponent implements OnInit, AfterViewInit, OnDestroy {
     private fb: FormBuilder,
     private cartService: CartServiceService,
     private budgetsService: BudgetsService,
-    private productsService: ProductsService
+    private productsService: ProductsService,
+    private router: Router
   ) {
     // Inicializar el formulario de términos
     this.termsForm = this.fb.group({
@@ -263,10 +264,10 @@ export class CartComponent implements OnInit, AfterViewInit, OnDestroy {
       errors.push('Debes aceptar los términos y condiciones');
     }
 
-    // Validar reCAPTCHA (opcional durante pruebas)
-    // if (!this.isRecaptchaValid) {
-    //   errors.push('Por favor, completa la verificación reCAPTCHA');
-    // }
+    // Validar reCAPTCHA
+    if (!this.isRecaptchaValid) {
+      errors.push('Por favor, completa la verificación reCAPTCHA');
+    }
 
     // Validar productos del carrito usando el servicio de presupuestos
     const productValidation = this.budgetsService.validateCartProducts(this.cartItems);
@@ -459,16 +460,18 @@ export class CartComponent implements OnInit, AfterViewInit, OnDestroy {
     const clienteEmail = response.cliente?.email || this.termsForm.get('email')?.value;
 
     alert(`✅ ¡Presupuesto creado correctamente!\n\n` +
-          `📋 Número de presupuesto: ${numeroPresupuesto}\n` +
           `👤 Cliente: ${clienteNombre}\n` +
           `📧 Email: ${clienteEmail}\n` +
-          `🛒 Productos: ${response.productos?.length || this.cartItems.length} artículos\n` +
+          `🛍️ Productos: ${response.productos?.length || this.cartItems.length} artículos\n` +
           `📅 Estado: ${response.estado || 'Pendiente'}\n\n` +
           'Hemos enviado una confirmación a tu email.\n' +
           'Nos pondremos en contacto contigo pronto para finalizar tu presupuesto.');
 
     // Resetear formulario después del envío exitoso
     this.resetForm();
+
+    // Redirigir a la página de inicio
+    this.router.navigate(['']);
   }
 
   // Manejar errores en la creación de presupuesto
@@ -604,5 +607,10 @@ export class CartComponent implements OnInit, AfterViewInit, OnDestroy {
     const minQty = product.cantidadMinima || product.minimumQuantity || 1;
     //console.log('📊 [CART] Cantidad mínima para', product.nombre || 'producto', ':', minQty);
     return minQty;
+  }
+
+  // Navegar a la página de productos
+  navigateToProducts(): void {
+    this.router.navigate(['/productos']);
   }
 }
