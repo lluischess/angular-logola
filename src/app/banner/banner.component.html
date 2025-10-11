@@ -16,7 +16,11 @@
       <div class="container-lg">
         <!-- Contenido dinámico del banner -->
         <div class="row">
-          <div class="col-lg-6 pt-5 mt-5">
+          <div class="col-lg-6 pt-5 mt-5" style="display: inline-block;
+          background-color: rgb(127 108 108 / 30%);
+          backdrop-filter: blur(3px);
+          padding: 10px 20px;
+          border-radius: 8px;">
 
             <h2 class="display-1 ls-1" [ngStyle]="getTextStyles(banner)">
               <span class="fw-bold">{{ banner.titulo }}</span>
