@@ -7,34 +7,29 @@ import { ProductsService, FrontProduct } from '../../services/products.service';
 import { SeoService, SeoMetadata } from '../../services/seo.service';
 import { Subscription } from 'rxjs';
 
-// Declarar Bootstrap para TypeScript
 declare var bootstrap: any;
 
 @Component({
   selector: 'app-page-grid',
   standalone: true,
-  imports: [CommonModule,RouterModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './page-grid.component.html',
   styleUrl: './page-grid.component.css'
 })
 export class PageGridComponent implements OnInit, OnDestroy {
-  // Productos reales desde el backend
   productos: FrontProduct[] = [];
-  productosFiltrados: FrontProduct[] = []; // Productos filtrados según la categoría y/o búsqueda
-  categoriaSeleccionada: string = ''; // Categoría actual
-  searchQuery: string = '';  // Término de búsqueda
+  productosFiltrados: FrontProduct[] = [];
+  categoriaSeleccionada: string = '';
+  searchQuery: string = '';
 
-  // Título dinámico de la categoría
   categoryTitle: string = '';
   isLoadingProducts: boolean = false;
 
-  // Propiedades para validación de categorías
   categoriaValida: boolean = true;
   categoriaEncontrada: FrontCategory | null = null;
   isLoadingCategory: boolean = false;
   categoryError: string = '';
 
-  // Subscripciones para limpieza
   private subscriptions: Subscription[] = [];
 
   constructor(
@@ -47,31 +42,26 @@ export class PageGridComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    // Escuchar cambios en los parámetros de la URL (categoría y búsqueda)
     this.route.paramMap.subscribe(params => {
-      this.categoriaSeleccionada = params.get('categoria') || ''; // Obtener la categoría
+      this.categoriaSeleccionada = params.get('categoria') || '';
 
       if (this.categoriaSeleccionada) {
-        // Validar que la categoría esté publicada antes de mostrar productos
         this.validateCategory(this.categoriaSeleccionada);
       } else {
-        // Si no hay categoría seleccionada, mostrar todos los productos
         this.categoriaValida = true;
         this.categoryTitle = 'Todos los productos';
+        this.applyAllProductsSeoMetadata();
         this.loadAllProducts();
       }
     });
 
-    // Escuchar cambios en los queryParams (búsqueda)
     this.route.queryParams.subscribe(queryParams => {
-      this.searchQuery = queryParams['search'] || '';  // Obtener el término de búsqueda
+      this.searchQuery = queryParams['search'] || '';
 
-      // Solo buscar si la categoría es válida
       if (this.categoriaValida) {
         if (this.searchQuery.trim()) {
           this.searchProducts(this.searchQuery);
         } else {
-          // Si no hay búsqueda, recargar productos de la categoría
           if (this.categoriaSeleccionada) {
             this.loadProductsByCategory(this.categoriaSeleccionada);
           } else {
@@ -83,39 +73,38 @@ export class PageGridComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    // Limpiar subscripciones
     this.subscriptions.forEach(sub => sub.unsubscribe());
+  }
+
+  /**
+   * Aplicar metadatos SEO para la página de todos los productos
+   */
+  private applyAllProductsSeoMetadata(): void {
+    this.seoService.updateSeoMetadata({
+      title: 'Todos los Productos - Chocolates Personalizados Logolate',
+      description: 'Explora todo el catálogo de chocolates y bombones personalizados de Logolate para hoteles, empresas y eventos. Pedidos desde 100 unidades.',
+      keywords: 'chocolates personalizados, bombones personalizados, catálogo chocolates, logolate productos',
+      ogTitle: 'Todos los Productos - Chocolates Personalizados Logolate',
+      ogDescription: 'Explora todo el catálogo de chocolates y bombones personalizados de Logolate para hoteles, empresas y eventos.',
+      canonical: this.seoService.buildCanonicalUrl('/productos')
+    });
   }
 
   /**
    * Aplicar metadatos SEO de la categoría
    */
   private applyCategorySeoMetadata(category: FrontCategory): void {
-    //console.log('🏷️ [PAGE-GRID] === APLICANDO METADATOS SEO DE CATEGORÍA ===');
-    //console.log('🏷️ [PAGE-GRID] Categoría:', category.nombre);
-    //console.log('🏷️ [PAGE-GRID] Campos SEO directos:');
-    //console.log('  - metaTitulo:', category.metaTitulo);
-    //console.log('  - metaDescripcion:', category.metaDescripcion);
-    //console.log('  - palabrasClave:', category.palabrasClave);
-    //console.log('  - ogTitulo:', category.ogTitulo);
-    //console.log('  - ogDescripcion:', category.ogDescripcion);
-    //console.log('  - ogImagen:', category.ogImagen);
-
     const seoMetadata: SeoMetadata = {
-      title: category.metaTitulo || `Catálogo de ${category.nombre}`,
-      description: category.metaDescripcion || `Descubre nuestra selección de ${category.nombre.toLowerCase()}`,
-      keywords: category.palabrasClave || category.nombre.toLowerCase(),
-      ogTitle: category.ogTitulo || category.metaTitulo || `Catálogo de ${category.nombre}`,
-      ogDescription: category.ogDescripcion || category.metaDescripcion || `Descubre nuestra selección de ${category.nombre.toLowerCase()}`,
-      ogImage: category.ogImagen || 'https://logolate.com/images/default-category.jpg' // Imagen por defecto
+      title: category.metaTitulo || `${category.nombre} Personalizados - Logolate`,
+      description: category.metaDescripcion || `Descubre nuestra selección de ${category.nombre.toLowerCase()} personalizados para hoteles y empresas. Pedidos desde 100 unidades.`,
+      keywords: category.palabrasClave || `${category.nombre.toLowerCase()}, personalizados, hoteles, empresas, logolate`,
+      ogTitle: category.ogTitulo || category.metaTitulo || `${category.nombre} Personalizados - Logolate`,
+      ogDescription: category.ogDescripcion || category.metaDescripcion || `Descubre nuestra selección de ${category.nombre.toLowerCase()} personalizados para hoteles y empresas.`,
+      ogImage: category.ogImagen || '',
+      canonical: this.seoService.buildCanonicalUrl(`/productos/${category.urlSlug}`)
     };
 
-    //console.log('🏷️ [PAGE-GRID] Metadatos SEO preparados:', seoMetadata);
-
-    // Aplicar los metadatos usando el servicio SEO
     this.seoService.updateSeoMetadata(seoMetadata);
-
-    //console.log('🏷️ [PAGE-GRID] Metadatos SEO aplicados para categoría:', category.nombre);
   }
 
   /**
@@ -126,56 +115,23 @@ export class PageGridComponent implements OnInit, OnDestroy {
     this.categoriaValida = false;
     this.categoryError = '';
 
-    //console.log(`🔍 [PAGE-GRID] === INICIANDO VALIDACIÓN DE CATEGORÍA ===`);
-    //console.log(`🔍 [PAGE-GRID] Slug a validar: ${slug}`);
-
     this.categoriesService.getCategoryBySlug(slug).subscribe({
       next: (category) => {
-        //console.log(`📦 [PAGE-GRID] === RESPUESTA DEL BACKEND RECIBIDA ===`);
-        //console.log(`📦 [PAGE-GRID] Categoría recibida:`, category);
-        //console.log(`📦 [PAGE-GRID] Categoría existe:`, !!category);
-        if (category) {
-          //console.log(`📦 [PAGE-GRID] Nombre:`, category.nombre);
-          //console.log(`📦 [PAGE-GRID] Descripción:`, category.descripcion);
-          //console.log(`📦 [PAGE-GRID] Publicado:`, category.publicado);
-          //console.log(`📦 [PAGE-GRID] Campos SEO:`);
-          //console.log(`  - metaTitulo:`, category.metaTitulo);
-          //console.log(`  - metaDescripcion:`, category.metaDescripcion);
-          //console.log(`  - palabrasClave:`, category.palabrasClave);
-        }
-
         this.isLoadingCategory = false;
 
         if (category && category.publicado) {
-          //console.log(`✅ [PAGE-GRID] === CATEGORÍA VÁLIDA Y PUBLICADA ===`);
-          // Categoría encontrada y publicada
           this.categoriaEncontrada = category;
           this.categoriaValida = true;
-
-          // Establecer título dinámico de la categoría
           this.categoryTitle = category.metaTitulo || category.nombre;
-          //console.log(`🏷️ [PAGE-GRID] Título establecido:`, this.categoryTitle);
-
-          // Aplicar metadatos SEO de la categoría
-          //console.log(`🔄 [PAGE-GRID] Llamando a applyCategorySeoMetadata...`);
           this.applyCategorySeoMetadata(category);
-
-          // Cargar productos de esta categoría
-          //console.log(`🔄 [PAGE-GRID] Cargando productos de la categoría...`);
           this.loadProductsByCategory(slug);
-
-          //console.log(`✅ [PAGE-GRID] Categoría procesada completamente: ${category.nombre}`);
         } else if (category && !category.publicado) {
-          // Categoría encontrada pero despublicada
           this.categoriaValida = false;
           this.categoryError = 'Esta categoría no está disponible actualmente.';
-          console.warn(`⚠️ [PAGE-GRID] Categoría despublicada: ${category.nombre}`);
           this.showCategoryNotAvailable();
         } else {
-          // Categoría no encontrada
           this.categoriaValida = false;
           this.categoryError = 'Categoría no encontrada.';
-          console.error(`❌ [PAGE-GRID] Categoría no encontrada: ${slug}`);
           this.showCategoryNotFound();
         }
       },
@@ -189,39 +145,21 @@ export class PageGridComponent implements OnInit, OnDestroy {
     });
   }
 
-  /**
-   * Muestra mensaje cuando la categoría no está disponible (despublicada)
-   */
   private showCategoryNotAvailable(): void {
-    // Redirigir inmediatamente a la página principal con mensaje
     this.router.navigate(['/'], {
-      queryParams: {
-        message: 'La categoría solicitada no está disponible actualmente.'
-      }
+      queryParams: { message: 'La categoría solicitada no está disponible actualmente.' }
     });
   }
 
-  /**
-   * Muestra mensaje cuando la categoría no existe
-   */
   private showCategoryNotFound(): void {
-    // Redirigir inmediatamente a la página principal con mensaje
     this.router.navigate(['/'], {
-      queryParams: {
-        message: 'La categoría solicitada no existe.'
-      }
+      queryParams: { message: 'La categoría solicitada no existe.' }
     });
   }
 
-  /**
-   * Muestra mensaje cuando hay error al verificar la categoría
-   */
   private showCategoryError(): void {
-    // Redirigir inmediatamente a la página principal con mensaje
     this.router.navigate(['/'], {
-      queryParams: {
-        message: 'Error al cargar la categoría. Por favor, intenta de nuevo.'
-      }
+      queryParams: { message: 'Error al cargar la categoría. Por favor, intenta de nuevo.' }
     });
   }
 
@@ -230,37 +168,15 @@ export class PageGridComponent implements OnInit, OnDestroy {
    */
   private loadProductsByCategory(categorySlug: string): void {
     this.isLoadingProducts = true;
-    //console.log(`📦 [PAGE-GRID] === INICIANDO CARGA DE PRODUCTOS ===`);
-    //console.log(`📦 [PAGE-GRID] Categoría: ${categorySlug}`);
-    //console.log(`📦 [PAGE-GRID] Estado antes de la carga:`, {
-    //   productos: this.productos.length,
-    //   productosFiltrados: this.productosFiltrados.length,
-    //   isLoadingProducts: this.isLoadingProducts
-    // });
 
     this.productsService.getProductsByCategory(categorySlug).subscribe({
       next: (products) => {
-        //console.log(`✅ [PAGE-GRID] === PRODUCTOS RECIBIDOS ===`);
-        //console.log(`✅ [PAGE-GRID] Cantidad de productos:`, products.length);
-        //console.log(`✅ [PAGE-GRID] Productos completos:`, products);
-
         this.productos = products;
         this.productosFiltrados = products;
         this.isLoadingProducts = false;
-
-        // console.log(`✅ [PAGE-GRID] Estado después de la carga:`, {
-        //   productos: this.productos.length,
-        //   productosFiltrados: this.productosFiltrados.length,
-        //   isLoadingProducts: this.isLoadingProducts
-        // });
       },
       error: (error) => {
-        console.error(`❌ [PAGE-GRID] === ERROR CARGANDO PRODUCTOS ===`);
-        console.error(`❌ [PAGE-GRID] Categoría: ${categorySlug}`);
-        console.error(`❌ [PAGE-GRID] Error completo:`, error);
-        console.error(`❌ [PAGE-GRID] Status:`, error.status);
-        console.error(`❌ [PAGE-GRID] Message:`, error.message);
-
+        console.error(`❌ [PAGE-GRID] Error cargando productos de categoría ${categorySlug}:`, error);
         this.productos = [];
         this.productosFiltrados = [];
         this.isLoadingProducts = false;
@@ -273,14 +189,12 @@ export class PageGridComponent implements OnInit, OnDestroy {
    */
   private loadAllProducts(): void {
     this.isLoadingProducts = true;
-    //console.log('📦 [PAGE-GRID] Cargando todos los productos');
 
     this.productsService.getAllPublishedProducts().subscribe({
       next: (products) => {
         this.productos = products;
         this.productosFiltrados = products;
         this.isLoadingProducts = false;
-        //console.log('✅ [PAGE-GRID] Todos los productos cargados:', products);
       },
       error: (error) => {
         console.error('❌ [PAGE-GRID] Error cargando todos los productos:', error);
@@ -296,14 +210,12 @@ export class PageGridComponent implements OnInit, OnDestroy {
    */
   private searchProducts(searchTerm: string): void {
     this.isLoadingProducts = true;
-    //console.log(`🔍 [PAGE-GRID] Buscando productos: ${searchTerm}`);
 
     this.productsService.searchProducts(searchTerm).subscribe({
       next: (products) => {
         this.productos = products;
         this.productosFiltrados = products;
         this.isLoadingProducts = false;
-        //console.log('✅ [PAGE-GRID] Productos de búsqueda:', products);
       },
       error: (error) => {
         console.error(`❌ [PAGE-GRID] Error en búsqueda de productos:`, error);
@@ -318,25 +230,10 @@ export class PageGridComponent implements OnInit, OnDestroy {
    * Obtener URL absoluta para imagen de producto
    */
   getProductImageUrl(product: FrontProduct): string {
-    //console.log(`🖼️ [PAGE-GRID] === PROCESANDO IMAGEN DE PRODUCTO ===`);
-    //console.log(`🖼️ [PAGE-GRID] Producto:`, product.nombre);
-    //console.log(`🖼️ [PAGE-GRID] Campo imagenes del producto:`, product.imagenes);
-    //console.log(`🖼️ [PAGE-GRID] Tipo de imagenes:`, typeof product.imagenes);
-    //console.log(`🖼️ [PAGE-GRID] Es array:`, Array.isArray(product.imagenes));
-
-    // Usar la primera imagen del array de imágenes
     if (product.imagenes && Array.isArray(product.imagenes) && product.imagenes.length > 0) {
-      const firstImage = product.imagenes[0];
-      //console.log(`🖼️ [PAGE-GRID] Primera imagen encontrada:`, firstImage);
-
-      const absoluteUrl = this.productsService.getAbsoluteImageUrl(firstImage);
-      //console.log(`🖼️ [PAGE-GRID] URL absoluta generada:`, absoluteUrl);
-      return absoluteUrl;
-    } else {
-      const placeholderUrl = this.productsService.getPlaceholderImage();
-      //console.log(`🖼️ [PAGE-GRID] Usando placeholder (no hay imágenes):`, placeholderUrl.substring(0, 50) + '...');
-      return placeholderUrl;
+      return this.productsService.getAbsoluteImageUrl(product.imagenes[0]);
     }
+    return this.productsService.getPlaceholderImage();
   }
 
   /**
@@ -344,55 +241,45 @@ export class PageGridComponent implements OnInit, OnDestroy {
    */
   onImageError(event: any): void {
     if (event.target) {
-      // Evitar bucle infinito: si ya es el placeholder, no hacer nada más
       if (event.target.src.includes('placeholder-product.jpg') || event.target.src.includes('placeholder.jpg')) {
-        //console.log('⚠️ [PAGE-GRID] Error cargando placeholder, ocultando imagen');
         event.target.style.display = 'none';
         return;
       }
-
       event.target.src = this.productsService.getPlaceholderImage();
     }
   }
 
   /**
-   * Función para filtrar productos localmente (fallback)
+   * Filtrar productos localmente (fallback para búsqueda sin backend)
    */
   filtrarProductos(): void {
     const query = this.searchQuery.toLowerCase().trim();
 
-    // Filtrar productos que coincidan con la categoría y/o búsqueda
     this.productosFiltrados = this.productos.filter(producto => {
       const matchesCategoria = !this.categoriaSeleccionada || producto.categoria === this.categoriaSeleccionada;
       const matchesSearch = query
         ? producto.nombre.toLowerCase().includes(query) || producto.referencia.toLowerCase().includes(query)
         : true;
 
-      return matchesCategoria && matchesSearch; // Producto debe coincidir con ambas condiciones
+      return matchesCategoria && matchesSearch;
     });
   }
-  // Función para añadir productos al carrito
+
   addToCart(product: any) {
     this.cartService.addToCart(product);
-    //console.log(`${product.nombre} añadido al carrito`);
 
-    // Abrir el offcanvas del carrito automáticamente
     const offcanvasElement = document.getElementById('offcanvasCart');
     if (offcanvasElement) {
-      // Verificar si ya existe una instancia del offcanvas
       let offcanvas = bootstrap.Offcanvas.getInstance(offcanvasElement);
       if (!offcanvas) {
         offcanvas = new bootstrap.Offcanvas(offcanvasElement);
       }
 
-      // Añadir event listener para limpiar el backdrop cuando se cierre
       offcanvasElement.addEventListener('hidden.bs.offcanvas', () => {
-        // Limpiar cualquier backdrop que pueda quedar
         const backdrop = document.querySelector('.offcanvas-backdrop');
         if (backdrop) {
           backdrop.remove();
         }
-        // Restaurar el scroll del body
         document.body.classList.remove('modal-open');
         document.body.style.overflow = '';
         document.body.style.paddingRight = '';
@@ -402,7 +289,6 @@ export class PageGridComponent implements OnInit, OnDestroy {
     }
   }
 
-  // Función que se llamará cuando el usuario haga submit en el buscador
   onSearchSubmit(event: Event): void {
     event.preventDefault();
     this.filtrarProductos();
