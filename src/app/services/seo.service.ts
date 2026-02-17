@@ -144,4 +144,28 @@ export class SeoService {
 
     this.updateSeoMetadata(defaultMetadata);
   }
+
+  /**
+   * Inyectar un bloque JSON-LD de schema.org en el <head>.
+   * Reemplaza cualquier script JSON-LD previo para evitar duplicados.
+   */
+  injectJsonLd(schema: object): void {
+    this.removeJsonLd();
+
+    const script = document.createElement('script');
+    script.setAttribute('type', 'application/ld+json');
+    script.setAttribute('id', 'jsonld-schema');
+    script.textContent = JSON.stringify(schema);
+    document.head.appendChild(script);
+  }
+
+  /**
+   * Eliminar el bloque JSON-LD del <head> (llamar en ngOnDestroy).
+   */
+  removeJsonLd(): void {
+    const existing = document.getElementById('jsonld-schema');
+    if (existing) {
+      existing.remove();
+    }
+  }
 }
