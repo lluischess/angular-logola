@@ -29,61 +29,32 @@ export class PageHomeComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    // Limpiar subscripciones
     this.subscriptions.forEach(sub => sub.unsubscribe());
   }
 
   /**
-   * Cargar metadatos SEO desde la configuración
+   * Cargar metadatos SEO desde la configuración del backend
    */
   private loadSeoMetadata(): void {
-    //console.log('🏠 [HOME] Cargando metadatos SEO desde configuración...');
-
     const sub = this.configurationService.getConfiguration().subscribe({
       next: (config: ConfigurationData) => {
-        //console.log('🏠 [HOME] Configuración recibida:', config);
-        //console.log('🏠 [HOME] config.seo existe:', !!config?.seo);
-        //console.log('🏠 [HOME] config.seo completo:', config?.seo);
-
         if (config && config.seo) {
-          //console.log('🏠 [HOME] Campos SEO individuales:');
-          //console.log('  - homeTitle:', config.seo.homeTitle);
-          //console.log('  - homeDescription:', config.seo.homeDescription);
-          //console.log('  - homeKeywords:', config.seo.homeKeywords);
-          //console.log('  - siteName:', config.seo.siteName);
-          //console.log('  - defaultImage:', config.seo.defaultImage);
-
           const seoMetadata: SeoMetadata = {
-            title: config.seo.homeTitle || 'Logolate - Chocolates y Caramelos Artesanales',
-            description: config.seo.homeDescription || 'Descubre los mejores chocolates y caramelos artesanales. Productos únicos y de calidad premium.',
-            keywords: config.seo.homeKeywords || 'chocolates, caramelos, artesanales, premium, dulces, logolate',
-            ogTitle: config.seo.homeTitle || 'Logolate - Chocolates y Caramelos Artesanales',
-            ogDescription: config.seo.homeDescription || 'Descubre los mejores chocolates y caramelos artesanales. Productos únicos y de calidad premium.',
+            title: config.seo.homeTitle || 'Logolate - Chocolates Personalizados para Hoteles y Empresas',
+            description: config.seo.homeDescription || 'Chocolates y bombones personalizados con tu logo para hoteles, empresas y eventos. Pedidos desde 100 unidades. Entrega en 10-15 días.',
+            keywords: config.seo.homeKeywords || 'chocolates personalizados, bombones personalizados empresa, regalos corporativos chocolate, chocolates para hoteles, chocolate personalizado logo',
+            ogTitle: config.seo.homeTitle || 'Logolate - Chocolates Personalizados para Hoteles y Empresas',
+            ogDescription: config.seo.homeDescription || 'Chocolates y bombones personalizados con tu logo para hoteles, empresas y eventos. Pedidos desde 100 unidades. Entrega en 10-15 días.',
             ogImage: config.seo.defaultImage || '',
-            canonical: 'http://localhost:4200/'
+            canonical: this.seoService.buildCanonicalUrl('/')
           };
 
-          // Aplicar metadatos SEO
           this.seoService.updateSeoMetadata(seoMetadata);
-          //console.log('🏠 [HOME] Metadatos SEO aplicados:', seoMetadata);
         } else {
-          //console.log('🏠 [HOME] No hay configuración SEO, usando metadatos por defecto');
           this.seoService.setDefaultMetadata();
         }
       },
-      error: (error: any) => {
-        console.error('❌ [HOME] Error cargando configuración SEO:', error);
-        console.error('❌ [HOME] Error status:', error.status);
-        console.error('❌ [HOME] Error message:', error.message);
-        console.error('❌ [HOME] Error URL:', error.url);
-
-        if (error.status === 0) {
-          console.error('❌ [HOME] Backend no está disponible o CORS error');
-        } else if (error.status === 404) {
-          console.error('❌ [HOME] Endpoint /configuration no encontrado');
-        }
-
-        // En caso de error, usar metadatos por defecto
+      error: () => {
         this.seoService.setDefaultMetadata();
       }
     });
