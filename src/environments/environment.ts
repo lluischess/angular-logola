@@ -1,4 +1,5 @@
 export const environment = {
-  production: true,
-  apiUrl: 'https://logolaback.onrender.com'
+  production: false,
+  apiUrl: 'https://logolaback.onrender.com',
+  siteUrl: 'http://localhost:4200'
 };
