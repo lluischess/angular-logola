@@ -58,6 +58,7 @@ export class PageProductComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngOnDestroy(): void {
     this.subscriptions.forEach(sub => sub.unsubscribe());
+    this.seoService.removeJsonLd();
   }
 
   /**
@@ -75,6 +76,50 @@ export class PageProductComponent implements OnInit, OnDestroy, AfterViewInit {
     };
 
     this.seoService.updateSeoMetadata(seoMetadata);
+    this.injectProductSchema(product);
+  }
+
+  /**
+   * Inyectar schema.org/Product con datos del producto
+   */
+  private injectProductSchema(product: FrontProduct): void {
+    const imageUrl = product.imagenes && product.imagenes.length > 0
+      ? this.productsService.getAbsoluteImageUrl(product.imagenes[0])
+      : '';
+
+    const schema: any = {
+      '@context': 'https://schema.org',
+      '@type': 'Product',
+      name: product.nombre,
+      description: product.metaDescripcion || product.descripcion || `${product.nombre}. Producto artesanal personalizado de calidad premium.`,
+      image: imageUrl,
+      sku: product.referencia,
+      brand: {
+        '@type': 'Brand',
+        name: 'Logolate'
+      },
+      category: product.categoria,
+      url: this.seoService.buildCanonicalUrl(`/producto/${product.urlSlug}`),
+      offers: {
+        '@type': 'Offer',
+        availability: 'https://schema.org/InStock',
+        priceCurrency: 'EUR',
+        seller: {
+          '@type': 'Organization',
+          name: 'Logolate'
+        }
+      }
+    };
+
+    if (product.medidas) {
+      schema.additionalProperty = {
+        '@type': 'PropertyValue',
+        name: 'Medidas',
+        value: product.medidas
+      };
+    }
+
+    this.seoService.injectJsonLd(schema);
   }
 
   /**
