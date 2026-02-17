@@ -1,4 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
+import { RouterModule } from '@angular/router';
 import { BannerComponent } from "../../banner/banner.component";
 import { NovedadesComponent } from "../../novedades/novedades.component";
 import { PromoComponent } from "../../promo/promo.component";
@@ -12,7 +13,7 @@ import { Subscription } from 'rxjs';
 @Component({
   selector: 'app-page-home',
   standalone: true,
-  imports: [BannerComponent, NovedadesComponent, PromoComponent, SChocolatesComponent, SCaramelosComponent, VentajasComponent],
+  imports: [RouterModule, BannerComponent, NovedadesComponent, PromoComponent, SChocolatesComponent, SCaramelosComponent, VentajasComponent],
   templateUrl: './page-home.component.html',
   styleUrl: './page-home.component.css'
 })
