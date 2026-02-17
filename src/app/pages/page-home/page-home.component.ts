@@ -31,6 +31,7 @@ export class PageHomeComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.subscriptions.forEach(sub => sub.unsubscribe());
+    this.seoService.removeJsonLd();
   }
 
   /**
@@ -54,12 +55,44 @@ export class PageHomeComponent implements OnInit, OnDestroy {
         } else {
           this.seoService.setDefaultMetadata();
         }
+
+        this.injectOrganizationSchema(config);
       },
       error: () => {
         this.seoService.setDefaultMetadata();
+        this.injectOrganizationSchema(null);
       }
     });
 
     this.subscriptions.push(sub);
+  }
+
+  /**
+   * Inyectar schema.org/Organization con datos de la empresa
+   */
+  private injectOrganizationSchema(config: ConfigurationData | null): void {
+    const schema = {
+      '@context': 'https://schema.org',
+      '@type': 'Organization',
+      name: 'Logolate',
+      url: 'https://logolate.com',
+      logo: 'https://logolate.com/assets/images/logo.png',
+      description: 'Más de 35 años fabricando chocolates y bombones personalizados para hoteles, empresas y eventos. Pedidos desde 100 unidades, envío a toda España.',
+      telephone: config?.footer?.contactoTelefono || '+34938612858',
+      email: config?.footer?.contactoEmail || 'info@logolate.com',
+      address: {
+        '@type': 'PostalAddress',
+        streetAddress: 'La Garriga',
+        addressLocality: 'La Garriga',
+        addressRegion: 'Barcelona',
+        postalCode: '08530',
+        addressCountry: 'ES'
+      },
+      sameAs: [
+        config?.footer?.redesSociales?.instagram || 'https://www.instagram.com/logolate'
+      ]
+    };
+
+    this.seoService.injectJsonLd(schema);
   }
 }
