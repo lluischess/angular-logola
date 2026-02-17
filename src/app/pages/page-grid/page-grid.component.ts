@@ -74,6 +74,7 @@ export class PageGridComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.subscriptions.forEach(sub => sub.unsubscribe());
+    this.seoService.removeJsonLd();
   }
 
   /**
@@ -174,6 +175,7 @@ export class PageGridComponent implements OnInit, OnDestroy {
         this.productos = products;
         this.productosFiltrados = products;
         this.isLoadingProducts = false;
+        this.injectItemListSchema(products, this.seoService.buildCanonicalUrl(`/productos/${categorySlug}`));
       },
       error: (error) => {
         console.error(`❌ [PAGE-GRID] Error cargando productos de categoría ${categorySlug}:`, error);
@@ -195,6 +197,7 @@ export class PageGridComponent implements OnInit, OnDestroy {
         this.productos = products;
         this.productosFiltrados = products;
         this.isLoadingProducts = false;
+        this.injectItemListSchema(products, this.seoService.buildCanonicalUrl('/productos'));
       },
       error: (error) => {
         console.error('❌ [PAGE-GRID] Error cargando todos los productos:', error);
@@ -292,5 +295,27 @@ export class PageGridComponent implements OnInit, OnDestroy {
   onSearchSubmit(event: Event): void {
     event.preventDefault();
     this.filtrarProductos();
+  }
+
+  /**
+   * Inyectar schema.org/ItemList con los productos visibles de la página
+   */
+  private injectItemListSchema(products: FrontProduct[], listUrl: string): void {
+    if (!products || products.length === 0) return;
+
+    const schema = {
+      '@context': 'https://schema.org',
+      '@type': 'ItemList',
+      url: listUrl,
+      numberOfItems: products.length,
+      itemListElement: products.slice(0, 20).map((product, index) => ({
+        '@type': 'ListItem',
+        position: index + 1,
+        url: this.seoService.buildCanonicalUrl(`/producto/${product.urlSlug}`),
+        name: product.nombre
+      }))
+    };
+
+    this.seoService.injectJsonLd(schema);
   }
 }
