@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SafeUrlPipe } from '../../pipes/safe-url.pipe';
+import { SeoService } from '../../../services/seo.service';
 
 interface Catalogo {
   titulo: string;
@@ -15,7 +16,7 @@ interface Catalogo {
   templateUrl: './page-cataloge.component.html',
   styleUrl: './page-cataloge.component.css'
 })
-export class PageCatalogeComponent {
+export class PageCatalogeComponent implements OnInit {
   catalogos: Catalogo[] = [
     {
       titulo: 'Catálogo Navidad 2025',
@@ -43,6 +44,19 @@ export class PageCatalogeComponent {
       pdfPath: 'assets/pdfs/CATALOGO_CARAMELOS.pdf'
     }
   ];
+
+  constructor(private seoService: SeoService) {}
+
+  ngOnInit(): void {
+    this.seoService.updateSeoMetadata({
+      title: 'Catálogos de Chocolates Personalizados - Logolate',
+      description: 'Descarga los catálogos de Logolate: chocolates para hoteles, amenities personalizados, caramelos, mini bar y regalos de Navidad corporativos.',
+      keywords: 'catálogo chocolates personalizados, catálogo hoteles, amenities chocolate, catálogo navidad corporativo',
+      ogTitle: 'Catálogos de Chocolates Personalizados - Logolate',
+      ogDescription: 'Descarga los catálogos de chocolates y bombones personalizados de Logolate para hoteles, empresas y eventos.',
+      canonical: this.seoService.buildCanonicalUrl('/catalogos')
+    });
+  }
 
   descargarCatalogo(pdfPath: string, titulo: string): void {
     const link = document.createElement('a');
