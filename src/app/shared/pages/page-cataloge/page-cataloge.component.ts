@@ -19,6 +19,11 @@ interface Catalogo {
 export class PageCatalogeComponent implements OnInit {
   catalogos: Catalogo[] = [
     {
+      titulo: 'Catálogo Pascua 2026',
+      iframeSrc: 'https://heyzine.com/flip-book/b511d3267a.html',
+      pdfPath: 'assets/pdfs/catalogo_pascua_2026.pdf'
+    },
+    {
       titulo: 'Catálogo Navidad 2025',
       iframeSrc: 'https://heyzine.com/flip-book/3c5b83ba5f.html',
       pdfPath: 'assets/pdfs/catalogo_navidad_2025.pdf'
